@@ -283,3 +283,36 @@
         font-size: 2.5rem;
     }
 }
+
+@media (max-width: 480px) {
+    .chairmanCard {
+        margin: 0 var(--space-2);
+    }
+
+    .cardInner {
+        padding: var(--space-6) var(--space-4);
+    }
+
+    .imageWrapper {
+        width: 100%;
+        max-width: 220px;
+        height: 280px;
+    }
+
+    .advisorName {
+        font-size: 1.8rem;
+        letter-spacing: -0.5px;
+    }
+
+    .qualification {
+        font-size: var(--text-base);
+    }
+
+    .message {
+        font-size: var(--text-base);
+    }
+
+    .chairmanSection {
+        padding: var(--space-12) 0;
+    }
+}

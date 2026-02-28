@@ -525,3 +525,45 @@
         padding: 12px 20px;
     }
 }
+
+@media (max-width: 480px) {
+    .header h2 {
+        font-size: var(--text-2xl);
+    }
+
+    .filters {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .filterBtn {
+        padding: 8px 16px;
+        font-size: var(--text-xs);
+    }
+
+    .eventCard {
+        padding: var(--space-5);
+        border-radius: 24px;
+    }
+
+    .modal {
+        border-radius: 16px;
+    }
+
+    .modalHeader {
+        padding: 12px 16px;
+    }
+
+    .modalBody {
+        padding: 12px 16px;
+    }
+
+    .modalFooter {
+        padding: 10px 16px;
+        flex-wrap: wrap;
+    }
+
+    .eventActions {
+        flex-direction: column;
+    }
+}

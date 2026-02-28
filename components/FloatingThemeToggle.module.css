@@ -1,0 +1,77 @@
+.toggleContainer {
+    position: fixed;
+    bottom: var(--space-8);
+    right: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    z-index: 10000;
+}
+
+.floatingToggle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--marvel-surface);
+    backdrop-filter: var(--marvel-glass);
+    -webkit-backdrop-filter: var(--marvel-glass);
+    border: 1px solid var(--marvel-border);
+    color: var(--marvel-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--marvel-shadow-outer), var(--marvel-shadow-inner);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+
+.floatingToggle:hover {
+    background: var(--marvel-surface-hover);
+    border-color: var(--marvel-border-hover);
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: var(--marvel-glow-blue), var(--marvel-shadow-inner);
+}
+
+.activePatriotic {
+    border-color: var(--patriotic-saffron);
+}
+
+.activeDot {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    background: var(--patriotic-saffron);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--patriotic-saffron);
+}
+
+.iconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+/* Theme specifics */
+[data-theme='light'] .floatingToggle {
+    background: var(--marvel-surface);
+    color: var(--marvel-text);
+    border-color: var(--marvel-border);
+}
+
+@media (max-width: 768px) {
+    .toggleContainer {
+        bottom: var(--space-6);
+        right: var(--space-6);
+        gap: var(--space-3);
+    }
+
+    .floatingToggle {
+        width: 56px;
+        height: 56px;
+    }
+}

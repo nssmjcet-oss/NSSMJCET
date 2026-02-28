@@ -1,0 +1,459 @@
+.home {
+    min-height: 100vh;
+    background: url('/uploads/nss-bg.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Ornaments removed to prevent fading/obstruction of nss-bg.jpg */
+.ornament1,
+.ornament2,
+.ornament3 {
+    display: none;
+}
+
+.progressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF9933, #FFFFFF, #138808);
+    transform-origin: 0%;
+    z-index: 9999;
+}
+
+/* Hero Section - World Class */
+.hero {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-48) 0 var(--space-20);
+    position: relative;
+    z-index: 1;
+}
+
+.heroContent {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.heroTagline {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5em;
+    font-weight: 900;
+    margin-bottom: var(--space-6);
+    background: var(--marvel-accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+}
+
+.heroTitle {
+    font-size: clamp(3.5rem, 12vw, 7.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: var(--space-10);
+    background: var(--marvel-title-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.05em;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
+    /* Reduced shadow */
+    will-change: transform;
+    padding: 0.15em 0;
+}
+
+.home[data-language="te"] .heroTitle {
+    font-size: clamp(3rem, 10vw, 6rem);
+    line-height: 1.4;
+}
+
+.heroDescription {
+    font-size: var(--text-xl);
+    line-height: 1.8;
+    margin-bottom: var(--space-12);
+    color: #000000;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 800;
+}
+
+.home[data-language="te"] .heroDescription {
+    line-height: 2;
+}
+
+.heroActions {
+    display: flex;
+    gap: var(--space-6);
+    justify-content: center;
+    align-items: center;
+    transform: translateZ(0);
+    /* Hardware acceleration */
+}
+
+/* Stats Section */
+.stats {
+    padding: var(--space-10) 0;
+    position: relative;
+    z-index: 1;
+}
+
+.statsSectionLabel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.statsSectionLabel span {
+    font-size: var(--text-xs);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    color: #FF9933;
+}
+
+.statsSectionLabel::before,
+.statsSectionLabel::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 60px;
+    background: linear-gradient(90deg, transparent, #FF9933);
+}
+
+.statsSectionLabel::after {
+    background: linear-gradient(90deg, #FF9933, transparent);
+}
+
+.sectionTitle {
+    font-size: var(--text-5xl);
+    font-weight: 900;
+    margin-bottom: var(--space-12);
+    text-align: center;
+    letter-spacing: -2px;
+    background: var(--marvel-title-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-10);
+}
+
+.statCard {
+    position: relative;
+    overflow: hidden;
+    background: white;
+    padding: var(--space-10) var(--space-6);
+    border-radius: 28px;
+    text-align: center;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 153, 51, 0.1);
+    will-change: transform;
+}
+
+.statCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF9933, #138808);
+    border-radius: 28px 28px 0 0;
+}
+
+.statCard:nth-child(2)::before {
+    background: linear-gradient(90deg, #138808, #0070c0);
+}
+
+.statCard:nth-child(3)::before {
+    background: linear-gradient(90deg, #0070c0, #FF9933);
+}
+
+.statCard:nth-child(4)::before {
+    background: linear-gradient(90deg, #FF9933, #138808);
+}
+
+.statCard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 48px rgba(255, 153, 51, 0.15), 0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: rgba(255, 153, 51, 0.3);
+}
+
+.statNumber {
+    font-size: var(--text-6xl);
+    font-weight: 900;
+    margin-bottom: var(--space-2);
+    display: block;
+    letter-spacing: -1px;
+    /* Increased from -3px to prevent collision */
+    background: linear-gradient(135deg, #FF9933 0%, #e07b00 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.statCard:nth-child(2) .statNumber {
+    background: linear-gradient(135deg, #138808, #0a5c05);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.statCard:nth-child(3) .statNumber {
+    background: linear-gradient(135deg, #0070c0, #004a8f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.statLabel {
+    font-size: var(--text-xs);
+    color: #64748b;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Motto / Inspiration Section */
+.motto {
+    padding: var(--space-16) 0 var(--space-20);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 3 inspiration portrait cards */
+.inspirersGrid {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: stretch;
+    padding: 0 2rem;
+    flex-wrap: wrap;
+}
+
+.inspireCard {
+    flex: 1 1 260px;
+    max-width: 300px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 153, 51, 0.15);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.inspireCard:hover {
+    box-shadow: 0 16px 48px rgba(255, 153, 51, 0.18);
+}
+
+.inspireImgWrap {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+}
+
+.inspireImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.4s ease;
+}
+
+.inspireCard:hover .inspireImg {
+    transform: scale(1.04);
+}
+
+.inspireInfo {
+    padding: 1.1rem 1.25rem 1.25rem;
+    text-align: center;
+}
+
+.inspireName {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.02em;
+}
+
+.inspireTitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #FF9933;
+    margin: 0;
+}
+
+/* Motto text below the cards */
+.mottoTextBlock {
+    max-width: 780px;
+    margin: 2.5rem auto 0;
+    text-align: center;
+    padding: 0 2rem;
+}
+
+.mottoText {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    line-height: 1.75;
+    color: #2d2d2d;
+    font-weight: 700;
+    margin: 0;
+    font-style: italic;
+}
+
+
+/* Objectives Section */
+.objectives {
+    padding: var(--space-20) 0;
+}
+
+.objectivesList {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    gap: var(--space-6);
+}
+
+.objectiveRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-10);
+    background: var(--marvel-surface);
+    backdrop-filter: var(--marvel-glass);
+    border: 1px solid var(--marvel-border);
+    padding: var(--space-8) var(--space-10);
+    border-radius: 32px;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--marvel-shadow-inner);
+}
+
+.objectiveRow:hover {
+    transform: translateX(10px);
+    background: var(--marvel-surface-hover);
+    border-color: var(--marvel-border-hover);
+}
+
+.objectiveNumber {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    background: var(--marvel-accent-gradient);
+    color: white;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: var(--text-2xl);
+    box-shadow: var(--marvel-glow-blue);
+}
+
+.objectiveItem p {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--marvel-text-dim);
+    transition: color 0.3s ease;
+}
+
+.objectiveItem:hover p {
+    color: var(--marvel-text);
+}
+
+/* CTA Section */
+.cta {
+    padding: var(--space-12) 0;
+    text-align: center;
+}
+
+.ctaContent h2 {
+    font-size: clamp(3rem, 10vw, 6rem);
+    font-weight: 900;
+    margin-bottom: var(--space-10);
+    letter-spacing: -4px;
+    background: var(--marvel-title-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.05));
+    /* Simplified from shadow */
+}
+
+.ctaContent p {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-12);
+    color: #334155;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 700;
+    line-height: 1.6;
+}
+
+@media (max-width: 1200px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .heroTitle {
+        font-size: 4rem;
+        letter-spacing: -2px;
+    }
+
+    .heroActions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .mottoBox {
+        grid-template-columns: 1fr;
+        padding: var(--space-10);
+        gap: var(--space-8);
+    }
+
+    .mottoLeft {
+        border-right: none;
+        border-bottom: 2px solid rgba(255, 153, 51, 0.15);
+        padding-right: 0;
+        padding-bottom: var(--space-6);
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .mottoTagline {
+        font-size: var(--text-2xl);
+    }
+}

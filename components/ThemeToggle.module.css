@@ -1,0 +1,58 @@
+.themeToggle {
+    background: var(--marvel-surface);
+    border: 1px solid var(--marvel-border);
+    backdrop-filter: var(--marvel-glass);
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all var(--transition-base);
+    padding: 0;
+}
+
+.themeToggle:hover {
+    background: var(--marvel-surface-hover);
+    border-color: var(--marvel-border-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--marvel-glow-blue);
+}
+
+.iconWrapper {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 12px;
+}
+
+.isDark {
+    transform: translateY(-36px);
+    /* 24px icon + 12px gap */
+}
+
+.sun,
+.moon {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+}
+
+[data-theme='light'] .themeToggle {
+    background: white;
+    border-color: #ddd;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='light'] .themeToggle:hover {
+    background: #f8f9fa;
+    border-color: #ccc;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}

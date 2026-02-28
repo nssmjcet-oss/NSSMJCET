@@ -1,0 +1,21 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Only authenticated admin users can write to storage.
+    // We rely on the backend (Admin SDK) for all writes in practice.
+    // This rule is a security backstop.
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Public can view all files (photos, event images, etc.)
+    match /{allPaths=**} {
+      allow read: if true;
+      // Only authenticated users can write - backend validates admin role
+      allow write: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+  }
+}

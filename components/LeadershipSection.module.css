@@ -1,0 +1,358 @@
+.leadershipSection {
+    padding: var(--space-20) 0 0;
+    position: relative;
+    z-index: 10;
+    --saffron: #FF9933;
+    --green: #138808;
+    --heading: #111111;
+    --subtext: #444444;
+    --quote: #333333;
+    --glow-saffron: rgba(255, 153, 51, 0.15);
+    --glow-green: rgba(19, 136, 8, 0.15);
+    overflow: hidden;
+}
+
+.leadershipContainer {
+    max-width: 950px;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cardSection {
+    width: 100%;
+    margin-bottom: var(--space-20);
+    position: relative;
+    z-index: 2;
+}
+
+.cardSection:last-child {
+    margin-bottom: 0;
+}
+
+.sectionTitle {
+    font-size: var(--text-2xl);
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: var(--space-8);
+    position: relative;
+    padding-left: var(--space-12);
+}
+
+.sectionTitle::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 4px;
+    border-radius: 100px;
+}
+
+.sectionTitle.green {
+    color: var(--green);
+}
+
+.sectionTitle.green::before {
+    background: var(--green);
+}
+
+.sectionTitle.saffron {
+    color: var(--saffron);
+}
+
+.sectionTitle.saffron::before {
+    background: var(--saffron);
+}
+
+
+.glassCard {
+    width: 100%;
+    position: relative;
+    z-index: 2;
+    perspective: 1500px;
+}
+
+.cardInner {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+    border-radius: 40px;
+    padding: var(--space-8) var(--space-10);
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: var(--space-12);
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    min-height: 480px;
+}
+
+/* Accent Glows */
+.cardInner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.1;
+    pointer-events: none;
+    transition: all 1s ease;
+}
+
+.cardInner.saffron::after {
+    background: radial-gradient(circle at top right, var(--saffron), transparent 60%);
+}
+
+.cardInner.green::after {
+    background: radial-gradient(circle at top right, var(--green), transparent 60%);
+}
+
+/* Gradient Border */
+.cardInner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 40px;
+    padding: 1.5px;
+    background: linear-gradient(135deg, var(--saffron), rgba(255, 255, 255, 0.8), var(--green));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.spotlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.glassCard:hover .spotlight {
+    opacity: 1;
+}
+
+.lightSweep {
+    position: absolute;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: linear-gradient(to right,
+            transparent,
+            rgba(255, 255, 255, 0.15),
+            transparent);
+    transform: skewX(-20deg);
+    pointer-events: none;
+    z-index: 4;
+    filter: blur(40px);
+}
+
+.imageSection {
+    position: relative;
+    z-index: 6;
+}
+
+.imgContainer {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.profileImg {
+    width: 100%;
+    height: 120%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.placeholderImg {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6rem;
+    font-weight: 950;
+    color: #cbd5e1;
+}
+
+.badge {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    color: var(--heading);
+    z-index: 10;
+}
+
+.contentSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 7;
+    padding-right: var(--space-8);
+}
+
+.roleLabel {
+    font-size: var(--text-xs);
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--subtext);
+    opacity: 0.6;
+    margin-bottom: var(--space-2);
+    display: block;
+}
+
+.name {
+    font-size: 2.8rem;
+    font-weight: 950;
+    color: var(--heading);
+    margin-bottom: var(--space-4);
+    letter-spacing: -2px;
+    line-height: 1.1;
+}
+
+.departmentBlock {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    padding: var(--space-6) var(--space-8);
+    margin-bottom: var(--space-8);
+    width: fit-content;
+}
+
+.deptIcon {
+    width: 44px;
+    height: 44px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--heading);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.deptContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.deptValue {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--heading);
+    line-height: 1.2;
+}
+
+.divider {
+    height: 1px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent);
+    margin: var(--space-8) 0;
+}
+
+.quoteWrapper {
+    position: relative;
+    padding-left: var(--space-8);
+}
+
+.quoteIcon {
+    position: absolute;
+    left: -10px;
+    top: -20px;
+    font-size: 5rem;
+    font-family: serif;
+    color: rgba(0, 0, 0, 0.04);
+}
+
+.quote {
+    font-style: italic;
+    color: var(--quote);
+    line-height: 1.6;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.ashokaWatermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+    .cardInner {
+        grid-template-columns: 360px 1fr;
+        padding: var(--space-8);
+        min-height: auto;
+    }
+
+    .name {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .cardInner {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        text-align: center;
+    }
+
+    .imageSection {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .contentSection {
+        padding-right: 0;
+        align-items: center;
+    }
+
+    .departmentBlock {
+        margin: 0 auto var(--space-8);
+    }
+
+    .quoteWrapper {
+        padding-left: 0;
+    }
+
+    .quoteIcon {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}

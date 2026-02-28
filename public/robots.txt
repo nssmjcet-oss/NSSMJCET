@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow admin routes from crawlers
+Disallow: /admin/
+Disallow: /api/admin/
+Disallow: /api/auth/
+Disallow: /login
+Disallow: /debug-auth/
+
+Sitemap: https://nssmjcet.vercel.app/sitemap.xml

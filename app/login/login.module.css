@@ -1,0 +1,101 @@
+.loginPage {
+    min-height: 100vh;
+    background: var(--marvel-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    position: relative;
+    overflow: hidden;
+}
+
+.loginPage::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -10%;
+    width: 40%;
+    height: 40%;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.loginPage::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    left: -10%;
+    width: 50%;
+    height: 50%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.loginContainer {
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    z-index: 1;
+}
+
+.loginCard {
+    background: rgba(8, 12, 37, 0.6);
+    backdrop-filter: var(--marvel-glass);
+    border: 1px solid var(--marvel-border);
+    border-radius: 40px;
+    padding: var(--space-12) var(--space-10);
+    box-shadow: var(--shadow-2xl), var(--marvel-glow-blue);
+}
+
+[data-theme='light'] .loginCard {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.loginHeader {
+    text-align: center;
+    margin-bottom: var(--space-10);
+}
+
+.loginHeader h1 {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    margin: var(--space-4) 0 var(--space-2);
+    background: var(--marvel-title-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+}
+
+.loginHeader p {
+    color: var(--marvel-text-dim);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.loginFooter {
+    margin-top: var(--space-10);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--marvel-border);
+    text-align: center;
+}
+
+.backLink {
+    color: var(--marvel-text-dim);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    transition: all var(--transition-base);
+}
+
+.backLink:hover {
+    color: var(--color-primary-light);
+    transform: translateX(-5px);
+}

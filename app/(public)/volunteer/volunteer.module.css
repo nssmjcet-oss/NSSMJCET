@@ -1,0 +1,211 @@
+.volunteerPage {
+    padding: var(--space-40) 0 var(--space-24);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: var(--marvel-bg);
+    color: var(--marvel-text);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: var(--space-16);
+    position: relative;
+    z-index: 1;
+}
+
+.header h1 {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 800;
+    margin-bottom: var(--space-4);
+    background: var(--marvel-title-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -2px;
+}
+
+.header p {
+    font-size: var(--text-xl);
+    color: var(--color-primary-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.formContainer {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.85);
+    /* Lighter, more glassmorphic */
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: var(--space-16);
+    border-radius: 48px;
+    position: relative;
+    z-index: 2;
+    transition: all var(--transition-slow);
+    box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.1);
+}
+
+.formContainer:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--color-primary-light);
+    box-shadow: var(--marvel-glow-blue);
+}
+
+/* Override global Marvelous labels for this specific page to match blue uppercase style */
+.volunteerPage :global(.marvelous-label) {
+    color: #2563eb !important;
+    /* Premium Blue */
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+    margin-bottom: 12px !important;
+}
+
+/* Glassmorphic inputs */
+.volunteerPage :global(.marvelous-input) {
+    background: rgba(255, 255, 255, 0.5) !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    color: #1e293b !important;
+    /* Slate 800 */
+    backdrop-filter: blur(5px);
+    border-radius: 16px !important;
+    padding: 18px 24px !important;
+}
+
+.volunteerPage :global(.marvelous-input:focus) {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.15) !important;
+}
+
+/* Fix select dropdown appearance - prevent tiling */
+.volunteerPage :global(.marvelous-select) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232563eb'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 1rem center !important;
+    background-size: 1.25rem !important;
+    padding-right: 3rem !important;
+}
+
+/* Ensure select options are visible in light mode */
+.volunteerPage :global(.marvelous-select) option {
+    color: #0f172a !important;
+    background: white !important;
+}
+
+/* Fix placeholder text visibility */
+.volunteerPage :global(.marvelous-input::placeholder) {
+    color: #94a3b8 !important;
+    opacity: 0.8 !important;
+}
+
+/* Back to Home Button */
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-xl);
+    color: #2563eb;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.7rem;
+    text-decoration: none;
+    transition: all var(--transition-base);
+    margin-bottom: var(--space-4);
+    position: relative;
+    z-index: 10;
+}
+
+.backButton:hover {
+    background: #2563eb;
+    color: white;
+    transform: translateX(-4px);
+    box-shadow: var(--marvel-glow-blue);
+}
+
+.form {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    /* Slightly tighter spacing */
+}
+
+.interestsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: 16px 20px;
+    /* More compact padding like screenshot */
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.checkboxLabel:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #2563eb;
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+}
+
+.checkboxLabel input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: #2563eb;
+    cursor: pointer;
+}
+
+.checkboxLabel span {
+    font-size: 1.1rem;
+    color: #334155;
+    /* Slate 700 */
+    font-weight: 700;
+}
+
+.checkboxLabel:hover span {
+    color: #0f172a;
+}
+
+@media (max-width: 768px) {
+    .volunteerPage {
+        padding: var(--space-20) 0;
+    }
+
+    .formContainer {
+        padding: var(--space-8) var(--space-6);
+        border-radius: 30px;
+    }
+
+    .header h1 {
+        letter-spacing: -1px;
+    }
+
+    .header p {
+        font-size: var(--text-lg);
+        letter-spacing: 2px;
+    }
+
+    .interestsGrid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,488 @@
+.navbar {
+    background-color: transparent;
+    position: fixed;
+    top: var(--space-4);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    max-width: var(--max-width-xl);
+    z-index: var(--z-fixed);
+    transition: all var(--transition-slow);
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.scrolled .navbar {
+    top: var(--space-2);
+}
+
+/* Shared Glass Circle Base Style */
+.navCircleBase {
+    background: var(--marvel-surface);
+    backdrop-filter: var(--marvel-glass);
+    -webkit-backdrop-filter: var(--marvel-glass);
+    border: 1px solid var(--marvel-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--marvel-shadow-outer), var(--marvel-shadow-inner);
+    transition: all var(--transition-base);
+}
+
+[data-theme='light'] .navCircleBase {
+    background: var(--marvel-surface);
+    border-color: var(--marvel-border);
+}
+
+.logoWrapper {
+    flex-shrink: 0;
+    width: 76px;
+    height: 76px;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+}
+
+/* Inherit base styles manually */
+.logoWrapper {
+    background: var(--marvel-surface);
+    backdrop-filter: var(--marvel-glass);
+    -webkit-backdrop-filter: var(--marvel-glass);
+    border: 1px solid var(--marvel-border);
+    border-radius: 50%;
+}
+
+/* If composes not supported by Next.js CSS modules, use mixin approach or manual duplication. 
+   Since we can't rely on 'composes' without verifying config, we will manually apply shared properties 
+   by grouping selectors or just applying the class in JSX.
+   However, user asked to EXTRACT to shared class in CSS.
+   Let's group selectors for the shared properties.
+*/
+
+.logoWrapper,
+.hamburgerWrapper {
+    background: #ffffff !important;
+    backdrop-filter: var(--marvel-glass);
+    -webkit-backdrop-filter: var(--marvel-glass);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transition: all var(--transition-base);
+}
+
+.logoWrapper {
+    flex-shrink: 0;
+    width: 76px;
+    height: 76px;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+}
+
+[data-theme='light'] .logoWrapper,
+[data-theme='light'] .hamburgerWrapper {
+    background: var(--marvel-surface);
+    border-color: var(--marvel-border);
+}
+
+/* Desktop Navbar Container - Glassmorphic Pill */
+.navContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 var(--space-6);
+    background: var(--marvel-surface);
+    backdrop-filter: var(--marvel-glass);
+    -webkit-backdrop-filter: var(--marvel-glass);
+    border: 1px solid var(--marvel-border);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-base);
+    box-shadow: var(--marvel-shadow-outer), var(--marvel-shadow-inner);
+    min-height: 64px;
+    flex: 1;
+}
+
+.scrolled .navContainer {
+    background: var(--marvel-bg-alt);
+    border-color: var(--marvel-border-hover);
+    min-height: 58px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='light'] .navContainer {
+    background: rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: var(--marvel-shadow-outer), var(--marvel-shadow-inner);
+}
+
+.scrolled .logoWrapper {
+    width: 64px;
+    height: 64px;
+}
+
+.centerSection {
+    display: flex;
+    justify-content: center;
+    margin-left: var(--space-4);
+}
+
+.rightSection {
+    margin-left: auto;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.logo {
+    text-decoration: none;
+    transition: transform var(--transition-base);
+}
+
+.logo:hover {
+    transform: translateY(-1px);
+}
+
+.largeLogo {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+    transition: all var(--transition-base);
+}
+
+.scrolled .largeLogo {
+    height: 50px;
+}
+
+.logo:hover .largeLogo {
+    transform: scale(1.05);
+}
+
+.logoContent {
+    display: flex;
+    align-items: center;
+}
+
+
+.hamburgerWrapper {
+    display: none;
+    position: fixed;
+    top: var(--space-4);
+    right: var(--space-4);
+    z-index: 10001;
+    width: 52px;
+    height: 52px;
+    cursor: pointer;
+}
+
+.hamburgerWrapper:hover {
+    background: var(--marvel-surface-hover);
+    border-color: var(--marvel-border-hover);
+    transform: translateY(-2px);
+}
+
+.menuToggle {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.hamburger {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--marvel-text);
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+@media (max-width: 1024px) {
+
+    /* Hide desktop navbar pill on mobile */
+    .navContainer {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        padding: 0 !important;
+    }
+
+    /* Show mobile hamburger */
+    .hamburgerWrapper {
+        display: flex;
+    }
+}
+
+.navLinks {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.navbar[data-language="te"] .navLinks {
+    gap: var(--space-3);
+}
+
+.navLinks a {
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: all var(--transition-base);
+    padding: var(--space-1) var(--space-1);
+    position: relative;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    line-height: 1.6;
+}
+
+[data-theme='light'] .navLinks a {
+    color: var(--marvel-text);
+    font-weight: 600;
+}
+
+[data-theme='light'] .navLinks a:hover {
+    color: var(--color-primary);
+}
+
+.navLinks a:hover {
+    color: var(--marvel-text);
+    transform: translateY(-1px);
+}
+
+.navLinks a.active {
+    color: var(--color-primary) !important;
+    font-weight: 800;
+}
+
+.activeIndicator {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+}
+
+.navActions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.toggles {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.authButtons {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-left: var(--space-4);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='light'] .authButtons {
+    border-left-color: rgba(0, 0, 0, 0.1);
+}
+
+.volunteerLink {
+    color: var(--color-secondary-light) !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    font-size: 0.7rem !important;
+    letter-spacing: 1.2px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 1250px) {
+    .navLinks {
+        gap: var(--space-2);
+    }
+
+    .logoTagline {
+        display: none;
+    }
+}
+
+@media (max-width: 1250px) {
+    .menuToggle {
+        display: flex;
+    }
+
+    /* Hide desktop nav on mobile */
+    .desktopNav {
+        display: none !important;
+    }
+}
+
+/* Desktop - Show desktop nav, hide mobile elements */
+@media (min-width: 1025px) {
+    .menuToggle {
+        display: none;
+    }
+
+    .desktopNav {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+/* Mobile Overlay Menu Styles */
+.mobileOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(3, 6, 22, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+}
+
+[data-theme='light'] .mobileOverlay {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+}
+
+.mobileCloseBtn {
+    position: absolute;
+    top: var(--space-6);
+    right: var(--space-6);
+    background: none;
+    border: none;
+    font-size: 48px;
+    color: var(--marvel-text);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.mobileCloseBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(90deg);
+}
+
+[data-theme='light'] .mobileCloseBtn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.mobileMenuContent {
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: stretch;
+    padding: var(--space-2);
+}
+
+.mobileMenuItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4) var(--space-6);
+    min-height: 56px;
+    background: var(--marvel-surface);
+    backdrop-filter: var(--marvel-glass);
+    border: 1px solid var(--marvel-border);
+    border-radius: var(--radius-full);
+    color: var(--marvel-text);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-base);
+    cursor: pointer;
+    width: 100%;
+}
+
+.mobileMenuItem:hover {
+    background: var(--marvel-surface-hover);
+    border-color: var(--marvel-border-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--marvel-glow-blue);
+}
+
+.mobileMenuItemActive {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.mobileMenuItemCTA {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    border-color: var(--color-primary);
+    color: white;
+    font-weight: 700;
+}
+
+.mobileMenuItemCTA:hover {
+    background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+    transform: translateY(-3px);
+}
+
+.mobileDivider {
+    height: 1px;
+    background: var(--marvel-border);
+    margin: var(--space-2) 0;
+}
+
+.mobileLanguageToggle {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-2);
+}
+
+@media (max-width: 480px) {
+    .largeLogo {
+        height: 40px;
+    }
+
+    .navbar {
+        gap: var(--space-2);
+        width: 98%;
+    }
+
+    .mobileOverlay {
+        padding: var(--space-4);
+    }
+
+    .mobileMenuContent {
+        gap: var(--space-3);
+    }
+
+    .mobileMenuItem {
+        min-height: 48px;
+        font-size: var(--text-base);
+    }
+}

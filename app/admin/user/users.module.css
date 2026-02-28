@@ -1,0 +1,247 @@
+.usersPage {
+    max-width: 1400px;
+    padding-bottom: var(--space-20);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-8);
+}
+
+.header h2 {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: var(--marvel-text);
+    background: var(--marvel-title-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-20);
+    gap: var(--space-4);
+    color: var(--marvel-text);
+}
+
+.noData {
+    background: var(--marvel-surface);
+    backdrop-filter: var(--marvel-glass);
+    border: 1px solid var(--marvel-border);
+    padding: var(--space-12);
+    border-radius: 40px;
+    text-align: center;
+    color: var(--marvel-text-dim);
+}
+
+.tableContainer {
+    background: var(--marvel-surface);
+    backdrop-filter: var(--marvel-glass);
+    border: 1px solid var(--marvel-border);
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.table th {
+    padding: var(--space-5) var(--space-4);
+    text-align: left;
+    font-weight: 800;
+    color: var(--marvel-text-dim);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--marvel-border);
+}
+
+.table td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--marvel-border);
+    color: var(--marvel-text);
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: var(--marvel-surface-hover);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badgePrimary {
+    background: var(--marvel-accent-gradient);
+    color: white;
+    box-shadow: var(--marvel-glow-blue);
+}
+
+.badgeSecondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--marvel-text-dim);
+    border: 1px solid var(--marvel-border);
+}
+
+.badgeSuccess {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badgeError {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(3, 6, 22, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: var(--space-4);
+}
+
+.modal {
+    background: var(--marvel-bg-alt);
+    border: 1px solid var(--marvel-border);
+    border-radius: 40px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-2xl), var(--marvel-glow-blue);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-6) var(--space-8);
+    border-bottom: 1px solid var(--marvel-border);
+}
+
+.modalHeader h3 {
+    margin: 0;
+    font-weight: 800;
+    background: var(--marvel-title-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--marvel-text-dim);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.closeBtn:hover {
+    color: var(--marvel-text);
+}
+
+.form {
+    padding: var(--space-8);
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    cursor: pointer;
+    color: var(--marvel-text);
+    font-weight: 600;
+    font-size: var(--text-sm);
+}
+
+.checkboxLabel input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-primary-light);
+}
+
+.permissionsSection {
+    margin-top: var(--space-10);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--marvel-border);
+}
+
+.permissionsSection h4 {
+    color: var(--marvel-text);
+    margin-bottom: var(--space-6);
+    font-size: var(--text-base);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.permissionsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-4);
+    margin-top: var(--space-10);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--marvel-border);
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: var(--space-4);
+        align-items: flex-start;
+    }
+
+    .tableContainer {
+        border-radius: 20px;
+    }
+
+    .permissionsGrid {
+        grid-template-columns: 1fr;
+    }
+}

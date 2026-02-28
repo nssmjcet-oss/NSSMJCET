@@ -200,6 +200,10 @@ function MemberCard({ member }) {
                 duration: 0.5,
                 ease: [0.16, 1, 0.3, 1],
             }
+        },
+        tap: {
+            filter: "grayscale(0%) brightness(1.03)",
+            scale: 1.1,
         }
     };
 

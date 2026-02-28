@@ -203,3 +203,30 @@
         border-radius: 30px;
     }
 }
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .contactInfo,
+    .contactForm {
+        padding: var(--space-6) var(--space-4);
+        border-radius: 20px;
+    }
+
+    .contactInfo h2,
+    .contactForm h2 {
+        font-size: var(--text-2xl);
+    }
+
+    .infoIcon {
+        width: 50px;
+        height: 50px;
+        font-size: var(--text-xl);
+    }
+
+    .infoList {
+        gap: var(--space-6);
+    }
+}

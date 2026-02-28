@@ -412,3 +412,60 @@
         width: 100%;
     }
 }
+
+@media (max-width: 480px) {
+    .heroSection {
+        min-height: 400px;
+    }
+
+    .heroContent h1 {
+        font-size: 2.5rem;
+    }
+
+    .heroSubtitle {
+        font-size: var(--text-base);
+        letter-spacing: 3px;
+    }
+
+    .introCardSection {
+        margin-top: -20px;
+    }
+
+    .glassCard {
+        padding: var(--space-4);
+        border-radius: 20px;
+    }
+
+    .glassTitle {
+        font-size: var(--text-2xl);
+    }
+
+    .mainDescription {
+        font-size: var(--text-base);
+    }
+
+    .logoContainer {
+        width: 150px;
+        height: 150px;
+    }
+
+    .sectionHeading {
+        font-size: var(--text-2xl);
+        margin-bottom: var(--space-8);
+    }
+
+    .objectiveCard {
+        padding: var(--space-6);
+        border-radius: 16px;
+    }
+
+    .mjcetGlass {
+        padding: var(--space-6) var(--space-4);
+        border-radius: 20px;
+    }
+
+    .institutionIdentity h3 {
+        font-size: var(--text-xl);
+        letter-spacing: 2px;
+    }
+}

@@ -122,6 +122,7 @@ export default function Chairman() {
                                             style={{ y: imgY }}
                                             initial={{ filter: "grayscale(70%)" }}
                                             whileHover={{ filter: "grayscale(0%)", scale: 1.05 }}
+                                            whileTap={{ filter: "grayscale(0%)", scale: 1.05 }}
                                             transition={{ duration: 0.5 }}
                                         />
                                     ) : (

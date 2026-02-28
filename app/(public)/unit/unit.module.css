@@ -278,3 +278,26 @@
         grid-template-columns: 1fr;
     }
 }
+
+@media (max-width: 480px) {
+    .heroTitle {
+        font-size: 2.2rem;
+    }
+
+    .mainCard {
+        padding: var(--space-8) var(--space-4);
+        border-radius: 20px;
+    }
+
+    .unitTitle {
+        font-size: var(--text-2xl);
+    }
+
+    .statBox {
+        padding: var(--space-6) var(--space-4);
+    }
+
+    .statValue {
+        font-size: var(--text-3xl);
+    }
+}

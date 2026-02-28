@@ -55,6 +55,12 @@ body.marvelous-theme {
     transition: var(--transition-premium);
 }
 
+.premium-image-base:hover,
+.premium-image-base:active {
+    filter: grayscale(0%) brightness(1);
+    transform: scale(1.05);
+}
+
 .premium-image-hover {
     filter: grayscale(0%) brightness(1);
     transform: scale(1.05);

@@ -121,6 +121,10 @@ function EventCard({ event, language, onViewDetails }) {
                 duration: 0.5,
                 ease: [0.16, 1, 0.3, 1],
             }
+        },
+        tap: {
+            filter: "grayscale(0%) brightness(1.02) contrast(1)",
+            scale: 1.08,
         }
     };
 

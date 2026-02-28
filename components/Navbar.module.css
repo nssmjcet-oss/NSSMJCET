@@ -209,13 +209,9 @@
 
 @media (max-width: 1024px) {
 
-    /* Hide desktop navbar pill on mobile */
+    /* Hide desktop navbar pill on mobile — completely */
     .navContainer {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        backdrop-filter: none !important;
-        padding: 0 !important;
+        display: none !important;
     }
 
     /* Show mobile hamburger */

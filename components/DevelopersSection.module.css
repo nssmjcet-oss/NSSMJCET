@@ -44,6 +44,7 @@
 .devCard {
     position: relative;
     perspective: 1000px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .cardInner {
@@ -64,6 +65,7 @@
     z-index: 1;
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
     min-height: 400px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .devCard:hover .cardInner {
@@ -103,6 +105,8 @@
     object-fit: cover;
     border-radius: 50%;
     border: 3px solid #000;
+    pointer-events: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .photoPlaceholder {

@@ -58,6 +58,7 @@
     position: relative;
     perspective: 1000px;
     cursor: default;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .cardInner {
@@ -76,6 +77,7 @@
     z-index: 1;
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
     min-height: 440px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .memberCard:hover .cardInner {
@@ -105,6 +107,8 @@
     object-position: top;
     border-radius: 50%;
     border: 4px solid #fff;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: none;
 }
 
 .photoPlaceholder {

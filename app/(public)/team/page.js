@@ -6,8 +6,8 @@ export const metadata = {
     description: 'Meet the NSS MJCET team members and office bearers',
 };
 
-// Revalidate this page every 60 seconds
-export const dynamic = 'force-dynamic';
+// Revalidate this page every hour
+export const revalidate = 3600;
 
 async function getTeamMembers() {
     try {

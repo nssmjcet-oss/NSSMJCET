@@ -120,14 +120,6 @@ export default function Navbar() {
                 </div>
 
                 <div className={`container ${styles.navContainer}`}>
-                    <div className={styles.hamburgerWrapper} onClick={toggleMenu}>
-                        <button className={styles.menuToggle} aria-label="Toggle menu">
-                            <span className={styles.hamburger}></span>
-                            <span className={styles.hamburger}></span>
-                            <span className={styles.hamburger}></span>
-                        </button>
-                    </div>
-
                     <div className={styles.desktopNav}>
                         <div className={styles.centerSection}>
                             <div className={styles.navLinks}>
@@ -175,6 +167,15 @@ export default function Navbar() {
                     </div>
                 </div>
             </motion.nav>
+
+            {/* Hamburger — outside nav so display:none on navContainer won't hide it */}
+            <div className={styles.hamburgerWrapper} onClick={toggleMenu}>
+                <button className={styles.menuToggle} aria-label="Toggle menu">
+                    <span className={styles.hamburger}></span>
+                    <span className={styles.hamburger}></span>
+                    <span className={styles.hamburger}></span>
+                </button>
+            </div>
 
             <AnimatePresence>
                 {isMenuOpen && (

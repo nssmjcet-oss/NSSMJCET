@@ -5,8 +5,10 @@ import { motion } from 'framer-motion';
 import { Plus, Trash2, Edit2, Save, X, Github, Linkedin, ExternalLink, Image as ImageIcon, Check, AlertCircle } from 'lucide-react';
 import styles from '../admin-content.module.css';
 import { compressImageToDataURL } from '@/utils/image-compression';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminDevelopers() {
+    const { role } = useAuth();
     const [developers, setDevelopers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(null);
@@ -123,16 +125,12 @@ export default function AdminDevelopers() {
             <div className={styles.pageHeader}>
                 <div>
                     <h1 className={styles.sectionTitle}>Meet The Developers</h1>
-                    <p className={styles.sectionSubtitle}>Manage the team behind the innovation</p>
+                    <p className={styles.sectionSubtitle}>
+                        Permanent section for the creators of NSS MJCET Website.
+                        <strong> Restricted to Super Admin.</strong>
+                    </p>
                 </div>
-                {!isEditing && (
-                    <button
-                        className={`${styles.btn} ${styles.btnPrimary}`}
-                        onClick={() => setIsEditing('new')}
-                    >
-                        <Plus size={18} /> Add Developer
-                    </button>
-                )}
+                {/* Add Developer button removed - Section is permanent */}
             </div>
 
             {message && (
@@ -324,12 +322,14 @@ export default function AdminDevelopers() {
                             </div>
 
                             <div className={styles.gridActions}>
-                                <button onClick={() => handleEdit(dev)} className={`${styles.btn} ${styles.btnSecondary}`} style={{ padding: '8px 12px' }}>
-                                    <Edit2 size={16} />
-                                </button>
-                                <button onClick={() => handleDelete(dev.id)} className={`${styles.btn} ${styles.btnDanger}`} style={{ padding: '8px 12px' }}>
-                                    <Trash2 size={16} />
-                                </button>
+                                {role === 'superadmin' ? (
+                                    <button onClick={() => handleEdit(dev)} className={`${styles.btn} ${styles.btnSecondary}`} style={{ padding: '8px 12px', width: '100%' }}>
+                                        <Edit2 size={16} /> Edit Details
+                                    </button>
+                                ) : (
+                                    <p style={{ fontSize: '11px', opacity: 0.5, fontStyle: 'italic' }}>View Only (Super Admin restricted)</p>
+                                )}
+                                {/* Delete button removed - Section is permanent */}
                             </div>
                         </div>
                     </motion.div>

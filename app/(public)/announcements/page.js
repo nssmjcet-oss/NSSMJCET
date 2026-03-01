@@ -56,7 +56,7 @@ export default function AnnouncementsPage() {
         const fetchAnnouncements = async () => {
             try {
                 setLoading(true);
-                const res = await fetch('/api/admin/announcements', { cache: 'no-store' });
+                const res = await fetch('/api/announcements');
                 const data = await res.json();
                 const now = new Date();
                 const active = (data.announcements || []).filter(a => {

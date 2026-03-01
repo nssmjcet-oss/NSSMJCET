@@ -6,8 +6,8 @@ export const metadata = {
     description: 'Upcoming and past events organized by NSS MJCET',
 };
 
-// Revalidate this page every 60 seconds
-export const dynamic = 'force-dynamic';
+// Revalidate this page every hour
+export const revalidate = 3600;
 
 async function getEvents() {
     try {

@@ -12,7 +12,7 @@ export default function GoverningBodySection() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/governing-body', { cache: 'no-store' })
+        fetch('/api/governing-body')
             .then(res => res.json())
             .then(data => {
                 if (data.members) setMembers(data.members);

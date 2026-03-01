@@ -26,7 +26,7 @@ export default function AnnouncementsSection() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/announcements', { cache: 'no-store' })
+        fetch('/api/announcements')
             .then(res => res.json())
             .then(data => {
                 if (data.announcements) {

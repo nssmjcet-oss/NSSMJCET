@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-export const revalidate = 3600; // Cache for 1 hour
 import { adminDb } from '@/lib/firebase-admin';
+
+export const revalidate = 3600; // Cache for 1 hour
 
 export async function GET() {
     try {

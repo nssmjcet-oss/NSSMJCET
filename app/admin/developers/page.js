@@ -153,24 +153,23 @@ export default function AdminDevelopers() {
                     <form onSubmit={handleSubmit}>
                         <div className={styles.grid} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Name</label>
+                                <label className={styles.label}>Name (Permanent)</label>
                                 <input
                                     type="text"
                                     className={styles.input}
                                     value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    placeholder="Full Name"
-                                    required
+                                    disabled
+                                    style={{ opacity: 0.6, cursor: 'not-allowed' }}
                                 />
                             </div>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Role</label>
+                                <label className={styles.label}>Role (Permanent)</label>
                                 <input
                                     type="text"
                                     className={styles.input}
                                     value={formData.role}
-                                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                                    placeholder="e.g. Developer"
+                                    disabled
+                                    style={{ opacity: 0.6, cursor: 'not-allowed' }}
                                 />
                             </div>
                             <div className={styles.formGroup} style={{ gridColumn: 'span 2' }}>
@@ -204,7 +203,7 @@ export default function AdminDevelopers() {
                                         />
                                         <div style={{ display: 'flex', gap: '10px' }}>
                                             <label htmlFor="dev-photo" className={`${styles.btn} ${styles.btnSecondary}`} style={{ cursor: 'pointer', margin: 0 }}>
-                                                {uploading ? 'Uploading...' : 'Upload Image'}
+                                                {uploading ? 'Processing...' : 'Change Photo'}
                                             </label>
                                             {formData.image && (
                                                 <button
@@ -212,62 +211,63 @@ export default function AdminDevelopers() {
                                                     onClick={() => setFormData({ ...formData, image: '' })}
                                                     className={`${styles.btn} ${styles.btnDanger}`}
                                                 >
-                                                    Remove
+                                                    Clear
                                                 </button>
                                             )}
                                         </div>
-                                        <p style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>
-                                            Professional headshot recommended (Square aspect ratio)
+                                        <p style={{ fontSize: '11px', color: '#3b82f6', marginTop: '8px', fontWeight: 'bold' }}>
+                                            Only the photo can be updated by Super Admin.
                                         </p>
                                     </div>
                                 </div>
                             </div>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Display Order</label>
+                                <label className={styles.label}>Display Order (Fixed)</label>
                                 <input
                                     type="number"
                                     className={styles.input}
                                     value={formData.order_index}
-                                    onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
+                                    disabled
+                                    style={{ opacity: 0.6, cursor: 'not-allowed' }}
                                 />
                             </div>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>GitHub URL</label>
+                                <label className={styles.label}>GitHub (Fixed)</label>
                                 <input
                                     type="text"
                                     className={styles.input}
                                     value={formData.github_url}
-                                    onChange={(e) => setFormData({ ...formData, github_url: e.target.value })}
-                                    placeholder="GitHub URL"
+                                    disabled
+                                    style={{ opacity: 0.6, cursor: 'not-allowed' }}
                                 />
                             </div>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>LinkedIn URL</label>
+                                <label className={styles.label}>LinkedIn (Fixed)</label>
                                 <input
                                     type="text"
                                     className={styles.input}
                                     value={formData.linkedin_url}
-                                    onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
-                                    placeholder="LinkedIn URL"
+                                    disabled
+                                    style={{ opacity: 0.6, cursor: 'not-allowed' }}
                                 />
                             </div>
                         </div>
 
                         <div className={styles.formGroup} style={{ marginTop: '10px' }}>
-                            <label className={styles.checkboxLabel} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', color: 'var(--marvel-text)', fontWeight: '700', fontSize: '13px' }}>
+                            <label className={styles.checkboxLabel} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'not-allowed', color: 'var(--marvel-text)', fontWeight: '700', fontSize: '13px', opacity: 0.6 }}>
                                 <input
                                     type="checkbox"
                                     checked={formData.is_active}
-                                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                                    disabled
                                     style={{ width: '18px', height: '18px' }}
                                 />
-                                Active Status (Visible on Homepage)
+                                Active Status (Permanently Active)
                             </label>
                         </div>
 
                         <div className={styles.btnGroup} style={{ marginTop: '32px', justifyContent: 'flex-start' }}>
                             <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
-                                <Save size={18} /> {isEditing === 'new' ? 'Confirm Addition' : 'Save Changes'}
+                                <Save size={18} /> Update Photo
                             </button>
                             <button type="button" onClick={handleCancel} className={`${styles.btn} ${styles.btnSecondary}`}>
                                 <X size={18} /> Cancel

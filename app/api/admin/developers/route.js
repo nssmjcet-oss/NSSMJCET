@@ -26,21 +26,21 @@ export async function POST(request) {
     );
 }
 
-// PUT - Update developer
+// PUT - Update developer (ONLY Image is editable)
 export async function PUT(request) {
     try {
         const body = await request.json();
-        const { id, ...data } = body;
+        const { id, image } = body;
 
         if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
         await adminDb.collection('developers').doc(id).update({
-            ...data,
+            image: image || '',
             updatedAt: FieldValue.serverTimestamp(),
         });
 
         revalidatePath('/');
-        return NextResponse.json({ message: 'Developer updated' }, { status: 200 });
+        return NextResponse.json({ message: 'Developer photo updated' }, { status: 200 });
     } catch (error) {
         console.error('Admin Developers PUT error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });

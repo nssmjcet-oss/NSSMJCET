@@ -41,10 +41,9 @@ export const metadata = {
             follow: true,
         },
     },
-    // Google Search Console verification — add your code after Vercel deployment
-    // verification: {
-    //     google: 'YOUR_GOOGLE_SITE_VERIFICATION_CODE',
-    // },
+    verification: {
+        google: 'googleb1d6eccf08c6d058',
+    },
 };
 
 export default function RootLayout({ children }) {

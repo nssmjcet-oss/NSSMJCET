@@ -22,12 +22,6 @@ export default function sitemap() {
             priority: 0.9,
         },
         {
-            url: `${baseUrl}/announcements`,
-            lastModified,
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
             url: `${baseUrl}/team`,
             lastModified,
             changeFrequency: 'monthly',
@@ -37,18 +31,6 @@ export default function sitemap() {
             url: `${baseUrl}/contact`,
             lastModified,
             changeFrequency: 'yearly',
-            priority: 0.6,
-        },
-        {
-            url: `${baseUrl}/volunteer`,
-            lastModified,
-            changeFrequency: 'monthly',
-            priority: 0.7,
-        },
-        {
-            url: `${baseUrl}/unit`,
-            lastModified,
-            changeFrequency: 'monthly',
             priority: 0.6,
         },
     ];

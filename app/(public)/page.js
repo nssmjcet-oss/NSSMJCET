@@ -16,7 +16,7 @@ const translations = {
     // ... (translations kept same)
     hero: {
         title: {
-            en: 'NSS MJCET',
+            en: 'NSS MJCET – National Service Scheme',
             te: 'NSS MJCET',
             hi: 'एनएसएस एमजेसीईटी',
         },
@@ -26,7 +26,7 @@ const translations = {
             hi: 'मैं नहीं बल्कि आप',
         },
         description: {
-            en: 'Empowering students to serve the community and build a better tomorrow through dedicated social service.',
+            en: 'NSS MJCET is the official National Service Scheme unit of Muffakham Jah College of Engineering & Technology. The platform highlights volunteer initiatives, community service programs, social impact activities, and student engagement led by NSS volunteers.',
             te: 'అంకిత సామాజిక సేవ ద్వారా సమాజానికి సేవ చేయడానికి మరియు మంచి రేపటిని నిర్మించడానికి విద్యార్థులకు శక్తినిస్తోంది.',
             hi: 'समर्पित समाज सेवा के माध्यम से समुदाय की सेवा करने और एक बेहतर कल बनाने के लिए छात्रों को सशक्त बनाना।',
         },

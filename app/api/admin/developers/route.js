@@ -40,6 +40,7 @@ export async function PUT(request) {
         });
 
         revalidatePath('/');
+        revalidatePath('/api/developers');
         return NextResponse.json({ message: 'Developer photo updated' }, { status: 200 });
     } catch (error) {
         console.error('Admin Developers PUT error:', error);

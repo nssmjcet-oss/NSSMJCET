@@ -44,6 +44,7 @@ export async function PUT(request) {
             }, { merge: true });
         }
         revalidatePath('/');
+        revalidatePath('/api/advisor-director');
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('AdvisorDirector Admin PUT error:', error);

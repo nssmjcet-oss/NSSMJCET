@@ -45,6 +45,9 @@ export async function POST(request) {
         });
 
         revalidatePath('/team');
+        revalidatePath('/api/team');
+        revalidatePath('/api/stats');
+        revalidatePath('/');
 
         return NextResponse.json({ message: 'Team member added', id: docRef.id }, { status: 201 });
     } catch (error) {
@@ -67,6 +70,9 @@ export async function PUT(request) {
         });
 
         revalidatePath('/team');
+        revalidatePath('/api/team');
+        revalidatePath('/api/stats');
+        revalidatePath('/');
 
         return NextResponse.json({ message: 'Updated successfully' }, { status: 200 });
     } catch (error) {
@@ -86,6 +92,9 @@ export async function DELETE(request) {
         await adminDb.collection('team').doc(id).delete();
 
         revalidatePath('/team');
+        revalidatePath('/api/team');
+        revalidatePath('/api/stats');
+        revalidatePath('/');
 
         return NextResponse.json({ message: 'Deleted successfully' }, { status: 200 });
     } catch (error) {

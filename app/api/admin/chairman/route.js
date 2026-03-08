@@ -43,6 +43,7 @@ export async function PUT(request) {
                 updatedAt: FieldValue.serverTimestamp()
             });
             revalidatePath('/');
+            revalidatePath('/api/chairman');
             return NextResponse.json({ success: true });
         } else {
             // Create new or update the only one (if we manage it by a fixed ID)
@@ -51,6 +52,7 @@ export async function PUT(request) {
                 updatedAt: FieldValue.serverTimestamp()
             }, { merge: true });
             revalidatePath('/');
+            revalidatePath('/api/chairman');
             return NextResponse.json({ success: true });
         }
     } catch (error) {

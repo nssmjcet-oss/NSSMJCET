@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 
-export const revalidate = 3600; // Cache for 1 hour
+export const revalidate = 3600; // ISR: cache for 1 hour to protect Firebase free tier
 
 export async function GET() {
     try {

@@ -38,6 +38,7 @@ export async function PUT(request) {
                 updatedAt: FieldValue.serverTimestamp()
             });
             revalidatePath('/');
+            revalidatePath('/api/program-officer');
             return NextResponse.json({ success: true });
         } else {
             await adminDb.collection('programOfficer').doc('info').set({
@@ -45,6 +46,7 @@ export async function PUT(request) {
                 updatedAt: FieldValue.serverTimestamp()
             }, { merge: true });
             revalidatePath('/');
+            revalidatePath('/api/program-officer');
             return NextResponse.json({ success: true });
         }
     } catch (error) {

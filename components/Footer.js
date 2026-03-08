@@ -138,6 +138,9 @@ export default function Footer() {
                 </div>
 
                 <div className={styles.footerBottom}>
+                    <p style={{ marginBottom: '0.5rem', opacity: 0.8, fontSize: '0.9rem' }}>
+                        NSS MJCET – National Service Scheme of Muffakham Jah College of Engineering & Technology, Hyderabad.
+                    </p>
                     <p>{t.copyright}</p>
                     <p className={styles.footerBottomMotto}>
                         <span style={{ color: '#FF9933' }}>NOT</span>

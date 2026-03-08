@@ -61,6 +61,8 @@ export async function POST(request) {
 
         revalidatePath('/');
         revalidatePath('/events');
+        revalidatePath('/api/events');
+        revalidatePath('/api/stats');
 
         return NextResponse.json(
             { message: 'Event created successfully', id: docRef.id },
@@ -95,6 +97,8 @@ export async function PUT(request) {
 
         revalidatePath('/');
         revalidatePath('/events');
+        revalidatePath('/api/events');
+        revalidatePath('/api/stats');
 
         return NextResponse.json(
             { message: 'Event updated successfully' },
@@ -126,6 +130,8 @@ export async function DELETE(request) {
 
         revalidatePath('/');
         revalidatePath('/events');
+        revalidatePath('/api/events');
+        revalidatePath('/api/stats');
 
         return NextResponse.json(
             { message: 'Event deleted successfully' },

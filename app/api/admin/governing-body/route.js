@@ -27,6 +27,7 @@ export async function POST(request) {
             createdAt: FieldValue.serverTimestamp(),
         });
         revalidatePath('/');
+        revalidatePath('/api/governing-body');
         return NextResponse.json({ id: docRef.id, success: true });
     } catch (error) {
         console.error('GoverningBody POST error:', error);
@@ -50,6 +51,7 @@ export async function PUT(request) {
         }, { merge: true });
 
         revalidatePath('/');
+        revalidatePath('/api/governing-body');
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('GoverningBody PUT error:', error);
@@ -65,6 +67,7 @@ export async function DELETE(request) {
 
         await adminDb.collection('governing_body').doc(id).delete();
         revalidatePath('/');
+        revalidatePath('/api/governing-body');
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error('GoverningBody DELETE error:', error);

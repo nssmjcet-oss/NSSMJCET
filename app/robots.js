@@ -4,7 +4,6 @@ export default function robots() {
             {
                 userAgent: '*',
                 allow: '/',
-                disallow: ['/admin', '/api'],
             },
         ],
         sitemap: 'https://nssmjcet.vercel.app/sitemap.xml',

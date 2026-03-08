@@ -42,6 +42,9 @@ export async function PUT(request) {
             updatedAt: FieldValue.serverTimestamp(),
         });
 
+        revalidatePath('/api/stats');
+        revalidatePath('/');
+
         return NextResponse.json({ message: 'Status updated successfully' }, { status: 200 });
     } catch (error) {
         console.error('Volunteer Admin PUT error:', error);
@@ -64,6 +67,9 @@ export async function DELETE(request) {
         }
 
         await adminDb.collection('volunteers').doc(id).delete();
+
+        revalidatePath('/api/stats');
+        revalidatePath('/');
 
         return NextResponse.json({ message: 'Deleted successfully' }, { status: 200 });
     } catch (error) {

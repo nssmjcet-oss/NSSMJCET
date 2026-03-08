@@ -47,6 +47,7 @@ export async function POST(request) {
 
         revalidatePath('/');
         revalidatePath('/announcements');
+        revalidatePath('/api/announcements');
 
         return NextResponse.json({ message: 'Announcement created successfully', id: docRef.id }, { status: 201 });
     } catch (error) {
@@ -76,6 +77,7 @@ export async function PUT(request) {
 
         revalidatePath('/');
         revalidatePath('/announcements');
+        revalidatePath('/api/announcements');
 
         return NextResponse.json({ message: 'Announcement updated successfully' }, { status: 200 });
     } catch (error) {
@@ -102,6 +104,7 @@ export async function DELETE(request) {
 
         revalidatePath('/');
         revalidatePath('/announcements');
+        revalidatePath('/api/announcements');
 
         return NextResponse.json({ message: 'Announcement deleted successfully' }, { status: 200 });
     } catch (error) {

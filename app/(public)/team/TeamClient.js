@@ -130,14 +130,14 @@ export default function TeamClient({ members }) {
                             {t.core}
                         </motion.h2>
                         <motion.div
-                            className={styles.teamGrid}
+                            className={styles.compactGrid}
                             variants={containerVariants}
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
                         >
                             {coreMembers.map((member) => (
-                                <MemberCard key={member._id} member={member} />
+                                <MemberCard key={member._id} member={member} compact={true} />
                             ))}
                         </motion.div>
                     </section>
@@ -153,7 +153,7 @@ export default function TeamClient({ members }) {
     );
 }
 
-function MemberCard({ member }) {
+function MemberCard({ member, compact = false }) {
     const { language } = useLanguage();
 
     const nameStr = typeof member.name === 'object' ? (member.name[language] || member.name.en || '') : (member.name || '');
@@ -218,7 +218,7 @@ function MemberCard({ member }) {
 
     return (
         <motion.div
-            className={styles.memberBox}
+            className={`${styles.memberBox} ${compact ? styles.compactMemberBox : ''}`}
             variants={cardVariants}
             initial="rest"
             whileHover="hover"
@@ -231,6 +231,7 @@ function MemberCard({ member }) {
                         alt={nameStr}
                         variants={imageVariants}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }}
+                        loading="lazy"
                     />
                 ) : (
                     <motion.div

@@ -6,6 +6,6 @@ export default function robots() {
                 allow: '/',
             },
         ],
-        sitemap: 'https://nssmjcet.vercel.app/sitemap.xml',
+        sitemap: 'https://nssmjcet.org/sitemap.xml',
     };
 }

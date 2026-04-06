@@ -7,10 +7,20 @@ import { revalidatePath } from 'next/cache';
 export async function GET() {
     try {
         const querySnapshot = await adminDb.collection('developers').orderBy('order_index', 'asc').get();
-        const developers = querySnapshot.docs.map(doc => ({
+        let developers = querySnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }));
+
+        const mirza = developers.find(d => d.name?.toLowerCase().includes('zohair'));
+        const farnaaz = developers.find(d => d.name?.toLowerCase().includes('farnaaz'));
+        
+        if (mirza && farnaaz) {
+            developers = developers.filter(d => d.id !== mirza.id && d.id !== farnaaz.id);
+            developers.splice(1, 0, mirza);
+            developers.splice(2, 0, farnaaz);
+        }
+
         return NextResponse.json({ developers }, { status: 200 });
     } catch (error) {
         console.error('Admin Developers GET error:', error);

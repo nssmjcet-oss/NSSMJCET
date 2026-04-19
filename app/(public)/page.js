@@ -8,6 +8,7 @@ import { useState, useEffect, useRef } from 'react';
 import LeadershipSection from '@/components/LeadershipSection';
 import GoverningBodySection from '@/components/GoverningBodySection';
 import EventSlider from '@/components/EventSlider';
+import EventsPortalBanner from '@/components/EventsPortalBanner';
 import EventModal from '@/components/EventModal';
 import AnnouncementsSection from '@/components/AnnouncementsSection';
 import DevelopersSection from '@/components/DevelopersSection';
@@ -218,7 +219,10 @@ export default function Home() {
             {/* 4. Governing Body Section */}
             <GoverningBodySection />
 
-            {/* 4. EVENTS (Slider) */}
+            {/* 5. Flagship Events Portal Banner */}
+            <EventsPortalBanner />
+
+            {/* 6. EVENTS (Slider) */}
             <EventSlider onViewDetails={setSelectedEvent} />
 
             {/* 5. Announcements */}

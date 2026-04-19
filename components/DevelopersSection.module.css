@@ -13,14 +13,24 @@
 
 .title {
     font-size: var(--text-5xl);
-    font-weight: 900;
+    font-weight: 800;
     margin-bottom: var(--space-4);
-    background: var(--marvel-title-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -2px;
+    color: #111111; /* Changed to dark for visibility */
+    letter-spacing: -1px;
     text-transform: uppercase;
+    position: relative;
+    display: inline-block;
+}
+
+.title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 10%;
+    width: 80%;
+    height: 4px;
+    background: var(--gradient-saffron);
+    border-radius: var(--radius-full);
 }
 
 .subtitle {
@@ -48,30 +58,29 @@
 }
 
 .cardInner {
-    background: rgba(255, 255, 255, 0.9);
-    /* Solidified for visibility */
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.6); /* Light premium glass */
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: var(--glass-border-light);
+    border-radius: 32px;
     padding: var(--space-12) var(--space-8);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all var(--transition-slow);
     cursor: default;
     position: relative;
     overflow: hidden;
     z-index: 1;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
-    min-height: 400px;
-    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08); /* Lighter shadow */
+    min-height: 420px;
 }
 
 .devCard:hover .cardInner {
     transform: translateY(-15px) !important;
-    background: #ffffff;
-    box-shadow: 0 30px 60px -15px rgba(37, 99, 235, 0.2);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 30px 60px -15px rgba(37, 99, 235, 0.15);
     border-color: rgba(37, 99, 235, 0.3);
 }
 
@@ -95,8 +104,9 @@
     margin-bottom: var(--space-6);
     position: relative;
     z-index: 3;
-    padding: 4px;
-    background: linear-gradient(135deg, #2563EB, #1E40AF);
+    padding: 3px;
+    background: var(--gradient-green); /* Metallic Green border */
+    box-shadow: var(--marvel-glow-green);
 }
 
 .devPhoto {
@@ -107,6 +117,11 @@
     border: 3px solid #000;
     pointer-events: none;
     -webkit-tap-highlight-color: transparent;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.devCard:hover .devPhoto {
+    transform: scale(1.08); /* Cinematic zoom */
 }
 
 .photoPlaceholder {
@@ -131,7 +146,7 @@
 .name {
     font-size: var(--text-2xl);
     font-weight: 800;
-    color: #0f172a;
+    color: #111111; /* Changed to dark for visibility */
     margin-bottom: var(--space-2);
     letter-spacing: -0.5px;
 }
@@ -139,7 +154,7 @@
 .role {
     font-size: var(--text-sm);
     font-weight: 700;
-    color: #2563EB;
+    color: var(--color-saffron);
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: var(--space-6);
@@ -149,6 +164,14 @@
     display: flex;
     gap: var(--space-4);
     justify-content: center;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.devCard:hover .socials {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .socialIcon {

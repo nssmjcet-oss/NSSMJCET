@@ -10,7 +10,6 @@ export default function LeadershipSection() {
     const { language } = useLanguage();
     const [officerData, setOfficerData] = useState(null);
     const [chairmanData, setChairmanData] = useState(null);
-    const [advisorData, setAdvisorData] = useState(null);
 
     useEffect(() => {
         // Fetch Program Officer
@@ -29,22 +28,9 @@ export default function LeadershipSection() {
             })
             .catch(console.error);
 
-        // Fetch Advisor cum Director
-        fetch('/api/advisor-director')
-            .then(res => res.json())
-            .then(json => {
-                if (json.advisor) setAdvisorData(json.advisor);
-            })
-            .catch(console.error);
     }, []);
 
     const leadershipData = [
-        {
-            data: advisorData,
-            role: 'Advisor cum Director',
-            label: 'ADVISOR CUM DIRECTOR',
-            accent: 'saffron'
-        },
         {
             data: chairmanData,
             role: 'Chairman',

@@ -1,0 +1,90 @@
+.splash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: url('/uploads/nss-bg.jpg') center/cover no-repeat;
+}
+
+.splash::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: transparent; /* Removed brightness overlay as requested */
+    z-index: 0;
+}
+
+
+/* ─── Center content ───────────────────────────────────── */
+.content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    text-align: center;
+}
+
+.logoWrap {
+    position: relative;
+    width: 280px; /* Increased back to a substantial size */
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logoWrap::after {
+    content: '';
+    position: absolute;
+    inset: -30%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+    z-index: -1;
+    filter: blur(20px);
+}
+
+.logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.2));
+}
+.title {
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 800;
+    letter-spacing: 0.2em; /* Wide spacing for premium look */
+    color: #111111; /* Changed back to dark */
+    text-shadow: 0 4px 20px rgba(255, 255, 255, 0.8);
+    margin: 0;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase; 
+    color: #000000; /* Switched to black as requested earlier */
+    margin: 0;
+}
+
+
+
+/* ─── Mobile adjustments ───────────────────────────────── */
+@media (max-width: 480px) {
+    .logoWrap {
+        width: 100px;
+        height: 100px;
+    }
+    .chakraWrap {
+        width: 240px;
+        height: 240px;
+    }
+}

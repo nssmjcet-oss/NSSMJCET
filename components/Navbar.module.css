@@ -1,16 +1,16 @@
 .navbar {
     background-color: transparent;
     position: fixed;
-    top: var(--space-4);
+    top: var(--space-6); /* Increased space for a more balanced floating look */
     left: 50%;
     transform: translateX(-50%);
-    width: 95%;
+    width: 92%; /* Slightly narrower for a more 'pill' feel */
     max-width: var(--max-width-xl);
     z-index: var(--z-fixed);
     transition: all var(--transition-slow);
     display: flex;
     align-items: center;
-    gap: var(--space-6);
+    gap: var(--space-8);
 }
 
 .scrolled .navbar {
@@ -93,15 +93,17 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 0 var(--space-6);
-    background: var(--marvel-surface);
-    backdrop-filter: var(--marvel-glass);
-    -webkit-backdrop-filter: var(--marvel-glass);
-    border: 1px solid var(--marvel-border);
+    padding: 0 var(--space-8);
+    background: rgba(15, 23, 42, 0.4); /* Sophisticated dark translucent */
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: var(--glass-border);
     border-radius: var(--radius-full);
-    transition: all var(--transition-base);
-    box-shadow: var(--marvel-shadow-outer), var(--marvel-shadow-inner);
-    min-height: 64px;
+    transition: all var(--transition-slow);
+    box-shadow: 
+        0 10px 40px -10px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    min-height: 72px; /* Taller for a more premium presence */
     flex: 1;
 }
 
@@ -257,8 +259,21 @@
 }
 
 .navLinks a.active {
-    color: var(--color-primary) !important;
-    font-weight: 800;
+    color: var(--color-saffron) !important; /* Premium Saffron for active */
+    font-weight: 700;
+}
+
+.navLinks a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: var(--gradient-saffron);
+    border-radius: var(--radius-full);
+    box-shadow: var(--marvel-glow-saffron);
 }
 
 .activeIndicator {

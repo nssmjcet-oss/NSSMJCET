@@ -152,14 +152,10 @@ export default function Navbar() {
                                         </Link>
                                     )}
 
-                                    {session ? (
+                                    {session && (
                                         <button onClick={handleLogout} className="marvelous-btn marvelous-btn-outline marvelous-btn-sm" style={{ padding: '8px 16px', fontSize: '12px' }}>
                                             {t.logout}
                                         </button>
-                                    ) : (
-                                        <Link href="/login" className="marvelous-btn marvelous-btn-primary marvelous-btn-sm" style={{ padding: '8px 16px', fontSize: '12px' }}>
-                                            {t.login}
-                                        </Link>
                                     )}
                                 </div>
                             </div>
@@ -197,14 +193,10 @@ export default function Navbar() {
                                     {t.admin}
                                 </Link>
                             )}
-                            {session ? (
+                            {session && (
                                 <button onClick={() => { toggleMenu(); handleLogout(); }} className={styles.mobileMenuItem}>
                                     {t.logout}
                                 </button>
-                            ) : (
-                                <Link href="/login" className={styles.mobileMenuItem} onClick={toggleMenu}>
-                                    {t.login}
-                                </Link>
                             )}
                             <div className={styles.mobileDivider}></div>
                             <div className={styles.mobileLanguageToggle}>

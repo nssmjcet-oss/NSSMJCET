@@ -1,0 +1,87 @@
+/* ──────────────────────────────────────────────────────────
+   Custom Cursor — NSS Ashoka Chakra Theme
+   All cursor elements are fixed + pointer-events:none
+   so they never interfere with page interactions.
+────────────────────────────────────────────────────────── */
+
+.cursorWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999999;
+    --cursor-x: -100px;
+    --cursor-y: -100px;
+}
+
+/* ─── Center dot ───────────────────────────────────────── */
+.cursorDot {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #FF9933 0%, #e07a00 100%);
+    box-shadow:
+        0 0 10px rgba(255,153,51,0.9),
+        0 0 20px rgba(255,153,51,0.5);
+    pointer-events: none;
+    z-index: 1000000;
+    will-change: transform;
+    /* Use translate3d for GPU acceleration */
+    transform: translate3d(var(--cursor-x), var(--cursor-y), 0) translate(-50%, -50%);
+    transition: width 0.18s ease, height 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* dot grows + turns green on hover */
+.cursorDot.hovering {
+    width: 32px;
+    height: 32px;
+    background: radial-gradient(circle, #1db811 0%, #138808 100%);
+    box-shadow:
+        0 0 15px rgba(19,136,8,0.9),
+        0 0 30px rgba(19,136,8,0.5);
+}
+
+/* ─── Chakra ring ──────────────────────────────────────── */
+.cursorRing {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999;
+    will-change: transform;
+    color: #FF9933;
+    /* transition on transform creates the "lag" effect smoothly */
+    transform: translate3d(var(--cursor-x), var(--cursor-y), 0) translate(-50%, -50%);
+    transition: 
+        transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), 
+        color 0.25s ease, 
+        width 0.2s ease, 
+        height 0.2s ease;
+}
+
+.cursorRing.ringHovering {
+    width: 130px;
+    height: 130px;
+    color: #138808;
+}
+
+.chakraSvg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 5px currentColor);
+    /* The SVG itself spins */
+    animation: spinSvg 10s linear infinite;
+}
+
+.cursorRing.ringHovering .chakraSvg {
+    animation: spinSvg 3s linear infinite;
+}
+
+@keyframes spinSvg {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}

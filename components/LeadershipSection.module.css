@@ -2,8 +2,8 @@
     padding: var(--space-20) 0 0;
     position: relative;
     z-index: 10;
-    --saffron: #FF9933;
-    --green: #138808;
+    --saffron: var(--color-saffron);
+    --green: var(--color-green);
     --heading: #111111;
     --subtext: #444444;
     --quote: #333333;
@@ -78,20 +78,28 @@
 }
 
 .cardInner {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border: 1px solid transparent;
-    background-clip: padding-box;
+    background: rgba(255, 255, 255, 0.6); /* Light premium glass */
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: none;
     position: relative;
-    border-radius: 40px;
-    padding: var(--space-8) var(--space-10);
+    border-radius: 48px;
+    padding: var(--space-10) var(--space-12);
     display: grid;
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: 340px 1fr;
     gap: var(--space-12);
-    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.08);
+    box-shadow: 
+        0 20px 60px -10px rgba(0, 0, 0, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
     overflow: hidden;
-    min-height: 480px;
+    min-height: 500px;
+    transition: all var(--transition-slow);
+}
+
+.glassCard:hover .cardInner {
+    transform: translateY(-8px) scale(1.01);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.12);
 }
 
 /* Accent Glows */
@@ -118,15 +126,28 @@
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: 40px;
-    padding: 1.5px;
-    background: linear-gradient(135deg, var(--saffron), rgba(255, 255, 255, 0.8), var(--green));
+    border-radius: 48px;
+    padding: 2px;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.8), 
+        transparent 40%, 
+        transparent 60%, 
+        rgba(255, 255, 255, 0.4)
+    );
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
     z-index: 5;
+}
+
+.cardInner.saffron::before {
+    background: linear-gradient(135deg, var(--color-saffron), transparent 50%);
+}
+
+.cardInner.green::before {
+    background: linear-gradient(135deg, var(--color-green), transparent 50%);
 }
 
 .spotlight {
@@ -177,6 +198,11 @@
     height: 120%;
     object-fit: cover;
     object-position: center top;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glassCard:hover .profileImg {
+    transform: scale(1.05); /* Cinematic Zoom */
 }
 
 .placeholderImg {
@@ -282,6 +308,14 @@
 .quoteWrapper {
     position: relative;
     padding-left: var(--space-8);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glassCard:hover .quoteWrapper {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .quoteIcon {

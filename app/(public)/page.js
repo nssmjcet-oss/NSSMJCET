@@ -212,7 +212,7 @@ export default function Home() {
             {/* 2. Inspiration Section (Gandhi, Vivekananda, Ambedkar + NSS Motto) */}
             <MottoSection language={language} variants={dreamyReveal} />
 
-            {/* 3. Leadership Section (Advisor cum Director, Chairman & Program Officer) */}
+            {/* 3. Leadership Section (Chairman & Program Officer) */}
             <LeadershipSection />
 
             {/* 4. Governing Body Section */}

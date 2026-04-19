@@ -7,29 +7,19 @@ export default function MeshGradient() {
     const meshRef = useRef(null);
 
     useEffect(() => {
-        let rafId;
         const handleMouseMove = (e) => {
             if (!meshRef.current) return;
+            // Directly update CSS variables on the container
+            // This is more efficient than forcing a React render or using a continuous RAF loop
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
 
-            if (rafId) {
-                cancelAnimationFrame(rafId);
-            }
-
-            rafId = requestAnimationFrame(() => {
-                const { clientX, clientY } = e;
-                const x = (clientX / window.innerWidth) * 100;
-                const y = (clientY / window.innerHeight) * 100;
-
-                meshRef.current.style.setProperty('--mouse-x', `${x}%`);
-                meshRef.current.style.setProperty('--mouse-y', `${y}%`);
-            });
+            meshRef.current.style.setProperty('--mouse-x', `${x}%`);
+            meshRef.current.style.setProperty('--mouse-y', `${y}%`);
         };
 
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-            if (rafId) cancelAnimationFrame(rafId);
-        };
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
+        return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
 
     return (

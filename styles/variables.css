@@ -36,9 +36,20 @@
     --marvel-border: rgba(30, 58, 138, 0.15);
     --marvel-border-hover: rgba(30, 58, 138, 0.3);
 
+    /* Premier Indian Colors */
+    --color-saffron: #FF9933;
+    --color-green: #138808;
+    --color-saffron-light: #FFB347;
+    --color-green-light: #1db811;
+
     /* Gradients */
+    --gradient-saffron: linear-gradient(135deg, #FF9933 0%, #FFB347 50%, #FF9933 100%);
+    --gradient-green: linear-gradient(135deg, #138808 0%, #1db811 50%, #138808 100%);
+    --gradient-saffron-premium: linear-gradient(135deg, #FF8000 0%, #FFD700 50%, #FF8000 100%);
+    --gradient-green-premium: linear-gradient(135deg, #065F46 0%, #10B981 50%, #065F46 100%);
+    
     --marvel-accent-gradient: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);
-    --marvel-secondary-gradient: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    --marvel-secondary-gradient: var(--gradient-saffron-premium);
     --marvel-title-gradient: linear-gradient(135deg, #0f172a 0%, #334155 100%);
     --marvel-glass-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
     --marvel-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
@@ -46,10 +57,18 @@
     /* Glows & Shadows */
     --marvel-glow-blue: 0 0 20px rgba(59, 130, 246, 0.4);
     --marvel-glow-orange: 0 0 20px rgba(249, 115, 22, 0.4);
+    --marvel-glow-saffron: 0 5px 25px rgba(255, 153, 51, 0.5);
+    --marvel-glow-green: 0 5px 25px rgba(19, 136, 8, 0.5);
     --marvel-shadow-glow: 0 0 30px rgba(37, 99, 235, 0.2);
     --marvel-shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     --marvel-shadow-soft: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --marvel-glass: blur(8px);
+    
+    /* Glassmorphism Tokens */
+    --glass-blur: blur(20px);
+    --glass-blur-sm: blur(10px);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.15);
+    --glass-border-light: 1px solid rgba(255, 255, 255, 0.4);
+    --marvel-glass: var(--glass-blur);
 
     /* Z-Index */
     --z-base: 1;

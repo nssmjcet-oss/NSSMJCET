@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Cinzel:wght@600;800&family=Dancing+Script:wght@500;700&display=swap');
 @import "../styles/variables.css";
 
 
@@ -119,6 +119,28 @@ body.marvelous-theme {
 .marvelous-theme [class*="Section"],
 .marvelous-theme [class*="Layout"] {
     background-color: transparent;
+}
+
+.marvelous-theme {
+    background: url('/uploads/nss-bg.jpg') fixed center center !important;
+    background-size: cover !important;
+    color: var(--marvel-text);
+    font-family: var(--font-futuristic);
+    transition: background-color var(--transition-slow), color var(--transition-slow);
+}
+
+/* Global Transition & Reveal */
+.marvelous-theme section {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: revealSection 1.2s var(--premium-ease) forwards;
+}
+
+@keyframes revealSection {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .marvelous-theme {
@@ -318,30 +340,28 @@ button {
 }
 
 .marvelous-btn-primary {
-    background: #2563eb;
-    /* Fallback for older browsers or if gradient fails */
-    background: var(--marvel-accent-gradient);
+    background: var(--gradient-saffron-premium);
     color: white !important;
-    box-shadow: var(--marvel-glow-blue);
+    box-shadow: var(--marvel-glow-saffron);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .marvelous-btn-primary:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.25);
-    filter: brightness(1.05);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 45px rgba(255, 153, 51, 0.4);
+    filter: brightness(1.1);
 }
 
 .marvelous-btn-secondary {
-    background: #f97316;
-    /* Fallback */
-    background: var(--marvel-secondary-gradient);
+    background: var(--gradient-green-premium);
     color: white !important;
-    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+    box-shadow: var(--marvel-glow-green);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .marvelous-btn-secondary:hover {
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 40px rgba(249, 115, 22, 0.4);
+    box-shadow: 0 10px 40px rgba(19, 136, 8, 0.4);
     filter: brightness(1.1);
 }
 
@@ -779,4 +799,11 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
     -webkit-text-fill-color: var(--marvel-text) !important;
     transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* ─── Custom Cursor — Hide default on non-touch devices ──── */
+@media (pointer: fine) {
+    *, *::before, *::after {
+        cursor: none !important;
+    }
 }

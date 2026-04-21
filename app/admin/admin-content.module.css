@@ -458,10 +458,3 @@
     transform: translateY(-8px);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
-
-/* Decoration fix for dashboard */
-:global([class*="Dashboard_decoration"]) {
-    opacity: 0.1 !important;
-    pointer-events: none;
-    z-index: 0;
-}

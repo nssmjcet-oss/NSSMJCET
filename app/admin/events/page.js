@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from '../admin-content.module.css';
@@ -77,7 +77,7 @@ export default function EventsPage() {
         fetchEvents();
     }, [filter]);
 
-    const fetchEvents = async () => {
+    const fetchEvents = useCallback(async () => {
         try {
             const url = filter === 'all'
                 ? '/api/admin/events'
@@ -93,7 +93,7 @@ export default function EventsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filter]);
 
     const handleDelete = async (id) => {
         if (!confirm(t.confirmDelete)) return;

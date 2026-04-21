@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './SplashScreen.module.css';
 
@@ -38,10 +39,13 @@ export default function SplashScreen({ onComplete }) {
                             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                         >
-                            <img
+                            <Image
                                 src="/uploads/nss-logo (1).png"
                                 alt="NSS Logo"
+                                width={180}
+                                height={180}
                                 className={styles.logo}
+                                priority
                             />
                         </motion.div>
 

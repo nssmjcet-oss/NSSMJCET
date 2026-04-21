@@ -6,7 +6,7 @@ import styles from '../admin-content.module.css';
 import { compressImageToDataURL } from '@/utils/image-compression';
 import { adminFetch } from '@/utils/api-client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Edit2, Plus, Linkedin, Github, Image as ImageIcon } from 'lucide-react';
+import { Trash2, Edit2, Plus, Linkedin, Github, Image as ImageIcon, Check, AlertCircle, Save, X } from 'lucide-react';
 
 export default function AdminDevelopers() {
     const { role } = useAuth();

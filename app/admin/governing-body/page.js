@@ -6,6 +6,7 @@ import styles from '../admin-content.module.css';
 import { compressImageToDataURL } from '@/utils/image-compression';
 import { translateText } from '@/utils/translation';
 import { adminFetch } from '@/utils/api-client';
+import { Linkedin } from 'lucide-react';
 
 const emptyMember = () => ({
     id: '',
@@ -340,7 +341,7 @@ export default function GoverningBodyAdminPage() {
 
                                 {member.linkedin && (
                                     <a href={member.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '16px' }}>
-                                        <Icons.LinkedIn size={14} /> Profile
+                                        <Linkedin size={14} /> Profile
                                     </a>
                                 )}
                             </div>

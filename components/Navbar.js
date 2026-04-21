@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -115,7 +116,14 @@ export default function Navbar() {
             >
                 <div className={styles.logoWrapper}>
                     <Link href="/" className={styles.logo}>
-                        <img src="/uploads/nss-logo (1).png" alt="NSS Logo" className={styles.largeLogo} />
+                        <Image 
+                            src="/uploads/nss-logo (1).png" 
+                            alt="NSS Logo" 
+                            width={110} 
+                            height={110} 
+                            className={styles.largeLogo} 
+                            priority
+                        />
                     </Link>
                 </div>
 

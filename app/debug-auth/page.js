@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, getDocFromServer } from 'firebase/firestore';
 import Link from 'next/link';
@@ -16,7 +16,7 @@ export default function DebugAuth() {
     // Firebase defaults can be 'default' or '(default)'
     const isCorrectId = currentDbId === 'default' || currentDbId === '(default)';
 
-    const checkServerRole = async () => {
+    const checkServerRole = useCallback(async () => {
         if (!user) return;
         setIsCheckingServer(true);
         setServerError(null);
@@ -36,11 +36,11 @@ export default function DebugAuth() {
         } finally {
             setIsCheckingServer(false);
         }
-    };
+    }, [user]);
 
     useEffect(() => {
         if (user) checkServerRole();
-    }, [user]);
+    }, [user, checkServerRole]);
 
     if (loading) {
         return <div style={{ padding: '100px', textAlign: 'center' }}><h1>Loading System Info...</h1></div>;

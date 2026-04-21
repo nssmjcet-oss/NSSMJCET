@@ -167,7 +167,7 @@ export default function UsersPage() {
                                 <tr key={user._id}>
                                     <td>
                                         <div style={{ width: '30px', height: '30px', borderRadius: '50%', overflow: 'hidden', background: '#eee' }}>
-                                            {user.profilePicture ? <img src={user.profilePicture} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ textAlign: 'center', lineHeight: '30px' }}>{user.name[0]}</div>}
+                                            {user.profilePicture ? <img src={user.profilePicture} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ textAlign: 'center', lineHeight: '30px' }}>{user.name[0]}</div>}
                                         </div>
                                     </td>
                                     <td>{user.name}</td>

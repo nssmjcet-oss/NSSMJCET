@@ -62,7 +62,7 @@ export default function SplashScreen({ onComplete }) {
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.8, duration: 1.2, ease: "easeInOut" }}
                         >
-                            "Not Me But You"
+                            &quot;Not Me But You&quot;
                         </motion.p>
 
                     </div>

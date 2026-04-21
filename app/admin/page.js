@@ -185,7 +185,7 @@ export default function AdminDashboard() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                     >
-                        <div className={styles.actionIconWrapper}><Icons.Portal size={20} /></div>
+                        <div className={styles.actionIconWrapper}><Icons.Globe /></div>
                         <span>Service Portals</span>
                     </motion.a>
                 </div>

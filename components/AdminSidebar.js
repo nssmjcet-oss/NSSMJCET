@@ -41,7 +41,8 @@ const translations = {
         developers: 'డెవలపర్లు',
         contact: 'సంప్రదింపు',
         portals: 'బాహ్య పోర్టల్స్',
-        logout: 'లాగ్అవుट్',
+        governingBody: 'పాలక సంఘం',
+        logout: 'లాగ్అవుట్',
         backHome: 'హోమ్‌కు తిరిగి వెళ్ళండి',
     },
     hi: {

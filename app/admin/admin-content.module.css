@@ -205,10 +205,10 @@
     display: block;
     font-size: 11px;
     font-weight: 800;
-    color: var(--marvel-text-dim);
+    color: #cbd5e1; /* Increased contrast for dark modals */
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
 .input,
@@ -248,13 +248,22 @@
 /* Specific fix for date and file inputs */
 .input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
-    opacity: 0.6;
+    opacity: 0.8;
     cursor: pointer;
 }
 .input[type="file"] {
     padding: 12px !important;
     font-size: 13px !important;
     cursor: pointer;
+}
+
+/* Fix for form scrolling in modals */
+.modalContent form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    height: 100%;
 }
 
 /* Modal - Glass Floating Island */
@@ -280,17 +289,18 @@
 }
 
 .modalContent {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)) !important;
+    background: linear-gradient(135deg, #0f172a, #1e293b) !important;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 40px;
-    width: 100%;
+    border-radius: 32px;
+    width: 95%;
     max-width: 800px;
-    max-height: 90vh;
+    height: auto;
+    max-height: 85vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
     overflow: hidden;
-    animation: modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalSlideUp {
@@ -336,6 +346,19 @@
     padding: var(--space-8);
     overflow-y: auto;
     flex: 1;
+    color: white; /* Ensure text is readable */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure form rows inside modal body are properly spaced */
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.fullWidth {
+    grid-column: span 2;
 }
 
 .modalFooter {
@@ -418,19 +441,27 @@
 }
 
 .gridItem {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(15, 23, 42, 0.7); /* Deepen background for contrast */
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 28px;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
+    color: white; /* Force white text */
 }
 
 .gridItem:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(59, 130, 246, 0.3);
+    background: rgba(30, 41, 59, 0.9);
+    border-color: #3b82f6;
     transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Decoration fix for dashboard */
+[class*="Dashboard_decoration"] {
+    opacity: 0.1 !important;
+    pointer-events: none;
+    z-index: 0;
 }

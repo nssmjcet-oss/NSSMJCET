@@ -1,4 +1,5 @@
-import { adminDb } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { Event } from '@/lib/models';
 import EventsClient from './EventsClient';
 
 export const metadata = {
@@ -6,24 +7,23 @@ export const metadata = {
     description: 'Upcoming and past events organized by NSS MJCET',
 };
 
-// Revalidate this page every hour
-export const revalidate = 3600;
+// Revalidate this page every minute
+export const revalidate = 60;
 
 async function getEvents() {
     try {
-        const querySnapshot = await adminDb.collection('events')
-            .where('status', '==', 'published')
-            .orderBy('date', 'desc')
-            .get();
+        await connectToDatabase();
+        const eventsData = await Event.find({ status: 'published' })
+            .sort({ date: -1 })
+            .lean();
 
-        return querySnapshot.docs.map(doc => {
-            const data = doc.data();
+        return eventsData.map(doc => {
             const serialized = {
-                ...data,
-                id: doc.id,
-                _id: doc.id,
-                createdBy: data.createdBy || null,
-                date: data.date?.toDate?.()?.toISOString() || data.date || null,
+                ...doc,
+                id: doc._id?.toString() || doc._id,
+                _id: doc._id?.toString() || doc._id,
+                createdBy: doc.createdBy || null,
+                date: doc.date instanceof Date ? doc.date.toISOString() : (doc.date || null),
             };
             return JSON.parse(JSON.stringify(serialized));
         });

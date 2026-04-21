@@ -1,43 +1,41 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useState, useEffect } from 'react';
-import { formatDate } from '@/utils/formatters';
-import styles from '../events/events.module.css'; // Steal events styling for consistency
+import styles from '../admin-content.module.css';
+import { Icons } from '@/components/Icons';
+import { adminFetch } from '@/utils/api-client';
+import { Plus, Globe, Edit2, Trash2 } from 'lucide-react';
 import { translateText } from '@/utils/translation';
-import { Edit2, Trash2, Plus, Globe } from 'lucide-react';
 
 const translations = {
     en: {
-        title: 'External Portals',
-        createEvent: 'Add New Portal',
+        title: 'Portals Management',
+        createEvent: 'Create New Portal',
+        noEvents: 'No portals found',
         loading: 'Loading portals...',
-        noEvents: 'No portals found. Click above to add one!',
+        confirmDelete: 'Are you sure you want to delete this portal?',
         edit: 'Edit',
         delete: 'Delete',
-        confirmDelete: 'Are you sure you want to delete this portal?',
-        url: 'Website URL',
     },
     te: {
-        title: 'బాహ్య పోర్టల్స్',
-        createEvent: 'కొత్త పోర్టల్ జోడించండి',
-        loading: 'పోర్టల్స్ లోడ్ చేస్తున్నాము...',
-        noEvents: 'పోర్టల్స్ కనుగొనబడలేదు. ఒక్కటి జోడించడానికి పైన క్లిక్ చేయండి!',
+        title: 'పోర్టల్స్ నిర్వహణ',
+        createEvent: 'కొత్త పోర్టల్‌ను సృష్టించండి',
+        noEvents: 'పోర్టల్‌లు కనుగొనబడలేదు',
+        loading: 'పోర్టల్‌లను లోడ్ చేస్తోంది...',
+        confirmDelete: 'మీరు ఖచ్చితంగా ఈ పోర్టల్‌ను తొలగించాలనుకుంటున్నారా?',
         edit: 'సవరించు',
-        delete: 'తొలగించు',
-        confirmDelete: 'మీరు ఖచ్చితంగా దీన్ని తొలగించాలనుకుంటున్నారా?',
-        url: 'వెబ్‌సైట్ URL',
+        delete: 'తొलగించు',
     },
     hi: {
-        title: 'बाहरी पोर्टल',
-        createEvent: 'नया पोर्टल जोड़ें',
+        title: 'पोर्टल प्रबंधन',
+        createEvent: 'नया पोर्टल बनाएं',
+        noEvents: 'कोई पोर्टल नहीं मिला',
         loading: 'पोर्टल लोड हो रहे हैं...',
-        noEvents: 'कोई पोर्टल नहीं मिला। एक जोड़ने के लिए ऊपर क्लिक करें!',
+        confirmDelete: 'क्या आप वाकई इस पोर्टल को हटाना चाहते हैं?',
         edit: 'संपादित करें',
         delete: 'हटाएं',
-        confirmDelete: 'क्या आप वाकई इसे हटाना चाहते हैं?',
-        url: 'वेबसाइट यूआरएल',
     },
 };
 
@@ -57,7 +55,7 @@ export default function PortalsPage() {
 
     const fetchPortals = async () => {
         try {
-            const response = await fetch('/api/admin/portals');
+            const response = await adminFetch('/api/admin/portals');
             const data = await response.json();
             if (response.ok) {
                 setPortals(data.portals);
@@ -73,13 +71,13 @@ export default function PortalsPage() {
         if (!confirm(t.confirmDelete)) return;
 
         try {
-            const response = await fetch(`/api/admin/portals?id=${id}`, {
+            const response = await adminFetch(`/api/admin/portals?id=${id}`, {
                 method: 'DELETE',
             });
 
             if (response.ok) {
                 fetchPortals();
-                fetch('/api/revalidate', {
+                adminFetch('/api/revalidate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ path: '/' }),
@@ -103,9 +101,12 @@ export default function PortalsPage() {
     }
 
     return (
-        <div className={styles.eventsPage}>
-            <div className={styles.header}>
-                <h2>{t.title}</h2>
+        <div className={styles.pageContainer}>
+            <div className={styles.pageHeader}>
+                <div>
+                    <h2 className={styles.sectionTitle}>{t.title}</h2>
+                    <p className={styles.sectionSubtitle}>Manage external links and registration portals</p>
+                </div>
                 <button
                     className="marvelous-btn marvelous-btn-primary marvelous-btn-sm"
                     onClick={() => setShowCreateModal(true)}
@@ -113,66 +114,67 @@ export default function PortalsPage() {
                     <Plus size={18} /> {t.createEvent}
                 </button>
             </div>
-
+ 
             {portals.length === 0 ? (
-                <div className={styles.noData}>
-                    <p>{t.noEvents}</p>
+                <div className={styles.card} style={{ textAlign: 'center', padding: '100px 20px' }}>
+                    <Globe size={48} style={{ color: 'var(--marvel-text-dim)', marginBottom: '20px', opacity: 0.5 }} />
+                    <p style={{ fontSize: '18px', fontWeight: '600' }}>{t.noEvents}</p>
                 </div>
             ) : (
-                <div className={styles.eventsGrid}>
+                <div className={styles.grid}>
                     {portals.map((portal) => (
-                        <div key={portal.id} className={styles.eventCard}>
-                            <div className={styles.eventHeader}>
-                                <h3 className={styles.cardTitle}>{portal.title[language] || portal.title.en}</h3>
-                            </div>
-
-                            <p className={styles.eventDescription}>
-                                {(portal.description?.[language] || portal.description?.en || '').substring(0, 150)}
-                            </p>
-
-                            <div className={styles.eventMeta}>
-                                <div className={styles.metaItem}>
-                                    <Globe className={styles.metaIcon} size={16} />
-                                    <a href={portal.url} target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                                        {portal.url.replace(/^https?:\/\//, '').substring(0, 30)}...
+                        <div key={portal.id} className={styles.gridItem}>
+                            <div className={styles.gridContent}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                                    <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', justifyCenter: 'center', color: '#3b82f6' }}>
+                                        <Globe size={20} />
+                                    </div>
+                                    <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'white', margin: 0 }}>
+                                        {portal.title[language] || portal.title.en}
+                                    </h3>
+                                </div>
+ 
+                                <p style={{ color: 'var(--marvel-text-dim)', fontSize: '14px', lineHeight: '1.6', marginBottom: '20px', minHeight: '45px' }}>
+                                    {(portal.description?.[language] || portal.description?.en || '').substring(0, 100)}...
+                                </p>
+ 
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <Globe size={14} style={{ color: '#3b82f6' }} />
+                                    <a href={portal.url} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa', fontWeight: '600', fontSize: '12px' }}>
+                                        {portal.url.replace(/^https?:\/\//, '').substring(0, 25)}...
                                     </a>
                                 </div>
                             </div>
-
-                            <div className={styles.eventActions}>
+ 
+                            <div className={styles.gridActions}>
                                 <button
-                                    className={styles.eventEditBtn}
+                                    className={`${styles.btn} ${styles.btnSecondary}`}
                                     onClick={() => setEditingPortal(portal)}
                                 >
-                                    <Edit2 size={16} /> {t.edit}
+                                    <Edit2 size={14} /> {t.edit}
                                 </button>
                                 <button
-                                    className={styles.eventDeleteBtn}
+                                    className={`${styles.btn} ${styles.btnDanger}`}
                                     onClick={() => handleDelete(portal.id)}
                                 >
-                                    <Trash2 size={16} /> {t.delete}
+                                    <Trash2 size={14} /> {t.delete}
                                 </button>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
-
+ 
             {showCreateModal && (
                 <PortalFormModal
                     onClose={() => setShowCreateModal(false)}
                     onSuccess={() => {
                         setShowCreateModal(false);
                         fetchPortals();
-                        fetch('/api/revalidate', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ path: '/' }),
-                        }).catch(err => console.log('Revalidation error:', err));
                     }}
                 />
             )}
-
+ 
             {editingPortal && (
                 <PortalFormModal
                     portal={editingPortal}
@@ -180,11 +182,6 @@ export default function PortalsPage() {
                     onSuccess={() => {
                         setEditingPortal(null);
                         fetchPortals();
-                        fetch('/api/revalidate', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ path: '/' }),
-                        }).catch(err => console.log('Revalidation error:', err));
                     }}
                 />
             )}
@@ -257,7 +254,7 @@ function PortalFormModal({ portal, onClose, onSuccess }) {
                 ? { id: portal.id, ...formData, url: targetUrl }
                 : { ...formData, url: targetUrl };
 
-            const response = await fetch(url, {
+            const response = await adminFetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
@@ -279,61 +276,52 @@ function PortalFormModal({ portal, onClose, onSuccess }) {
 
     return (
         <div className={styles.modalOverlay} onClick={onClose}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalContent} onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px' }}>
                 <div className={styles.modalHeader}>
-                    <h3>{isEdit ? 'Edit Portal' : 'Add New Portal'}</h3>
+                    <h3 className={styles.modalTitle}>{isEdit ? 'Edit Portal' : 'Add New Portal'}</h3>
                     <button className={styles.closeBtn} onClick={onClose}>×</button>
                 </div>
 
-                {error && <div className="alert alert-error">{error}</div>}
-                {translating && <div className="alert alert-info" style={{ margin: '10px 20px 0', padding: '8px 12px', fontSize: '12px' }}>Auto-translating to Hindi & Telugu...</div>}
+                {error && <div className={styles.badge} style={{ width: 'calc(100% - 40px)', margin: '20px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', padding: '12px', justifyContent: 'center' }}>{error}</div>}
+                {translating && <div className={styles.badge} style={{ width: 'calc(100% - 40px)', margin: '10px 20px 0', background: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: '12px', padding: '10px', justifyContent: 'center' }}>Auto-translating to Hindi & Telugu...</div>}
 
-                <form onSubmit={handleSubmit} className={styles.form}>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                     <div className={styles.modalBody}>
                         
-                        <div className="form-group">
-                            <label className="label">Exact Website URL * (e.g. hackathon.com)</label>
+                        <div className={styles.formGroup}>
+                            <label className={styles.label}>Target Web Address * (e.g. hackathon.com)</label>
                             <input
                                 type="text"
-                                className="input"
+                                className={styles.input}
                                 value={formData.url}
                                 onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                                 required
+                                placeholder="https://external-registration-link.com"
                             />
                         </div>
 
-                        <div className={styles.tabs} style={{ marginTop: '20px'}}>
-                            <button
-                                type="button"
-                                className={`${styles.tab} ${activeTab === 'en' ? styles.tabActive : ''}`}
-                                onClick={() => setActiveTab('en')}
-                            >
-                                English
-                            </button>
-                            <button
-                                type="button"
-                                className={`${styles.tab} ${activeTab === 'te' ? styles.tabActive : ''}`}
-                                onClick={() => setActiveTab('te')}
-                            >
-                                తెలుగు (Telugu)
-                            </button>
-                            <button
-                                type="button"
-                                className={`${styles.tab} ${activeTab === 'hi' ? styles.tabActive : ''}`}
-                                onClick={() => setActiveTab('hi')}
-                            >
-                                हिंदी (Hindi)
-                            </button>
+                        <div className={styles.tabs} style={{ display: 'flex', gap: '8px', marginTop: '32px', marginBottom: '24px', background: 'rgba(0,0,0,0.2)', padding: '6px', borderRadius: '16px' }}>
+                            {['en', 'te', 'hi'].map((lang) => (
+                                <button
+                                    key={lang}
+                                    type="button"
+                                    className={`${styles.btn} ${activeTab === lang ? styles.btnPrimary : styles.btnSecondary}`}
+                                    onClick={() => setActiveTab(lang)}
+                                    style={{ flex: 1, borderRadius: '12px', padding: '10px' }}
+                                >
+                                    {lang === 'en' ? 'English' : lang === 'te' ? 'తెలుగు' : 'हिंदी'}
+                                </button>
+                            ))}
                         </div>
 
                         {['en', 'te', 'hi'].map((lang) => (
                             activeTab === lang && (
-                                <div key={lang}>
-                                    <div className="form-group">
-                                        <label className="label">Button Label / Title ({lang.toUpperCase()}) *</label>
+                                <div key={lang} style={{ animation: 'fadeIn 0.4s ease' }}>
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Button Call-to-Action ({lang.toUpperCase()}) *</label>
                                         <input
                                             type="text"
-                                            className="input"
+                                            className={styles.input}
                                             value={formData.title[lang]}
                                             onChange={(e) => setFormData({
                                                 ...formData,
@@ -344,18 +332,18 @@ function PortalFormModal({ portal, onClose, onSuccess }) {
                                             placeholder="e.g. Register for Hackathon"
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <label className="label">Hover Subject Description (Optional)</label>
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Brief Subject Context ({lang.toUpperCase()})</label>
                                         <input
                                             type="text"
-                                            className="input"
+                                            className={styles.input}
                                             value={formData.description[lang]}
                                             onChange={(e) => setFormData({
                                                 ...formData,
                                                 description: { ...formData.description, [lang]: e.target.value }
                                             })}
                                             onBlur={lang === 'en' ? (e) => handleAutoTranslate('description', e.target.value) : undefined}
-                                            placeholder="A short snippet to show if desired"
+                                            placeholder="A short snippet to show on hover..."
                                         />
                                     </div>
                                 </div>
@@ -363,12 +351,12 @@ function PortalFormModal({ portal, onClose, onSuccess }) {
                         ))}
                     </div>
 
-                    <div className={styles.modalActions}>
-                        <button type="button" className="btn btn-outline" onClick={onClose}>
+                    <div className={styles.modalFooter}>
+                        <button type="button" className={`${styles.btn} ${styles.btnSecondary}`} onClick={onClose}>
                             Cancel
                         </button>
-                        <button type="submit" className="btn btn-primary" disabled={loading}>
-                            {loading ? 'Saving...' : (isEdit ? 'Update Portal' : 'Save Portal')}
+                        <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`} disabled={loading} style={{ minWidth: '140px' }}>
+                            {loading ? 'Propagating...' : (isEdit ? 'Update Link' : 'Authorize Portal')}
                         </button>
                     </div>
                 </form>

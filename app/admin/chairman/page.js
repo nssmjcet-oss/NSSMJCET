@@ -1,11 +1,11 @@
 'use client';
-// Force chunk re-generation for chairman
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from '../admin-content.module.css';
-import { translateText } from '@/utils/translation';
 import { compressImageToDataURL } from '@/utils/image-compression';
+import { translateText } from '@/utils/translation';
+import { adminFetch } from '@/utils/api-client';
 
 export default function ChairmanAdminPage() {
     const { user } = useAuth();
@@ -54,7 +54,7 @@ export default function ChairmanAdminPage() {
     const fetchChairman = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/admin/chairman');
+            const res = await adminFetch('/api/admin/chairman');
             const data = await res.json();
             if (data.chairman) {
                 setFormData({
@@ -95,15 +95,20 @@ export default function ChairmanAdminPage() {
         e.preventDefault();
         setSaving(true);
         try {
-            const res = await fetch('/api/admin/chairman', {
+            const res = await adminFetch('/api/admin/chairman', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
             if (res.ok) {
+                const updated = await res.json();
+                if (updated.chairman) {
+                    setFormData(updated.chairman);
+                }
                 alert('Chairman information saved successfully!');
             } else {
-                alert('Failed to save. Please try again.');
+                const errorData = await res.json();
+                alert(`Failed to save: ${errorData.error || 'Please try again.'}`);
             }
         } catch (error) {
             console.error('Error saving chairman', error);

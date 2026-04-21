@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Trash2, Edit2, Save, X, Github, Linkedin, ExternalLink, Image as ImageIcon, Check, AlertCircle } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import styles from '../admin-content.module.css';
 import { compressImageToDataURL } from '@/utils/image-compression';
-import { useAuth } from '@/contexts/AuthContext';
+import { adminFetch } from '@/utils/api-client';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Trash2, Edit2, Plus, Linkedin, Github, Image as ImageIcon } from 'lucide-react';
 
 export default function AdminDevelopers() {
     const { role } = useAuth();
@@ -30,7 +31,7 @@ export default function AdminDevelopers() {
     const fetchDevs = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/admin/developers');
+            const res = await adminFetch('/api/admin/developers');
             const data = await res.json();
             if (data.developers) setDevelopers(data.developers);
         } catch (error) {
@@ -63,7 +64,7 @@ export default function AdminDevelopers() {
         const payload = isEditing ? { id: isEditing, ...formData } : formData;
 
         try {
-            const res = await fetch('/api/admin/developers', {
+            const res = await adminFetch('/api/admin/developers', {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -86,7 +87,7 @@ export default function AdminDevelopers() {
     const handleDelete = async (id) => {
         if (!confirm('Are you sure you want to delete this developer?')) return;
         try {
-            const res = await fetch(`/api/admin/developers?id=${id}`, { method: 'DELETE' });
+            const res = await adminFetch(`/api/admin/developers?id=${id}`, { method: 'DELETE' });
             if (res.ok) {
                 setMessage({ type: 'success', text: 'Deleted successfully' });
                 fetchDevs();

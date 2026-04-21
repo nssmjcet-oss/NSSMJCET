@@ -1,4 +1,5 @@
-import { adminDb } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { Team } from '@/lib/models';
 import TeamClient from './TeamClient';
 
 export const metadata = {
@@ -6,19 +7,20 @@ export const metadata = {
     description: 'Meet the NSS MJCET team members and office bearers',
 };
 
-// Revalidate this page every hour
-export const revalidate = 3600;
+// Revalidate this page every minute
+export const revalidate = 60;
 
 async function getTeamMembers() {
     try {
-        const querySnapshot = await adminDb.collection('team').orderBy('order', 'asc').get();
+        await connectToDatabase();
+        const teamData = await Team.find({}).sort({ order: 1 }).lean();
 
-        return querySnapshot.docs.map(doc => {
-            const data = doc.data();
+        return teamData.map(doc => {
             const serialized = {
-                ...data,
-                id: doc.id,
-                createdAt: data.createdAt?.toDate?.()?.toISOString() || data.createdAt || null,
+                ...doc,
+                id: doc._id?.toString() || doc._id,
+                _id: doc._id?.toString() || doc._id,
+                createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : (doc.createdAt || null),
             };
             return JSON.parse(JSON.stringify(serialized));
         });

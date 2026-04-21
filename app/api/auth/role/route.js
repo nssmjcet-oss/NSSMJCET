@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase-admin';
+import { adminAuth } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { User } from '@/lib/models';
 
 export async function GET(req) {
     const authHeader = req.headers.get('authorization');
@@ -12,34 +14,25 @@ export async function GET(req) {
         const decodedToken = await adminAuth.verifyIdToken(idToken);
         const uid = decodedToken.uid;
 
-        // Check both common colelction names
-        const collections = ['users', 'user'];
-        let role = 'NONE';
-        let foundColl = null;
+        await connectToDatabase();
 
-        for (const coll of collections) {
-            const userDoc = await adminDb.collection(coll).doc(uid).get();
-            if (userDoc.exists) {
-                role = userDoc.data().role;
-                foundColl = coll;
-                break;
-            }
-        }
+        // Check the users collection in MongoDB
+        const userDoc = await User.findOne({ uid }).lean();
 
-        if (foundColl) {
+        if (userDoc) {
             return NextResponse.json({
                 uid,
                 email: decodedToken.email,
-                role,
-                database: 'VERIFIED SERVER-SIDE (default ID matches)',
-                source: foundColl
+                role: userDoc.role,
+                database: 'VERIFIED SERVER-SIDE (MongoDB)',
+                source: 'users'
             });
         }
 
         return NextResponse.json({
             uid,
             role: 'NONE',
-            error: `No document found in Firestore collections: ${collections.join(', ')}`
+            error: 'No user document found in MongoDB'
         });
 
     } catch (error) {

@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase-admin';
+import { adminAuth } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { User } from '@/lib/models';
 
 // One-time endpoint to bootstrap the superadmin role.
-// This uses the Admin SDK which bypasses Firestore security rules.
 // IMPORTANT: This endpoint should be deleted after use or protected more strongly.
 export async function POST(req) {
     try {
@@ -28,13 +29,18 @@ export async function POST(req) {
 
         const uid = userRecord.uid;
 
-        // Write the superadmin role directly using Admin SDK (bypasses security rules)
-        await adminDb.collection('users').doc(uid).set({
-            uid,
-            email: userRecord.email,
-            role: 'superadmin',
-            createdAt: new Date().toISOString(),
-        }, { merge: true });
+        // Write the superadmin role to MongoDB
+        await connectToDatabase();
+        await User.findOneAndUpdate(
+            { uid },
+            {
+                uid,
+                email: userRecord.email,
+                role: 'superadmin',
+                createdAt: new Date(),
+            },
+            { upsert: true, new: true }
+        );
 
         return NextResponse.json({
             success: true,

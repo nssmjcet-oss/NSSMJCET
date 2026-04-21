@@ -1,24 +1,23 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { ProgramOfficer } from '@/lib/models';
 
-export const revalidate = 3600; // ISR: cache for 1 hour to protect Firebase free tier
+export const revalidate = 0;
 
 export async function GET() {
     try {
-        const querySnapshot = await adminDb.collection('programOfficer').limit(1).get();
+        await connectToDatabase();
+        const doc = await ProgramOfficer.findOne({}).lean();
 
-        let officer = null;
-        if (!querySnapshot.empty) {
-            officer = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
-        } else {
-            officer = {
+        const officer = doc
+            ? { ...doc, id: doc._id }
+            : {
                 name: { en: '', te: '', hi: '' },
                 designation: { en: '', te: '', hi: '' },
                 qualification: { en: '', te: '', hi: '' },
                 quote: { en: '', te: '', hi: '' },
                 photo: ''
             };
-        }
 
         return NextResponse.json({ officer });
     } catch (error) {

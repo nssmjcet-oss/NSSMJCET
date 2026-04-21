@@ -1,19 +1,12 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { Event, Volunteer, Team, Stat } from '@/lib/models';
 
-export const revalidate = 3600; // ISR: cache for 1 hour to protect Firebase free tier
+export const revalidate = 60;
 
 export async function GET() {
     try {
-        if (!adminDb) {
-            return NextResponse.json({
-                volunteers: 0,
-                events: 0,
-                serviceHours: 0,
-                beneficiaries: 0,
-                warning: 'Admin Database not initialized'
-            });
-        }
+        await connectToDatabase();
 
         // 1. Get Settings (Manual Overrides & Global Counters)
         let settings = {
@@ -24,9 +17,9 @@ export async function GET() {
         };
 
         try {
-            const settingsSnap = await adminDb.collection('siteSettings').doc('main').get();
-            if (settingsSnap.exists) {
-                settings = settingsSnap.data();
+            const settingsDoc = await Stat.findOne({}).lean();
+            if (settingsDoc) {
+                settings = { ...settings, ...settingsDoc };
             }
         } catch (e) {
             console.warn('Stats: siteSettings collection possibly missing, using defaults.');
@@ -38,11 +31,11 @@ export async function GET() {
         // 2. Automatic totals
         try {
             if (volunteerCount === 0) {
-                const [vSnapshot, tSnapshot] = await Promise.all([
-                    adminDb.collection('volunteers').where('status', '==', 'approved').get(),
-                    adminDb.collection('team').get()
+                const [vCount, tCount] = await Promise.all([
+                    Volunteer.countDocuments({ status: 'approved' }),
+                    Team.countDocuments({})
                 ]);
-                volunteerCount = vSnapshot.size + tSnapshot.size;
+                volunteerCount = vCount + tCount;
             }
         } catch (e) {
             console.warn('Stats: volunteers/team collection missing or error.');
@@ -50,8 +43,7 @@ export async function GET() {
 
         try {
             if (eventCount === 0) {
-                const eSnapshot = await adminDb.collection('events').get();
-                eventCount = eSnapshot.size;
+                eventCount = await Event.countDocuments({});
             }
         } catch (e) {
             console.warn('Stats: events collection missing or error.');
@@ -61,12 +53,11 @@ export async function GET() {
             volunteers: volunteerCount,
             events: eventCount,
             serviceHours: settings.serviceHours || 0,
-            beneficiaries: settings.peopleBenefited || settings.serviceHours || 0 // Fallback
+            beneficiaries: settings.peopleBenefited || settings.serviceHours || 0
         }, { status: 200 });
 
     } catch (error) {
         console.error('Stats GET fatal error:', error);
-        // Never return 500 for stats if possible, just return 0s
         return NextResponse.json({
             volunteers: 0,
             events: 0,
@@ -76,3 +67,4 @@ export async function GET() {
         }, { status: 200 });
     }
 }
+

@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from '../admin-content.module.css';
-import { translateText } from '@/utils/translation';
 import { compressImageToDataURL } from '@/utils/image-compression';
+import { translateText } from '@/utils/translation';
+import { adminFetch } from '@/utils/api-client';
 
 const emptyMember = () => ({
     id: '',
@@ -32,7 +33,7 @@ export default function GoverningBodyAdminPage() {
     const fetchMembers = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/admin/governing-body');
+            const res = await adminFetch('/api/admin/governing-body');
             const data = await res.json();
             setMembers(data.members || []);
         } catch (error) {
@@ -108,7 +109,7 @@ export default function GoverningBodyAdminPage() {
         setSaving(true);
         try {
             const method = editingMember === 'new' ? 'POST' : 'PUT';
-            const res = await fetch('/api/admin/governing-body', {
+            const res = await adminFetch('/api/admin/governing-body', {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -118,7 +119,8 @@ export default function GoverningBodyAdminPage() {
                 setEditingMember(null);
                 fetchMembers();
             } else {
-                alert('Failed to save. Please try again.');
+                const errorData = await res.json();
+                alert(`Failed to save: ${errorData.error || 'Please try again.'}`);
             }
         } catch (error) {
             alert('Error saving. Please check console.');
@@ -130,7 +132,7 @@ export default function GoverningBodyAdminPage() {
     const handleDelete = async (id) => {
         if (!confirm('Delete this member?')) return;
         try {
-            const res = await fetch(`/api/admin/governing-body?id=${id}`, { method: 'DELETE' });
+            const res = await adminFetch(`/api/admin/governing-body?id=${id}`, { method: 'DELETE' });
             if (res.ok) {
                 fetchMembers();
             } else {
@@ -141,51 +143,86 @@ export default function GoverningBodyAdminPage() {
         }
     };
 
-    if (loading) return <div className={styles.loading}>Loading...</div>;
+    if (loading) return (
+        <div className={styles.loading}>
+            <div className="spinner"></div>
+            <p>Loading leadership data...</p>
+        </div>
+    );
 
     // Edit / Add Form
     if (editingMember !== null) {
         return (
-            <div>
+            <div className={styles.pageContainer}>
                 <div className={styles.pageHeader}>
-                    <h2 className={styles.sectionTitle}>
-                        {editingMember === 'new' ? 'Add Governing Body Member' : 'Edit Governing Body Member'}
-                    </h2>
+                    <div>
+                        <h2 className={styles.sectionTitle}>
+                            {editingMember === 'new' ? 'New Leadership Profile' : 'Edit Leadership Profile'}
+                        </h2>
+                        <p className={styles.sectionSubtitle}>Define roles and display priority for organization leaders</p>
+                    </div>
                     <button
                         onClick={() => setEditingMember(null)}
-                        className={`${styles.btn} ${styles.btnSecondary}`}
+                        className="marvelous-btn marvelous-btn-outline marvelous-btn-sm"
                     >
                         ← Back to List
                     </button>
                 </div>
 
-                {translating && <span style={{ color: 'var(--color-primary-light)', fontSize: '12px', fontWeight: 'bold' }}>Auto-translating...</span>}
+                {translating && (
+                    <div className="alert alert-info" style={{ marginBottom: '20px' }}>
+                        Auto-translating name and designation...
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className={styles.card}>
-                    {/* Photo */}
-                    <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                        <label className={styles.label}>Profile Photo</label>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                            {formData.photo && (
-                                <img src={formData.photo} alt="Preview" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover' }} />
-                            )}
-                            <input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-                            {uploading && <span>Uploading...</span>}
+                    {/* Photo section */}
+                    <div className={styles.formGroup}>
+                        <label className={styles.label}>Profile Portrait</label>
+                        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '24px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ position: 'relative' }}>
+                                {formData.photo ? (
+                                    <img src={formData.photo} alt="Preview" style={{ width: '120px', height: '120px', borderRadius: '32px', objectFit: 'cover', border: '2px solid #3b82f6', padding: '4px' }} />
+                                ) : (
+                                    <div style={{ width: '120px', height: '120px', borderRadius: '32px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px', color: 'rgba(255,255,255,0.2)' }}>
+                                        ?
+                                    </div>
+                                )}
+                                {uploading && (
+                                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', borderRadius: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <div className="spinner" style={{ width: '24px', height: '24px' }}></div>
+                                    </div>
+                                )}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <p style={{ fontSize: '14px', color: 'var(--marvel-text-dim)', marginBottom: '12px' }}>
+                                    Recommendation: Square aspect ratio (1:1), max 1MB.
+                                </p>
+                                <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    onChange={handleImageUpload} 
+                                    disabled={uploading}
+                                    style={{ color: 'white', fontSize: '14px' }}
+                                />
+                            </div>
                         </div>
                     </div>
 
-                    {/* Name */}
-                    <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'var(--marvel-surface)', border: '1px solid var(--marvel-border)', borderRadius: '0.5rem' }}>
-                        <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--marvel-text)' }}>Name</h3>
-                        <div className={styles.formGrid}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginTop: '32px' }}>
+                        {/* Name Section */}
+                        <div className={styles.formGroup}>
+                            <label className={styles.label}>Identity (Multilingual)</label>
                             {['en', 'te', 'hi'].map((lang) => (
-                                <div className={styles.formGroup} key={lang}>
-                                    <label className={styles.label}>{lang === 'en' ? 'English' : lang === 'te' ? 'Telugu' : 'Hindi'}</label>
+                                <div key={lang} style={{ marginBottom: '12px' }}>
+                                    <label style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                                        {lang === 'en' ? 'English' : lang === 'te' ? 'Telugu' : 'Hindi'}
+                                    </label>
                                     <input
                                         type="text"
                                         className={styles.input}
                                         required={lang === 'en'}
-                                        placeholder={lang === 'en' ? 'Full Name' : lang === 'te' ? 'తెలుగు పేరు' : 'हिंदी नाम'}
+                                        placeholder="Full Name"
                                         value={formData.name[lang]}
                                         onChange={(e) => updateField('name', lang, e.target.value)}
                                         onBlur={lang === 'en' ? (e) => handleAutoTranslate('name', e.target.value) : undefined}
@@ -193,20 +230,20 @@ export default function GoverningBodyAdminPage() {
                                 </div>
                             ))}
                         </div>
-                    </div>
 
-                    {/* Designation */}
-                    <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'var(--marvel-surface)', border: '1px solid var(--marvel-border)', borderRadius: '0.5rem' }}>
-                        <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--marvel-text)' }}>Designation / Role</h3>
-                        <div className={styles.formGrid}>
+                        {/* Designation Section */}
+                        <div className={styles.formGroup}>
+                            <label className={styles.label}>Official Role (Multilingual)</label>
                             {['en', 'te', 'hi'].map((lang) => (
-                                <div className={styles.formGroup} key={lang}>
-                                    <label className={styles.label}>{lang === 'en' ? 'English' : lang === 'te' ? 'Telugu' : 'Hindi'}</label>
+                                <div key={lang} style={{ marginBottom: '12px' }}>
+                                    <label style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>
+                                        {lang === 'en' ? 'English' : lang === 'te' ? 'Telugu' : 'Hindi'}
+                                    </label>
                                     <input
                                         type="text"
                                         className={styles.input}
                                         required={lang === 'en'}
-                                        placeholder={lang === 'en' ? 'e.g. Secretary' : lang === 'te' ? 'హోదా' : 'पदनाम'}
+                                        placeholder="e.g. Program Officer"
                                         value={formData.designation[lang]}
                                         onChange={(e) => updateField('designation', lang, e.target.value)}
                                         onBlur={lang === 'en' ? (e) => handleAutoTranslate('designation', e.target.value) : undefined}
@@ -216,11 +253,9 @@ export default function GoverningBodyAdminPage() {
                         </div>
                     </div>
 
-                    {/* LinkedIn Link */}
-                    <div style={{ marginTop: '1.5rem', padding: '1.25rem', background: 'var(--marvel-surface)', border: '1px solid var(--marvel-border)', borderRadius: '0.5rem' }}>
-                        <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--marvel-text)' }}>Social Links</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px', gap: '32px', marginTop: '20px' }}>
                         <div className={styles.formGroup}>
-                            <label className={styles.label}>LinkedIn Profile URL</label>
+                            <label className={styles.label}>LinkedIn Profile</label>
                             <input
                                 type="url"
                                 className={styles.input}
@@ -229,25 +264,31 @@ export default function GoverningBodyAdminPage() {
                                 onChange={(e) => setFormData(prev => ({ ...prev, linkedin: e.target.value }))}
                             />
                         </div>
-                    </div>
-
-                    {/* Order */}
-                    <div style={{ marginTop: '1.5rem' }}>
                         <div className={styles.formGroup}>
-                            <label className={styles.label}>Display Order (lower = appears first)</label>
+                            <label className={styles.label}>Priority</label>
                             <input
                                 type="number"
                                 className={styles.input}
                                 value={formData.order}
                                 onChange={(e) => setFormData(prev => ({ ...prev, order: parseInt(e.target.value) || 0 }))}
-                                style={{ maxWidth: '120px' }}
                             />
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
-                        <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`} disabled={saving || uploading}>
-                            {saving ? 'Saving...' : 'Save Member'}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '40px', gap: '16px' }}>
+                        <button 
+                            type="button" 
+                            className="marvelous-btn marvelous-btn-outline marvelous-btn-sm"
+                            onClick={() => setEditingMember(null)}
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            type="submit" 
+                            className="marvelous-btn marvelous-btn-primary marvelous-btn-sm" 
+                            disabled={saving || uploading}
+                        >
+                            {saving ? 'Saving...' : 'Save leadership profile'}
                         </button>
                     </div>
                 </form>
@@ -257,41 +298,60 @@ export default function GoverningBodyAdminPage() {
 
     // List View
     return (
-        <div>
+        <div className={styles.pageContainer}>
             <div className={styles.pageHeader}>
-                <h2 className={styles.sectionTitle}>Governing Body</h2>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <p style={{ color: 'var(--color-primary-light)' }}>
-                        Manage the Governing Body members displayed on the Home page.
-                    </p>
-                    <button onClick={openNew} className={`${styles.btn} ${styles.btnPrimary}`}>
-                        + Add Member
-                    </button>
+                <div>
+                    <h2 className={styles.sectionTitle}>Governing Body</h2>
+                    <p className={styles.sectionSubtitle}>Manage the organization&apos;s core leadership hierarchy</p>
                 </div>
+                <button onClick={openNew} className="marvelous-btn marvelous-btn-primary marvelous-btn-sm">
+                    <Plus size={18} /> Add New Member
+                </button>
             </div>
 
             {members.length === 0 ? (
-                <div className={styles.card} style={{ textAlign: 'center', padding: '3rem', color: 'var(--marvel-text-dim)' }}>
-                    No members yet. Click &quot;Add Member&quot; to get started.
+                <div className={styles.card} style={{ textAlign: 'center', padding: '100px 20px', color: 'var(--marvel-text-dim)' }}>
+                    <p style={{ fontSize: '18px', fontWeight: '600' }}>No leadership profiles found.</p>
                 </div>
             ) : (
-                <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+                <div className={styles.grid}>
                     {members.map(member => (
-                        <div key={member.id} className={styles.card} style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                            {member.photo ? (
-                                <img src={member.photo} alt={member.name?.en} style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-                            ) : (
-                                <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'var(--marvel-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', flexShrink: 0 }}>
-                                    {member.name?.en?.charAt(0) || '?'}
+                        <div key={member.id} className={styles.gridItem}>
+                            <div className={styles.gridContent} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                                <div style={{ position: 'relative', marginBottom: '20px' }}>
+                                    <div style={{ position: 'absolute', top: '-10px', left: '-10px', width: '20px', height: '20px', borderRadius: '50%', background: '#3b82f6', color: 'white', fontSize: '10px', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)' }}>
+                                        {member.order}
+                                    </div>
+                                    {member.photo ? (
+                                        <img src={member.photo} alt="" style={{ width: '100px', height: '100px', borderRadius: '32px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.1)' }} />
+                                    ) : (
+                                        <div style={{ width: '100px', height: '100px', borderRadius: '32px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px' }}>
+                                            {member.name?.en?.charAt(0) || '?'}
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                            <div style={{ flex: 1 }}>
-                                <p style={{ fontWeight: 700, color: 'var(--marvel-text)', marginBottom: '0.25rem' }}>{member.name?.en || 'Unnamed'}</p>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--marvel-text-dim)' }}>{member.designation?.en || '—'}</p>
+                                
+                                <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'white', marginBottom: '4px' }}>
+                                    {member.name?.en || 'Unnamed'}
+                                </h3>
+                                <p style={{ fontSize: '13px', color: 'var(--marvel-text-dim)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>
+                                    {member.designation?.en || '—'}
+                                </p>
+
+                                {member.linkedin && (
+                                    <a href={member.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '16px' }}>
+                                        <Icons.LinkedIn size={14} /> Profile
+                                    </a>
+                                )}
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                <button onClick={() => openEdit(member)} className={`${styles.btn} ${styles.btnSecondary}`} style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem' }}>Edit</button>
-                                <button onClick={() => handleDelete(member.id)} style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '0.5rem', padding: '0.35rem 0.75rem', cursor: 'pointer', fontSize: '0.75rem' }}>Delete</button>
+                            
+                            <div className={styles.gridActions}>
+                                <button onClick={() => openEdit(member)} className={`${styles.btn} ${styles.btnSecondary}`}>
+                                    <Edit2 size={14} /> Edit
+                                </button>
+                                <button onClick={() => handleDelete(member.id)} className={`${styles.btn} ${styles.btnDanger}`}>
+                                    <Trash2 size={14} /> Delete
+                                </button>
                             </div>
                         </div>
                     ))}
@@ -299,4 +359,15 @@ export default function GoverningBodyAdminPage() {
             )}
         </div>
     );
+}
+
+// Helper to add icons
+function Plus({ size }) {
+    return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
+}
+function Edit2({ size }) {
+    return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>;
+}
+function Trash2({ size }) {
+    return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
 }

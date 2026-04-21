@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import styles from '../admin-content.module.css';
 import { translateText } from '@/utils/translation';
 import { compressImageToDataURL } from '@/utils/image-compression';
+import { adminFetch } from '@/utils/api-client';
 
 export default function TeamPage() {
     const { user } = useAuth();
@@ -57,7 +58,7 @@ export default function TeamPage() {
 
     const fetchTeam = async () => {
         try {
-            const res = await fetch('/api/admin/team');
+            const res = await adminFetch('/api/admin/team');
             const data = await res.json();
             if (data.team) {
                 setTeam(data.team);
@@ -94,7 +95,7 @@ export default function TeamPage() {
             if (editingMember) payload.id = editingMember.id;
 
             const method = editingMember ? 'PUT' : 'POST';
-            const res = await fetch('/api/admin/team', {
+            const res = await adminFetch('/api/admin/team', {
                 method: method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
@@ -102,7 +103,7 @@ export default function TeamPage() {
 
             if (res.ok) {
                 // Revalidate the public team page (non-blocking)
-                fetch('/api/revalidate', {
+                adminFetch('/api/revalidate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ path: '/team' }),
@@ -124,7 +125,7 @@ export default function TeamPage() {
     const handleDelete = async (id) => {
         if (!confirm("Are you sure you want to delete this member?")) return;
         try {
-            const res = await fetch(`/api/admin/team?id=${id}`, { method: 'DELETE' });
+            const res = await adminFetch(`/api/admin/team?id=${id}`, { method: 'DELETE' });
             if (res.ok) fetchTeam();
             else alert("Failed to delete");
         } catch (e) {

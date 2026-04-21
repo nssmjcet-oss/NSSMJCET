@@ -2,12 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import styles from './content.module.css';
+import { useLanguage } from '@/contexts/LanguageContext';
+import styles from '../admin-content.module.css';
+import { Icons } from '@/components/Icons';
+import { adminFetch } from '@/utils/api-client';
 import { translateText } from '@/utils/translation';
 
 const PAGES = [
-    { id: 'settings', label: 'Site Stats (Impact)' },
-    { id: 'unit', label: 'Unit Details' },
+    { id: 'settings', label: 'Unit Stats (Dashboard)' },
+    { id: 'hero', label: 'Homepage Hero' },
+    { id: 'about', label: 'About Section' },
+    { id: 'vision', label: 'Vision & Mission' },
+    { id: 'objectives', label: 'NSS Objectives' },
+    { id: 'unit', label: 'Unit Information' },
 ];
 
 export default function ContentPage() {
@@ -80,7 +87,7 @@ export default function ContentPage() {
         setLoading(true);
         try {
             if (pageId === 'settings' || pageId === 'unit') {
-                const res = await fetch('/api/admin/content?type=settings');
+                const res = await adminFetch('/api/admin/content?type=settings');
                 const data = await res.json();
                 if (data.settings) {
                     setSettingsData({
@@ -93,7 +100,7 @@ export default function ContentPage() {
             }
 
             if (pageId !== 'settings') {
-                const res = await fetch(`/api/admin/content?pageId=${pageId}`);
+                const res = await adminFetch(`/api/admin/content?pageId=${pageId}`);
                 const data = await res.json();
                 if (data.content) {
                     setFormData(data.content);
@@ -120,12 +127,12 @@ export default function ContentPage() {
             // If it's unit details, we might need to save both content and settings
             if (selectedPage === 'unit') {
                 await Promise.all([
-                    fetch('/api/admin/content', {
+                    adminFetch('/api/admin/content', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ type: 'settings', ...settingsData }),
                     }),
-                    fetch('/api/admin/content', {
+                    adminFetch('/api/admin/content', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ type: 'content', ...formData }),
@@ -136,21 +143,25 @@ export default function ContentPage() {
                     ? { type: 'settings', ...settingsData }
                     : { type: 'content', ...formData };
 
-                await fetch('/api/admin/content', {
+                const res = await adminFetch('/api/admin/content', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body),
                 });
+                const data = await res.json();
+                if (data.content) {
+                    setFormData(data.content);
+                }
             }
 
             // Revalidate the public unit page after saving
             await Promise.all([
-                fetch('/api/revalidate', {
+                adminFetch('/api/revalidate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ path: '/unit' }),
                 }),
-                fetch('/api/revalidate', {
+                adminFetch('/api/revalidate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ path: '/' }),

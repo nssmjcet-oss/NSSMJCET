@@ -4,9 +4,10 @@ import { useLanguage } from '../../../contexts/LanguageContext';
 import styles from './about.module.css';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 const translations = {
+// ... (rest same)
     en: {
         title: 'About NSS',
         subtitle: 'National Service Scheme',
@@ -158,8 +159,23 @@ const translations = {
 
 export default function AboutPage() {
     const { language } = useLanguage();
+    const [dynamicContent, setDynamicContent] = useState(null);
     const t = translations[language];
     const containerRef = useRef(null);
+
+    useEffect(() => {
+        fetch('/api/content?pageId=about')
+            .then(res => res.json())
+            .then(data => {
+                if (data.content) setDynamicContent(data.content);
+            })
+            .catch(err => console.error('About fetch error:', err));
+    }, []);
+
+    // Merge logic: Use dynamic if available, otherwise fallback
+    const displayTitle = dynamicContent?.title?.[language] || dynamicContent?.title?.en || t.title;
+    const displayIntro = dynamicContent?.content?.[language] || dynamicContent?.content?.en || t.intro.text;
+    const displaySections = dynamicContent?.sections || [];
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -200,7 +216,7 @@ export default function AboutPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         >
-                            {t.title}
+                            {displayTitle}
                         </motion.h1>
                         <motion.div
                             className={styles.heroLine}
@@ -247,7 +263,7 @@ export default function AboutPage() {
                             </motion.div>
                             <div className={styles.introText}>
                                 <h2 className={styles.glassTitle}>{t.intro.title}</h2>
-                                <p className={styles.mainDescription}>{t.intro.text}</p>
+                                <p className={styles.mainDescription}>{displayIntro}</p>
                                 <div className={styles.symbolInfo}>
                                     <div className={styles.symbolTag}>SYMBOLISM</div>
                                     <p>{t.intro.symbol}</p>
@@ -330,6 +346,29 @@ export default function AboutPage() {
                         </div>
                     </div>
                 </motion.section>
+
+                {/* 5. DYNAMIC SECTIONS FROM ADMIN */}
+                {displaySections.length > 0 && (
+                    <section className={styles.objectivesSection}>
+                        {displaySections.map((section, idx) => (
+                            <motion.div
+                                key={idx}
+                                className={styles.glassCard}
+                                style={{ marginBottom: '2rem', padding: '2rem' }}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                            >
+                                <h3 style={{ color: 'var(--color-primary)', marginBottom: '1rem', fontSize: '1.8rem' }}>
+                                    {section.heading[language] || section.heading.en}
+                                </h3>
+                                <div style={{ lineLeight: 1.8, fontSize: '1.1rem', color: '#444', whiteSpace: 'pre-wrap' }}>
+                                    {section.content[language] || section.content.en}
+                                </div>
+                            </motion.div>
+                        ))}
+                    </section>
+                )}
             </div>
         </div>
     );

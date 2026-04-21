@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
-import { FieldValue } from 'firebase-admin/firestore';
+import connectToDatabase from '@/lib/mongodb';
+import { Contact } from '@/lib/models';
 import { validateForm } from '@/utils/validation';
 
 // POST - Submit contact form (Public)
@@ -24,27 +24,20 @@ export async function POST(request) {
             );
         }
 
-        if (!adminDb) {
-            console.error('Firebase Admin DB not initialized');
-            return NextResponse.json(
-                { error: 'Server configuration error' },
-                { status: 500 }
-            );
-        }
+        await connectToDatabase();
 
-        // Create contact submission in Firestore (Collection: contacts)
-        const docRef = await adminDb.collection('contacts').add({
+        const newContact = await Contact.create({
             name,
             email,
             subject,
             message,
-            status: 'new', // Default status for admin panel
-            submittedAt: FieldValue.serverTimestamp(),
-            createdAt: FieldValue.serverTimestamp(),
+            status: 'new',
+            submittedAt: new Date(),
+            createdAt: new Date(),
         });
 
         return NextResponse.json(
-            { message: 'Your message has been sent successfully! We will get back to you soon.', id: docRef.id },
+            { message: 'Your message has been sent successfully! We will get back to you soon.', id: newContact._id },
             { status: 201 }
         );
     } catch (error) {

@@ -1,21 +1,19 @@
 import { NextResponse } from 'next/server';
-import { saveFile } from '@/lib/upload';
+import { uploadBase64Image } from '@/lib/storage';
 
 export async function POST(request) {
     try {
-        const formData = await request.formData();
-        const file = formData.get('file');
+        const body = await request.json();
+        const { base64, folder = 'uploads' } = body;
 
-        if (!file) {
-            return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+        if (!base64) {
+            return NextResponse.json({ error: 'No image data provided' }, { status: 400 });
         }
 
-        const url = await saveFile(file);
-
+        const url = await uploadBase64Image(base64, folder);
         return NextResponse.json({ url }, { status: 200 });
     } catch (error) {
         console.error('Upload Error:', error);
-        const message = error instanceof Error ? error.message : String(error);
-        return NextResponse.json({ error: 'Upload failed: ' + message }, { status: 500 });
+        return NextResponse.json({ error: 'Upload failed: ' + error.message }, { status: 500 });
     }
 }

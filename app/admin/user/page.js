@@ -5,8 +5,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './users.module.css';
+import { adminFetch } from '@/utils/api-client';
 
-// ... (keep translations as is)
 const translations = {
     en: {
         title: 'User Management',
@@ -92,7 +92,7 @@ export default function UsersPage() {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch('/api/admin/users');
+            const response = await adminFetch('/api/admin/users');
             const data = await response.json();
             if (response.ok) {
                 setUsers(data.users);
@@ -108,7 +108,7 @@ export default function UsersPage() {
         if (!confirm(t.confirmDelete)) return;
 
         try {
-            const response = await fetch(`/api/admin/users?userId=${userId}`, {
+            const response = await adminFetch(`/api/admin/users?userId=${userId}`, {
                 method: 'DELETE',
             });
 
@@ -292,7 +292,7 @@ function UserFormModal({ user, onClose, onSuccess }) {
             const url = '/api/admin/users';
             const method = isEdit ? 'PUT' : 'POST';
 
-            const response = await fetch(url, {
+            const response = await adminFetch(url, {
                 method,
                 body: data,
             });

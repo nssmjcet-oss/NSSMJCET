@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from '../admin-content.module.css';
+import { adminFetch } from '@/utils/api-client';
 
 export default function ContactPage() {
     const { user } = useAuth();
@@ -16,7 +17,7 @@ export default function ContactPage() {
 
     const fetchMessages = async () => {
         try {
-            const res = await fetch('/api/admin/contact');
+            const res = await adminFetch('/api/admin/contact');
             const data = await res.json();
             if (data.contacts) {
                 setMessages(data.contacts);
@@ -30,7 +31,7 @@ export default function ContactPage() {
 
     const updateStatus = async (id, newStatus) => {
         try {
-            const res = await fetch('/api/admin/contact', {
+            const res = await adminFetch('/api/admin/contact', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, status: newStatus }),
@@ -53,7 +54,7 @@ export default function ContactPage() {
     const handleDelete = async (id) => {
         if (!confirm('Are you sure you want to delete this message?')) return;
         try {
-            const res = await fetch(`/api/admin/contact?id=${id}`, {
+            const res = await adminFetch(`/api/admin/contact?id=${id}`, {
                 method: 'DELETE',
             });
             if (res.ok) {

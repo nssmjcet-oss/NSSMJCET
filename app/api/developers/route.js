@@ -1,30 +1,24 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { Developer } from '@/lib/models';
 
-export const revalidate = 3600; // ISR: cache for 1 hour to protect Firebase free tier
+export const revalidate = 60;
 
 export async function GET() {
     try {
-        const querySnapshot = await adminDb.collection('developers')
-            .where('is_active', '==', true)
-            .orderBy('order_index', 'asc')
-            .get();
+        await connectToDatabase();
+        const devsData = await Developer.find({ is_active: true })
+            .sort({ order_index: 1 })
+            .lean();
 
-        let developers = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        let developers = devsData.map(doc => ({ ...doc, id: doc._id }));
 
         // Enforce specific ordering: Mirza Zohair Ali Baig (2nd), Farnaaz Munawar (3rd)
         const mirza = developers.find(d => d.name?.toLowerCase().includes('zohair'));
         const farnaaz = developers.find(d => d.name?.toLowerCase().includes('farnaaz'));
-        
+
         if (mirza && farnaaz) {
-            // Remove them from current positions
-            developers = developers.filter(d => d.id !== mirza.id && d.id !== farnaaz.id);
-            
-            // Insert at index 1 (2nd place) and index 2 (3rd place)
-            // Assuming whoever is left at index 0 stays 1st
+            developers = developers.filter(d => String(d.id) !== String(mirza.id) && String(d.id) !== String(farnaaz.id));
             developers.splice(1, 0, mirza);
             developers.splice(2, 0, farnaaz);
         }

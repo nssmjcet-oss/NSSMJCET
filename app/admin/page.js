@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import { Icons } from '@/components/Icons';
 import styles from './dashboard.module.css';
+import { adminFetch } from '@/utils/api-client';
 
 const translations = {
     en: {
@@ -58,7 +59,7 @@ export default function AdminDashboard() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await fetch('/api/admin/stats');
+                const res = await adminFetch('/api/admin/stats');
                 if (res.ok) {
                     const data = await res.json();
                     setStats(data);
@@ -86,9 +87,9 @@ export default function AdminDashboard() {
         <div className={styles.dashboard}>
             <motion.div
                 className={styles.welcomeSection}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
             >
                 <h2>{t.welcome}, Admin!</h2>
                 <p>{t.overview}</p>
@@ -104,7 +105,7 @@ export default function AdminDashboard() {
                         whileHover="hover"
                     >
                         <div className={styles.cardHeader}>
-                            <div className={styles.cardIcon}><Icons.Users /></div>
+                            <div className={styles.cardIcon}><Icons.Users size={28} /></div>
                             <span className={styles.cardLabel}>{t.totalUsers}</span>
                         </div>
                         <div className={styles.cardValue}>{stats.users}</div>
@@ -121,7 +122,7 @@ export default function AdminDashboard() {
                     transition={{ delay: 0.1 }}
                 >
                     <div className={styles.cardHeader}>
-                        <div className={styles.cardIcon}><Icons.Events /></div>
+                        <div className={styles.cardIcon}><Icons.Events size={28} /></div>
                         <span className={styles.cardLabel}>{t.totalEvents}</span>
                     </div>
                     <div className={styles.cardValue}>{stats.events}</div>
@@ -137,7 +138,7 @@ export default function AdminDashboard() {
                     transition={{ delay: 0.2 }}
                 >
                     <div className={styles.cardHeader}>
-                        <div className={styles.cardIcon}><Icons.Volunteers /></div>
+                        <div className={styles.cardIcon}><Icons.Volunteers size={28} /></div>
                         <span className={styles.cardLabel}>{t.pendingVolunteers}</span>
                     </div>
                     <div className={styles.cardValue}>{stats.volunteers}</div>
@@ -151,31 +152,41 @@ export default function AdminDashboard() {
                     <motion.a
                         href="/admin/events"
                         className={styles.actionBentoCard}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                     >
-                        <div className={styles.actionIconWrapper}><Icons.Events /></div>
-                        <span>{t.createEvent}</span>
+                        <div className={styles.actionIconWrapper}><Icons.Events size={20} /></div>
+                        <span>Manage Events</span>
                     </motion.a>
-                    {isSuperAdmin && (
-                        <motion.a
-                            href="/admin/users"
-                            className={styles.actionBentoCard}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <div className={styles.actionIconWrapper}><Icons.Users /></div>
-                            <span>{t.manageUsers}</span>
-                        </motion.a>
-                    )}
+                    
+                    <motion.a
+                        href="/admin/governing-body"
+                        className={styles.actionBentoCard}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        <div className={styles.actionIconWrapper}><Icons.Users size={20} /></div>
+                        <span>Governing Body</span>
+                    </motion.a>
+
                     <motion.a
                         href="/admin/volunteers"
                         className={styles.actionBentoCard}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                     >
-                        <div className={styles.actionIconWrapper}><Icons.Volunteers /></div>
-                        <span>{t.viewVolunteers}</span>
+                        <div className={styles.actionIconWrapper}><Icons.Volunteers size={20} /></div>
+                        <span>Volunteer Applications</span>
+                    </motion.a>
+
+                    <motion.a
+                        href="/admin/portals"
+                        className={styles.actionBentoCard}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        <div className={styles.actionIconWrapper}><Icons.Portal size={20} /></div>
+                        <span>Service Portals</span>
                     </motion.a>
                 </div>
             </div>

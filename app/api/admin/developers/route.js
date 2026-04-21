@@ -1,22 +1,28 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
-import { FieldValue } from 'firebase-admin/firestore';
 import { revalidatePath } from 'next/cache';
+import connectToDatabase from '@/lib/mongodb';
+import { Developer } from '@/lib/models';
+import { maybeUploadImage } from '@/lib/storage';
+import { getAuthUser, requireAdmin } from '@/lib/server-auth';
 
 // GET - Get all developers for admin panel
-export async function GET() {
+export async function GET(request) {
     try {
-        const querySnapshot = await adminDb.collection('developers').orderBy('order_index', 'asc').get();
-        let developers = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
+        const devsData = await Developer.find({}).sort({ order_index: 1 }).lean();
+        let developers = devsData.map(doc => ({ ...doc, id: doc._id }));
 
         const mirza = developers.find(d => d.name?.toLowerCase().includes('zohair'));
         const farnaaz = developers.find(d => d.name?.toLowerCase().includes('farnaaz'));
-        
+
         if (mirza && farnaaz) {
-            developers = developers.filter(d => d.id !== mirza.id && d.id !== farnaaz.id);
+            developers = developers.filter(d => String(d.id) !== String(mirza.id) && String(d.id) !== String(farnaaz.id));
             developers.splice(1, 0, mirza);
             developers.splice(2, 0, farnaaz);
         }
@@ -39,14 +45,23 @@ export async function POST(request) {
 // PUT - Update developer (ONLY Image is editable)
 export async function PUT(request) {
     try {
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
         const body = await request.json();
         const { id, image } = body;
 
         if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
-        await adminDb.collection('developers').doc(id).update({
-            image: image || '',
-            updatedAt: FieldValue.serverTimestamp(),
+        const finalImage = await maybeUploadImage(image, 'developers');
+
+        await Developer.findByIdAndUpdate(id, {
+            image: finalImage || '',
+            updatedAt: new Date(),
         });
 
         revalidatePath('/');

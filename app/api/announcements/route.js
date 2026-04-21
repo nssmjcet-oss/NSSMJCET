@@ -1,19 +1,19 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { Announcement } from '@/lib/models';
 
-export const revalidate = 3600; // ISR: cache for 1 hour to protect Firebase free tier
+export const revalidate = 60; // Refresh every minute for fresh content
 
 export async function GET() {
     try {
-        const querySnapshot = await adminDb.collection('announcements')
-            .where('isActive', '==', true)
-            .orderBy('priority', 'desc')
-            .orderBy('createdAt', 'desc')
-            .get();
+        await connectToDatabase();
+        const announcementsData = await Announcement.find({ isActive: true })
+            .sort({ priority: -1, createdAt: -1 })
+            .lean();
 
-        const announcements = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const announcements = announcementsData.map(doc => ({
+            ...doc,
+            id: doc._id
         }));
 
         return NextResponse.json({ announcements }, { status: 200 });

@@ -1,28 +1,36 @@
 import { NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase-admin';
+import { adminAuth } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { User } from '@/lib/models';
+import { getAuthUser, requireSuperAdmin } from '@/lib/server-auth';
 
 export async function DELETE(req, { params }) {
     const { uid } = params;
 
     try {
-        // 1. Prevent deleting self (Super Admin should not delete themselves if they are the only one)
-        // In a real scenario, we'd verify the requester's UID from the token
+        const { user, error: authError, status: authStatus } = await getAuthUser(req);
+        if (authError) return NextResponse.json({ error: authError }, { status: authStatus });
 
-        // 2. Check if user exists and their role
-        const userDoc = await adminDb.collection('users').doc(uid).get();
-        if (!userDoc.exists) {
+        const rbacError = requireSuperAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
+
+        // Check if user exists and their role
+        const userDoc = await User.findOne({ uid }).lean();
+        if (!userDoc) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
         }
 
-        if (userDoc.data().role === 'superadmin') {
+        if (userDoc.role === 'superadmin') {
             return NextResponse.json({ error: 'Super Admin account cannot be deleted.' }, { status: 403 });
         }
 
-        // 3. Delete from Firebase Auth
+        // Delete from Firebase Auth
         await adminAuth.deleteUser(uid);
 
-        // 4. Delete from Firestore
-        await adminDb.collection('users').doc(uid).delete();
+        // Delete from MongoDB
+        await User.deleteOne({ uid });
 
         return NextResponse.json({ message: 'User deleted successfully' });
     } catch (error) {
@@ -36,6 +44,12 @@ export async function PATCH(req, { params }) {
     const { password } = await req.json();
 
     try {
+        const { user, error: authError, status: authStatus } = await getAuthUser(req);
+        if (authError) return NextResponse.json({ error: authError }, { status: authStatus });
+
+        const rbacError = requireSuperAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
         if (!password || password.length < 6) {
             return NextResponse.json({ error: 'Password must be at least 6 characters.' }, { status: 400 });
         }

@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
-import { FieldValue } from 'firebase-admin/firestore';
+import connectToDatabase from '@/lib/mongodb';
+import { User } from '@/lib/models';
 
 // Note: For full security, verify ID Token here.
 
 export async function GET() {
     try {
-        const querySnapshot = await adminDb.collection('users').orderBy('createdAt', 'desc').get();
+        await connectToDatabase();
+        const usersData = await User.find({}).sort({ createdAt: -1 }).lean();
 
-        const users = querySnapshot.docs.map(doc => {
-            const data = doc.data();
-            delete data.password; // redundant for firebase auth users usually
-            return { id: doc.id, ...data };
+        const users = usersData.map(doc => {
+            const { password, ...data } = doc; // remove password if it exists
+            return { ...data, id: doc._id };
         });
 
         return NextResponse.json({ users }, { status: 200 });
@@ -22,6 +22,7 @@ export async function GET() {
 
 export async function PUT(request) {
     try {
+        await connectToDatabase();
         const formData = await request.formData();
         const userId = formData.get('userId');
         const name = formData.get('name');
@@ -38,10 +39,10 @@ export async function PUT(request) {
             role: role || 'member',
             position: position || '',
             isActive: isActiveStr === 'true',
-            updatedAt: FieldValue.serverTimestamp()
+            updatedAt: new Date()
         };
 
-        await adminDb.collection('users').doc(userId).update(updateData);
+        await User.findOneAndUpdate({ uid: userId }, updateData);
 
         return NextResponse.json({ message: 'User updated successfully' }, { status: 200 });
     } catch (error) {
@@ -51,6 +52,7 @@ export async function PUT(request) {
 
 export async function DELETE(request) {
     try {
+        await connectToDatabase();
         const { searchParams } = new URL(request.url);
         const userId = searchParams.get('userId');
 
@@ -58,7 +60,7 @@ export async function DELETE(request) {
             return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
         }
 
-        await adminDb.collection('users').doc(userId).delete();
+        await User.deleteOne({ uid: userId });
 
         return NextResponse.json({ message: 'User deleted successfully' }, { status: 200 });
     } catch (error) {

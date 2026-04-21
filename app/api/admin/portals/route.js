@@ -1,24 +1,21 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { Portal } from '@/lib/models';
+import { getAuthUser, requireAdmin } from '@/lib/server-auth';
 
-// Admin routes do not use revalidate caching because we need fresh states
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
     try {
-        if (!adminDb) {
-            return NextResponse.json({ error: 'Database not initialized' }, { status: 500 });
-        }
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
 
-        const querySnapshot = await adminDb.collection('portals')
-            .orderBy('createdAt', 'desc')
-            .get();
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
 
-        const portals = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-
+        await connectToDatabase();
+        const portalsData = await Portal.find({}).sort({ createdAt: -1 }).lean();
+        const portals = portalsData.map(doc => ({ ...doc, id: doc._id }));
         return NextResponse.json({ portals }, { status: 200 });
     } catch (error) {
         console.error('Admin Portals GET error:', error);
@@ -31,8 +28,15 @@ export async function GET(request) {
 
 export async function POST(request) {
     try {
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
         const data = await request.json();
-        
+
         if (!data.title?.en || !data.url) {
             return NextResponse.json(
                 { error: 'Title and URL are required' },
@@ -40,15 +44,9 @@ export async function POST(request) {
             );
         }
 
-        const newPortal = {
-            ...data,
-            createdAt: new Date().toISOString(),
-        };
-
-        const docRef = await adminDb.collection('portals').add(newPortal);
-
+        const newPortal = await Portal.create({ ...data, createdAt: new Date() });
         return NextResponse.json(
-            { message: 'Portal added successfully', id: docRef.id },
+            { message: 'Portal added successfully', id: newPortal._id },
             { status: 201 }
         );
     } catch (error) {
@@ -62,24 +60,57 @@ export async function POST(request) {
 
 export async function PUT(request) {
     try {
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
         const data = await request.json();
-        
+
         if (!data.id) {
-            return NextResponse.json(
-                { error: 'Portal ID is required' },
-                { status: 400 }
-            );
+            return NextResponse.json({ error: 'Portal ID is required' }, { status: 400 });
         }
 
         const { id, ...updateData } = data;
-        updateData.updatedAt = new Date().toISOString();
-
-        await adminDb.collection('portals').doc(id).update(updateData);
-
-        return NextResponse.json(
-            { message: 'Portal updated successfully' },
-            { status: 200 }
-        );
+        updateData.updatedAt = new Date();
+ 
+        // Ensure id is a simple string if it's a serialized ObjectId object
+        const portalId = typeof id === 'object' ? (id.$oid || id.toString()) : id;
+ 
+        let updated = null;
+ 
+        // 1. Try as ObjectId if valid
+        if (typeof portalId === 'string' && portalId.length === 24) {
+            try {
+                updated = await Portal.findByIdAndUpdate(
+                    new mongoose.Types.ObjectId(portalId),
+                    updateData,
+                    { new: true }
+                ).lean();
+            } catch (e) {
+                console.log('Portal ObjectId update failed, trying string format...');
+            }
+        }
+ 
+        // 2. Try as string
+        if (!updated) {
+            updated = await Portal.findOneAndUpdate(
+                { _id: portalId },
+                updateData,
+                { new: true }
+            ).lean();
+        }
+        
+        if (!updated) {
+            return NextResponse.json({ error: 'Portal not found in database with ID: ' + portalId }, { status: 404 });
+        }
+ 
+        return NextResponse.json({ 
+            message: 'Portal updated successfully',
+            portal: { ...updated, id: updated._id.toString() }
+        }, { status: 200 });
     } catch (error) {
         console.error('Admin Portals PUT error:', error);
         return NextResponse.json(
@@ -91,6 +122,13 @@ export async function PUT(request) {
 
 export async function DELETE(request) {
     try {
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
 
@@ -98,8 +136,7 @@ export async function DELETE(request) {
             return NextResponse.json({ error: 'Portal ID is required' }, { status: 400 });
         }
 
-        await adminDb.collection('portals').doc(id).delete();
-
+        await Portal.findByIdAndDelete(id);
         return NextResponse.json({ message: 'Portal deleted successfully' }, { status: 200 });
     } catch (error) {
         console.error('Admin Portals DELETE error:', error);

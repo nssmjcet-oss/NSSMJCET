@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from '../admin-content.module.css';
-import { compressImage, compressImageToDataURL } from '@/utils/image-compression';
+import { Icons } from '@/components/Icons';
+import { adminFetch } from '@/utils/api-client';
 import { translateText } from '@/utils/translation';
+import { compressImageToDataURL } from '@/utils/image-compression';
 
 export default function AnnouncementsPage() {
     const { user } = useAuth();
@@ -78,7 +80,7 @@ export default function AnnouncementsPage() {
 
     const fetchAnnouncements = async () => {
         try {
-            const res = await fetch('/api/admin/announcements');
+            const res = await adminFetch('/api/admin/announcements');
             const data = await res.json();
             if (data.announcements) {
                 setAnnouncements(data.announcements);
@@ -100,7 +102,7 @@ export default function AnnouncementsPage() {
             };
             if (editingItem) body.id = editingItem.id;
 
-            const res = await fetch('/api/admin/announcements', {
+            const res = await adminFetch('/api/admin/announcements', {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
@@ -109,12 +111,12 @@ export default function AnnouncementsPage() {
             if (res.ok) {
                 // Revalidate the public announcements page and home page
                 Promise.all([
-                    fetch('/api/revalidate', {
+                    adminFetch('/api/revalidate', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ path: '/announcements' }),
                     }),
-                    fetch('/api/revalidate', {
+                    adminFetch('/api/revalidate', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ path: '/' }),
@@ -124,7 +126,8 @@ export default function AnnouncementsPage() {
                 closeModal();
                 fetchAnnouncements();
             } else {
-                alert('Failed to save announcement');
+                const errorData = await res.json();
+                alert(`Failed to save: ${errorData.error || 'Please try again.'}`);
             }
         } catch (error) {
             console.error('Error saving announcement', error);
@@ -135,18 +138,18 @@ export default function AnnouncementsPage() {
     const handleDelete = async (id) => {
         if (!confirm('Are you sure you want to delete this announcement?')) return;
         try {
-            const res = await fetch(`/api/admin/announcements?id=${id}`, {
+            const res = await adminFetch(`/api/admin/announcements?id=${id}`, {
                 method: 'DELETE',
             });
             if (res.ok) {
                 // Revalidate home page and announcements page
                 Promise.all([
-                    fetch('/api/revalidate', {
+                    adminFetch('/api/revalidate', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ path: '/' }),
                     }),
-                    fetch('/api/revalidate', {
+                    adminFetch('/api/revalidate', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ path: '/announcements' }),

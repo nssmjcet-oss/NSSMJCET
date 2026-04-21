@@ -1,17 +1,19 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { Event } from '@/lib/models';
 
-export const revalidate = 3600; // ISR: cache for 1 hour to protect Firebase free tier
+export const revalidate = 60; // Refresh every minute for fresh content
 
 export async function GET() {
     try {
-        const querySnapshot = await adminDb.collection('events')
-            .orderBy('date', 'desc')
-            .get();
+        await connectToDatabase();
+        const eventsData = await Event.find({ status: 'published' })
+            .sort({ date: -1 })
+            .lean();
 
-        const events = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const events = eventsData.map(doc => ({
+            ...doc,
+            id: doc._id
         }));
 
         return NextResponse.json({ events }, { status: 200 });

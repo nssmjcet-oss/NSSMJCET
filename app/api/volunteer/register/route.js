@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
-import { FieldValue } from 'firebase-admin/firestore';
+import connectToDatabase from '@/lib/mongodb';
+import { Volunteer } from '@/lib/models';
 import { validateForm } from '@/utils/validation';
 
 // POST - Submit volunteer registration (Public)
@@ -26,27 +26,18 @@ export async function POST(request) {
             );
         }
 
-        if (!adminDb) {
-            console.error('Firebase Admin DB not initialized');
-            return NextResponse.json(
-                { error: 'Server configuration error' },
-                { status: 500 }
-            );
-        }
+        await connectToDatabase();
 
         // Check if already registered
-        const volunteersRef = adminDb.collection('volunteers');
-        const snapshot = await volunteersRef.where('email', '==', email).get();
-
-        if (!snapshot.empty) {
+        const existing = await Volunteer.findOne({ email });
+        if (existing) {
             return NextResponse.json(
                 { error: 'You have already registered with this email' },
                 { status: 400 }
             );
         }
 
-        // Create volunteer registration in Firestore
-        const docRef = await volunteersRef.add({
+        const newVolunteer = await Volunteer.create({
             name,
             email,
             phone,
@@ -55,13 +46,13 @@ export async function POST(request) {
             year,
             interests: interests || [],
             message: message || '',
-            status: 'pending', // Default status
-            submittedAt: FieldValue.serverTimestamp(),
-            createdAt: FieldValue.serverTimestamp(),
+            status: 'pending',
+            submittedAt: new Date(),
+            createdAt: new Date(),
         });
 
         return NextResponse.json(
-            { message: 'Registration submitted successfully! We will contact you soon.', id: docRef.id },
+            { message: 'Registration submitted successfully! We will contact you soon.', id: newVolunteer._id },
             { status: 201 }
         );
     } catch (error) {

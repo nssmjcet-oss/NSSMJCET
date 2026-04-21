@@ -1,28 +1,30 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { adminDb } from '@/lib/firebase-admin';
-import { FieldValue } from 'firebase-admin/firestore';
+import connectToDatabase from '@/lib/mongodb';
+import { Chairman } from '@/lib/models';
+import { maybeUploadImage } from '@/lib/storage';
+import { getAuthUser, requireAdmin } from '@/lib/server-auth';
 
-// Note: For full security, verify Firebase ID Token from Authorization header
-// For now, assuming authenticated access from client-side route protection
-
-export async function GET() {
+export async function GET(request) {
     try {
-        const querySnapshot = await adminDb.collection('chairman').limit(1).get();
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
 
-        let chairman = null;
-        if (!querySnapshot.empty) {
-            chairman = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
-        } else {
-            // Return empty structure if not found
-            chairman = {
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
+        const doc = await Chairman.findOne({}).lean();
+
+        const chairman = doc
+            ? { ...doc, id: doc._id }
+            : {
                 name: { en: '', te: '', hi: '' },
                 designation: { en: '', te: '', hi: '' },
                 qualification: { en: '', te: '', hi: '' },
                 message: { en: '', te: '', hi: '' },
                 photo: ''
             };
-        }
 
         return NextResponse.json({ chairman });
     } catch (error) {
@@ -33,28 +35,33 @@ export async function GET() {
 
 export async function PUT(request) {
     try {
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
         const body = await request.json();
         const { id, ...data } = body;
 
-        if (id) {
-            // Update existing
-            await adminDb.collection('chairman').doc(id).update({
-                ...data,
-                updatedAt: FieldValue.serverTimestamp()
-            });
-            revalidatePath('/');
-            revalidatePath('/api/chairman');
-            return NextResponse.json({ success: true });
-        } else {
-            // Create new or update the only one (if we manage it by a fixed ID)
-            await adminDb.collection('chairman').doc('info').set({
-                ...data,
-                updatedAt: FieldValue.serverTimestamp()
-            }, { merge: true });
-            revalidatePath('/');
-            revalidatePath('/api/chairman');
-            return NextResponse.json({ success: true });
+        if (data.photo) {
+            data.photo = await maybeUploadImage(data.photo, 'leaders');
         }
+
+        // Singleton update: There should only ever be one chairman doc
+        const updatedDoc = await Chairman.findOneAndUpdate(
+            {},
+            { ...data, updatedAt: new Date() },
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+        ).lean();
+ 
+        revalidatePath('/');
+        revalidatePath('/api/chairman');
+        return NextResponse.json({ 
+            success: true, 
+            chairman: { ...updatedDoc, id: updatedDoc._id } 
+        });
     } catch (error) {
         console.error('Chairman PUT error:', error);
         return NextResponse.json({ error: 'Failed to update chairman' }, { status: 500 });

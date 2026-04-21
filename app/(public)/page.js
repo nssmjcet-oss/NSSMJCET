@@ -138,6 +138,7 @@ export default function Home() {
         beneficiaries: 0
     });
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const [heroData, setHeroData] = useState(null);
 
     useEffect(() => {
         fetch('/api/stats')
@@ -146,7 +147,18 @@ export default function Home() {
                 if (!data.error) setStats(data);
             })
             .catch(console.error);
+
+        fetch('/api/content?pageId=hero')
+            .then(res => res.json())
+            .then(data => {
+                if (data.content) setHeroData(data.content);
+            })
+            .catch(console.error);
     }, []);
+
+    // Merge logic for dynamic hero
+    const displayHeroTitle = heroData?.title?.[language] || heroData?.title?.en || getText(translations.hero.title, language);
+    const displayHeroDesc = heroData?.content?.[language] || heroData?.content?.en || getText(translations.hero.description, language);
 
     return (
         <div className={styles.home} data-language={language}>
@@ -182,13 +194,13 @@ export default function Home() {
                             className={styles.heroTitle}
                             variants={dreamyReveal}
                         >
-                            {getText(translations.hero.title, language)}
+                            {displayHeroTitle}
                         </motion.h1>
                         <motion.p
                             className={styles.heroDescription}
                             variants={dreamyReveal}
                         >
-                            {getText(translations.hero.description, language)}
+                            {displayHeroDesc}
                         </motion.p>
                         <motion.div
                             className={styles.heroActions}

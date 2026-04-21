@@ -5,20 +5,48 @@ const admin = require('firebase-admin');
 const path = require('path');
 const https = require('https');
 
-const serviceAccount = require(path.join(__dirname, '..', 'service-account.json'));
+// --- Load environment variables manually ---
+const fs = require('fs');
+const envPath = path.join(__dirname, '..', '.env.local');
+if (fs.existsSync(envPath)) {
+    const envConfig = fs.readFileSync(envPath, 'utf8');
+    envConfig.split('\n').forEach((line) => {
+        const equalIndex = line.indexOf('=');
+        if (equalIndex > -1) {
+            let key = line.substring(0, equalIndex).trim();
+            let val = line.substring(equalIndex + 1).trim();
+            if (val.startsWith('"') && val.endsWith('"')) val = val.substring(1, val.length - 1);
+            if (val.startsWith("'") && val.endsWith("'")) val = val.substring(1, val.length - 1);
+            process.env[key] = val;
+        }
+    });
+}
 
-const app = admin.apps.length ? admin.app() : admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    projectId: serviceAccount.project_id,
-});
+const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+if (!admin.apps.length) {
+    if (!projectId || !clientEmail || !privateKey) {
+        console.error("FATAL: Missing Firebase credentials in .env.local");
+        process.exit(1);
+    }
+    const cleanedKey = privateKey.replace(/\\n/g, '\n').replace(/^['"]|['"]$/g, '').trim();
+    admin.initializeApp({
+        credential: admin.credential.cert({
+            projectId,
+            clientEmail,
+            privateKey: cleanedKey,
+        }),
+    });
+}
 
 async function listDatabases() {
     try {
         // Get access token from Admin SDK
         const token = await admin.app().options.credential.getAccessToken();
         const accessToken = token.access_token;
-        const projectId = serviceAccount.project_id;
-
+        // Use the projectId variable we defined earlier
         console.log('Project ID:', projectId);
         console.log('Listing Firestore databases...\n');
 

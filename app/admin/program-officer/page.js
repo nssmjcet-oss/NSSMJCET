@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from '../admin-content.module.css';
-import { translateText } from '@/utils/translation';
 import { compressImageToDataURL } from '@/utils/image-compression';
+import { translateText } from '@/utils/translation';
+import { adminFetch } from '@/utils/api-client';
 
 export default function ProgramOfficerAdminPage() {
     const { user } = useAuth();
@@ -53,7 +54,7 @@ export default function ProgramOfficerAdminPage() {
     const fetchOfficer = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/admin/program-officer');
+            const res = await adminFetch('/api/admin/program-officer');
             const data = await res.json();
             if (data.officer) {
                 setFormData({
@@ -93,15 +94,20 @@ export default function ProgramOfficerAdminPage() {
         e.preventDefault();
         setSaving(true);
         try {
-            const res = await fetch('/api/admin/program-officer', {
+            const res = await adminFetch('/api/admin/program-officer', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
             if (res.ok) {
+                const updated = await res.json();
+                if (updated.officer) {
+                    setFormData(updated.officer);
+                }
                 alert('Program Officer information saved successfully!');
             } else {
-                alert('Failed to save. Please try again.');
+                const errorData = await res.json();
+                alert(`Failed to save: ${errorData.error || 'Please try again.'}`);
             }
         } catch (error) {
             console.error('Error saving program officer', error);

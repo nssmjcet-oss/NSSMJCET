@@ -1,19 +1,25 @@
 import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 import { revalidatePath } from 'next/cache';
-import { adminDb } from '@/lib/firebase-admin';
-import { FieldValue } from 'firebase-admin/firestore';
+import connectToDatabase from '@/lib/mongodb';
+import { Announcement } from '@/lib/models';
+import { getAuthUser, requireAdmin } from '@/lib/server-auth';
 
 // GET - Fetch all announcements
-export async function GET() {
+export async function GET(request) {
     try {
-        if (!adminDb) {
-            throw new Error('Firebase Admin DB not initialized. Check your environment variables.');
-        }
-        const querySnapshot = await adminDb.collection('announcements').orderBy('createdAt', 'desc').get();
-        const announcements = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
+        const announcementsData = await Announcement.find({}).sort({ createdAt: -1 }).lean();
+        
+        const announcements = announcementsData.map(doc => ({
+            ...doc,
+            id: doc._id
         }));
 
         return NextResponse.json({ announcements }, { status: 200 });
@@ -21,8 +27,7 @@ export async function GET() {
         console.error('Announcements GET error:', error);
         return NextResponse.json({
             error: 'Failed to fetch announcements: ' + error.message,
-            stack: error.stack,
-            dbInitialized: !!adminDb
+            stack: error.stack
         }, { status: 500 });
     }
 }
@@ -30,10 +35,17 @@ export async function GET() {
 // POST - Create new announcement
 export async function POST(request) {
     try {
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
         const body = await request.json();
         const { title, content, priority, expiryDate, isActive, createdBy, imageUrl } = body;
 
-        const docRef = await adminDb.collection('announcements').add({
+        const announcementData = {
             title,
             content,
             priority: priority || 'medium',
@@ -41,21 +53,22 @@ export async function POST(request) {
             isActive: isActive !== undefined ? isActive : true,
             createdBy: createdBy || 'admin',
             imageUrl: imageUrl || null,
-            createdAt: FieldValue.serverTimestamp(),
-            updatedAt: FieldValue.serverTimestamp(),
-        });
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        const newAnnouncement = await Announcement.create(announcementData);
 
         revalidatePath('/');
         revalidatePath('/announcements');
         revalidatePath('/api/announcements');
 
-        return NextResponse.json({ message: 'Announcement created successfully', id: docRef.id }, { status: 201 });
+        return NextResponse.json({ message: 'Announcement created successfully', id: newAnnouncement._id }, { status: 201 });
     } catch (error) {
         console.error('Announcements POST error:', error);
         return NextResponse.json({
             error: 'Failed to create announcement: ' + error.message,
-            stack: error.stack,
-            dbInitialized: !!adminDb
+            stack: error.stack
         }, { status: 500 });
     }
 }
@@ -63,6 +76,13 @@ export async function POST(request) {
 // PUT - Update announcement
 export async function PUT(request) {
     try {
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
         const body = await request.json();
         const { id, ...updateData } = body;
 
@@ -70,9 +90,9 @@ export async function PUT(request) {
             return NextResponse.json({ error: 'Announcement ID is required' }, { status: 400 });
         }
 
-        await adminDb.collection('announcements').doc(id).update({
+        await Announcement.findByIdAndUpdate(id, {
             ...updateData,
-            updatedAt: FieldValue.serverTimestamp(),
+            updatedAt: new Date(),
         });
 
         revalidatePath('/');
@@ -84,8 +104,7 @@ export async function PUT(request) {
         console.error('Announcements PUT error:', error);
         return NextResponse.json({
             error: 'Failed to update announcement: ' + error.message,
-            stack: error.stack,
-            dbInitialized: !!adminDb
+            stack: error.stack
         }, { status: 500 });
     }
 }
@@ -93,6 +112,13 @@ export async function PUT(request) {
 // DELETE - Delete announcement
 export async function DELETE(request) {
     try {
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
+
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
 
@@ -100,7 +126,7 @@ export async function DELETE(request) {
             return NextResponse.json({ error: 'Announcement ID is required' }, { status: 400 });
         }
 
-        await adminDb.collection('announcements').doc(id).delete();
+        await Announcement.findByIdAndDelete(id);
 
         revalidatePath('/');
         revalidatePath('/announcements');
@@ -111,8 +137,7 @@ export async function DELETE(request) {
         console.error('Announcements DELETE error:', error);
         return NextResponse.json({
             error: 'Failed to delete announcement: ' + error.message,
-            stack: error.stack,
-            dbInitialized: !!adminDb
+            stack: error.stack
         }, { status: 500 });
     }
 }

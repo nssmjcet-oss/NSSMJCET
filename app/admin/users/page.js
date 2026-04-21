@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import styles from '../admin-content.module.css';
 import { Icons } from '@/components/Icons';
 import { motion, AnimatePresence } from 'framer-motion';
+import { adminFetch } from '@/utils/api-client';
 
 export default function AdminUsersPage() {
     const { user, role, loading: authLoading } = useAuth();
@@ -29,10 +29,7 @@ export default function AdminUsersPage() {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const token = await auth.currentUser?.getIdToken();
-            const response = await fetch('/api/admin/users', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await adminFetch('/api/admin/users');
             if (response.ok) {
                 const data = await response.json();
                 setUsers(data.users || []);
@@ -49,12 +46,10 @@ export default function AdminUsersPage() {
         setStatus({ type: 'loading', message: 'Creating admin account...' });
 
         try {
-            const token = await auth.currentUser?.getIdToken();
-            const response = await fetch('/api/admin/users', {
+            const response = await adminFetch('/api/admin/users', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ ...newUser, role: 'admin' }),
             });
@@ -82,10 +77,8 @@ export default function AdminUsersPage() {
         if (!confirm('Are you sure you want to delete this admin? This action cannot be undone.')) return;
 
         try {
-            const token = await auth.currentUser?.getIdToken();
-            const response = await fetch(`/api/admin/users/${uid}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await adminFetch(`/api/admin/users/${uid}`, {
+                method: 'DELETE'
             });
 
             if (response.ok) {
@@ -107,12 +100,10 @@ export default function AdminUsersPage() {
         }
 
         try {
-            const token = await auth.currentUser?.getIdToken();
-            const response = await fetch(`/api/admin/users/${uid}`, {
+            const response = await adminFetch(`/api/admin/users/${uid}`, {
                 method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ password: newPassword }),
             });

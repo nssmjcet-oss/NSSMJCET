@@ -1,17 +1,25 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { User, Event, Volunteer } from '@/lib/models';
+import { getAuthUser, requireAdmin } from '@/lib/server-auth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request) {
     try {
+        const { user, error, status } = await getAuthUser(request);
+        if (error) return NextResponse.json({ error }, { status });
 
-        // 1. Get Total Users (Using high-performance count aggregation)
-        const usersCount = (await adminDb.collection('users').count().get()).data().count;
-        // 2. Get Total Events
-        const eventsCount = (await adminDb.collection('events').count().get()).data().count;
-        // 3. Get Pending Volunteers
-        const pendingVolunteersCount = (await adminDb.collection('volunteers').where('status', '==', 'pending').count().get()).data().count;
+        const rbacError = requireAdmin(user);
+        if (rbacError) return NextResponse.json({ error: rbacError.error }, { status: rbacError.status });
+
+        await connectToDatabase();
+
+        const [usersCount, eventsCount, pendingVolunteersCount] = await Promise.all([
+            User.countDocuments({}),
+            Event.countDocuments({}),
+            Volunteer.countDocuments({ status: 'pending' })
+        ]);
 
         return NextResponse.json({
             users: usersCount,

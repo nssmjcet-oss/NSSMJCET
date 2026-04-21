@@ -1,24 +1,23 @@
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import connectToDatabase from '@/lib/mongodb';
+import { Chairman } from '@/lib/models';
 
-export const revalidate = 3600; // ISR: cache for 1 hour to protect Firebase free tier
+export const revalidate = 0;
 
 export async function GET() {
     try {
-        const querySnapshot = await adminDb.collection('chairman').limit(1).get();
+        await connectToDatabase();
+        const doc = await Chairman.findOne({}).lean();
 
-        let chairman = null;
-        if (!querySnapshot.empty) {
-            chairman = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
-        } else {
-            chairman = {
+        const chairman = doc
+            ? { ...doc, id: doc._id }
+            : {
                 name: { en: '', te: '', hi: '' },
                 designation: { en: '', te: '', hi: '' },
                 qualification: { en: '', te: '', hi: '' },
                 message: { en: '', te: '', hi: '' },
                 photo: ''
             };
-        }
 
         return NextResponse.json({ chairman });
     } catch (error) {

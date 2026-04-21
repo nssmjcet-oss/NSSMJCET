@@ -460,7 +460,7 @@
 }
 
 /* Decoration fix for dashboard */
-[class*="Dashboard_decoration"] {
+:global([class*="Dashboard_decoration"]) {
     opacity: 0.1 !important;
     pointer-events: none;
     z-index: 0;

@@ -4,7 +4,7 @@ export const metadata = {
     openGraph: {
         title: 'NSS MJCET Announcements',
         description: 'Stay updated with the latest notices and announcements from NSS MJCET.',
-        url: 'https://nssmjcet.vercel.app/announcements',
+        url: 'https://www.nssmjcet.in/announcements',
     },
 };
 

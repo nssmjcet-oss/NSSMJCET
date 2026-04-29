@@ -4,7 +4,7 @@ export const metadata = {
     openGraph: {
         title: 'Join NSS MJCET — Volunteer Registration',
         description: 'Register to become an NSS MJCET volunteer and make a difference in your community.',
-        url: 'https://nssmjcet.vercel.app/volunteer',
+        url: 'https://www.nssmjcet.in/volunteer',
     },
 };
 

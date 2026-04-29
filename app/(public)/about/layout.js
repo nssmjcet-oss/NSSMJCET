@@ -5,7 +5,7 @@ export const metadata = {
     openGraph: {
         title: 'About NSS MJCET — National Service Scheme',
         description: 'Learn about NSS MJCET, our objectives, the Ashoka Chakra symbolism, and our community service legacy.',
-        url: 'https://nssmjcet.vercel.app/about',
+        url: 'https://www.nssmjcet.in/about',
     },
 };
 

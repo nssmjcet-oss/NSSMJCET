@@ -8,4 +8,4 @@ Disallow: /api/auth/
 Disallow: /login
 Disallow: /debug-auth/
 
-Sitemap: https://nssmjcet.vercel.app/sitemap.xml
+Sitemap: https://www.nssmjcet.in/sitemap.xml

@@ -4,7 +4,7 @@ export const metadata = {
     openGraph: {
         title: 'NSS MJCET Unit Details',
         description: 'Our NSS Unit at MJCET — volunteers, events, service hours, and program officer details.',
-        url: 'https://nssmjcet.vercel.app/unit',
+        url: 'https://www.nssmjcet.in/unit',
     },
 };
 

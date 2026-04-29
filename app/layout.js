@@ -2,7 +2,7 @@ import "./globals.css";
 import Providers from "./providers";
 
 export const metadata = {
-    metadataBase: new URL('https://nssmjcet.vercel.app'),
+    metadataBase: new URL('https://www.nssmjcet.in'),
     alternates: {
         canonical: '/',
     },
@@ -14,7 +14,7 @@ export const metadata = {
     openGraph: {
         type: 'website',
         locale: 'en_IN',
-        url: 'https://nssmjcet.vercel.app',
+        url: 'https://www.nssmjcet.in',
         siteName: 'NSS MJCET',
         title: 'NSS MJCET Official Website',
         description: 'Official platform for NSS MJCET events, volunteer activities and social initiatives.',
@@ -51,15 +51,15 @@ const websiteSchema = {
     "@type": "WebSite",
     "name": "NSS MJCET",
     "alternateName": "National Service Scheme MJCET",
-    "url": "https://nssmjcet.vercel.app/"
+    "url": "https://www.nssmjcet.in/"
 };
 
 const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "NSS MJCET",
-    "url": "https://nssmjcet.vercel.app",
-    "logo": "https://nssmjcet.vercel.app/logo.png",
+    "url": "https://www.nssmjcet.in",
+    "logo": "https://www.nssmjcet.in/logo.png",
     "description": "Official website of NSS MJCET showcasing social initiatives, volunteer activities, community programs and events.",
     "sameAs": [
         "https://www.instagram.com/nssmjcet"

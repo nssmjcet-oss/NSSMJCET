@@ -4,7 +4,7 @@ export const metadata = {
     openGraph: {
         title: 'Contact NSS MJCET',
         description: 'Contact NSS MJCET — Muffakham Jah College of Engineering and Technology, Hyderabad.',
-        url: 'https://nssmjcet.vercel.app/contact',
+        url: 'https://www.nssmjcet.in/contact',
     },
 };
 

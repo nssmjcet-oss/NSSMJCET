@@ -1,5 +1,5 @@
 export default function sitemap() {
-    const baseUrl = 'https://nssmjcet.vercel.app';
+    const baseUrl = 'https://www.nssmjcet.in';
     const lastModified = new Date();
 
     return [

@@ -5,8 +5,10 @@ import { useState } from 'react';
 import { useLanguage, getText } from '@/contexts/LanguageContext';
 import { formatDate } from '@/utils/formatters';
 import styles from './EventModal.module.css';
+import Image from 'next/image';
 
 export default function EventModal({ event, onClose }) {
+
     const { language } = useLanguage();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -16,11 +18,13 @@ export default function EventModal({ event, onClose }) {
     const description = getText(event.description, language);
     const images = event.images && event.images.length > 0 ? event.images : ['/placeholder-event.jpg'];
 
-    const nextImage = () => {
+    const nextImage = (e) => {
+        e.stopPropagation();
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
     };
 
-    const prevImage = () => {
+    const prevImage = (e) => {
+        e.stopPropagation();
         setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
     };
 
@@ -45,28 +49,45 @@ export default function EventModal({ event, onClose }) {
                     <div className={styles.contentGrid}>
                         <div className={styles.imageSection}>
                             <div className={styles.mainImageWrapper}>
-                                <img
-                                    src={images[currentImageIndex]}
-                                    alt={`${title} image ${currentImageIndex + 1}`}
-                                    className={styles.mainImage}
-                                />
+                                <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+                                    <Image
+                                        src={images[currentImageIndex]}
+                                        alt={`${title} image ${currentImageIndex + 1}`}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, 50vw"
+                                        style={{ objectFit: 'cover' }}
+                                        priority
+                                        className={styles.mainImage}
+                                    />
+                                </div>
                                 {images.length > 1 && (
                                     <>
                                         <button className={`${styles.navBtn} ${styles.prev}`} onClick={prevImage}>&#10094;</button>
                                         <button className={`${styles.navBtn} ${styles.next}`} onClick={nextImage}>&#10095;</button>
-                                        <div className={styles.imageDots}>
-                                            {images.map((_, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className={`${styles.dot} ${idx === currentImageIndex ? styles.activeDot : ''}`}
-                                                    onClick={() => setCurrentImageIndex(idx)}
-                                                />
-                                            ))}
-                                        </div>
+                                        
+                                        {images.length > 10 ? (
+                                            <div className={styles.imageCounter}>
+                                                {currentImageIndex + 1} / {images.length}
+                                            </div>
+                                        ) : (
+                                            <div className={styles.imageDots}>
+                                                {images.map((_, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        className={`${styles.dot} ${idx === currentImageIndex ? styles.activeDot : ''}`}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setCurrentImageIndex(idx);
+                                                        }}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                     </>
                                 )}
                             </div>
                         </div>
+
 
                         <div className={styles.infoSection}>
                             <div className={styles.modalHeader}>

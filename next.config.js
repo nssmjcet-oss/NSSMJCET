@@ -15,6 +15,23 @@ const nextConfig = {
             },
         ],
     },
+    async redirects() {
+        return [
+            {
+                source: '/:path*',
+                has: [{ type: 'host', value: 'nssmjcet.vercel.app' }],
+                destination: 'https://www.nssmjcet.in/:path*',
+                permanent: true,
+            },
+            {
+                source: '/:path*',
+                has: [{ type: 'host', value: 'nssmjcet.in' }],
+                destination: 'https://www.nssmjcet.in/:path*',
+                permanent: true,
+            }
+        ];
+    },
 }
+
 
 module.exports = nextConfig

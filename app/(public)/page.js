@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useLanguage, getText } from '@/contexts/LanguageContext';
 import styles from './page.module.css';
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
@@ -12,6 +13,7 @@ import EventsPortalBanner from '@/components/EventsPortalBanner';
 import EventModal from '@/components/EventModal';
 import AnnouncementsSection from '@/components/AnnouncementsSection';
 import DevelopersSection from '@/components/DevelopersSection';
+
 
 const translations = {
     // ... (translations kept same)
@@ -339,6 +341,7 @@ export default function Home() {
 }
 
 function MottoSection({ language, variants }) {
+
     const inspirers = [
         {
             name: 'Mahatma Gandhi',
@@ -371,7 +374,16 @@ function MottoSection({ language, variants }) {
                         whileHover={{ scale: 1.03, y: -6 }}
                     >
                         <div className={styles.inspireImgWrap}>
-                            <img src={person.image} alt={person.name} className={styles.inspireImg} />
+                            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                                <Image
+                                    src={person.image}
+                                    alt={person.name}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, 33vw"
+                                    style={{ objectFit: 'cover' }}
+                                    className={styles.inspireImg}
+                                />
+                            </div>
                         </div>
                         <div className={styles.inspireInfo}>
                             <h3 className={styles.inspireName}>{person.name}</h3>
@@ -380,6 +392,7 @@ function MottoSection({ language, variants }) {
                     </motion.div>
                 ))}
             </div>
+
 
             <motion.div
                 className={styles.mottoTextBlock}

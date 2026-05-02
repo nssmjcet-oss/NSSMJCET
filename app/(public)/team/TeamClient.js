@@ -45,7 +45,7 @@ export default function TeamClient({ members }) {
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.05 // Reduced stagger for speed
+                staggerChildren: 0.03 // Even faster stagger
             }
         }
     };
@@ -88,9 +88,10 @@ export default function TeamClient({ members }) {
                             whileInView="visible"
                             viewport={{ once: true }}
                         >
-                            {gbsMembers.map((member) => (
-                                <MemberCard key={member._id} member={member} />
+                            {gbsMembers.map((member, idx) => (
+                                <MemberCard key={member._id} member={member} priority={idx < 4} />
                             ))}
+
                         </motion.div>
                     </section>
                 )}
@@ -112,9 +113,10 @@ export default function TeamClient({ members }) {
                             whileInView="visible"
                             viewport={{ once: true }}
                         >
-                            {execomMembers.map((member) => (
-                                <MemberCard key={member._id} member={member} />
+                            {execomMembers.map((member, idx) => (
+                                <MemberCard key={member._id} member={member} priority={idx < 4} />
                             ))}
+
                         </motion.div>
                     </section>
                 )}
@@ -136,9 +138,10 @@ export default function TeamClient({ members }) {
                             whileInView="visible"
                             viewport={{ once: true }}
                         >
-                            {coreMembers.map((member) => (
-                                <MemberCard key={member._id} member={member} compact={true} />
+                            {coreMembers.map((member, idx) => (
+                                <MemberCard key={member._id} member={member} compact={true} priority={idx < 8} />
                             ))}
+
                         </motion.div>
                     </section>
                 )}
@@ -153,7 +156,11 @@ export default function TeamClient({ members }) {
     );
 }
 
-function MemberCard({ member, compact = false }) {
+import Image from 'next/image';
+
+const MotionImage = motion(Image);
+
+function MemberCard({ member, compact = false, priority = false }) {
     const { language } = useLanguage();
 
     const nameStr = typeof member.name === 'object' ? (member.name[language] || member.name.en || '') : (member.name || '');
@@ -226,13 +233,18 @@ function MemberCard({ member, compact = false }) {
         >
             <div className={styles.memberAvatar}>
                 {member.image ? (
-                    <motion.img
-                        src={member.image}
-                        alt={nameStr}
-                        variants={imageVariants}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }}
-                        loading="lazy"
-                    />
+                    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+                        <MotionImage
+                            src={member.image}
+                            alt={nameStr}
+                            variants={imageVariants}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            style={{ objectFit: 'cover', objectPosition: 'top center' }}
+                            priority={priority}
+                            className={styles.memberImage}
+                        />
+                    </div>
                 ) : (
                     <motion.div
                         className={styles.avatarPlaceholder}
@@ -243,6 +255,7 @@ function MemberCard({ member, compact = false }) {
                 )}
                 <div className={styles.avatarGlowOverlay} />
             </div>
+
             <motion.div className={styles.memberInfo} variants={textVariants}>
                 <h3>{nameStr}</h3>
                 {positionStr && <p className={styles.position}>{positionStr}</p>}

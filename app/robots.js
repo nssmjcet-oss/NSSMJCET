@@ -4,8 +4,17 @@ export default function robots() {
             {
                 userAgent: '*',
                 allow: '/',
+                disallow: [
+                    '/admin/',
+                    '/api/admin/',
+                    '/api/auth/',
+                    '/login',
+                    '/debug-auth/',
+                ],
             },
         ],
-        sitemap: 'https://nssmjcet.org/sitemap.xml',
+        sitemap: 'https://www.nssmjcet.in/sitemap.xml',
     };
 }
+
+

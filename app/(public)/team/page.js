@@ -4,7 +4,15 @@ import TeamClient from './TeamClient';
 
 export const metadata = {
     title: 'Our Team - NSS MJCET',
-    description: 'Meet the NSS MJCET team members and office bearers',
+    description: 'Meet the NSS MJCET team — office bearers, core members, and dedicated volunteers at Muffakham Jah College of Engineering and Technology.',
+    alternates: {
+        canonical: 'https://www.nssmjcet.in/team',
+    },
+    openGraph: {
+        title: 'NSS MJCET Team',
+        description: 'Meet the office bearers, core members, and volunteers of NSS MJCET.',
+        url: 'https://www.nssmjcet.in/team',
+    },
 };
 
 // Revalidate this page every minute

@@ -4,7 +4,15 @@ import EventsClient from './EventsClient';
 
 export const metadata = {
     title: 'Events - NSS MJCET',
-    description: 'Upcoming and past events organized by NSS MJCET',
+    description: 'Upcoming and past events organized by NSS MJCET — community service, health camps, environmental drives and more.',
+    alternates: {
+        canonical: 'https://www.nssmjcet.in/events',
+    },
+    openGraph: {
+        title: 'NSS MJCET Events',
+        description: 'Explore upcoming and past events by NSS MJCET — Muffakham Jah College of Engineering and Technology.',
+        url: 'https://www.nssmjcet.in/events',
+    },
 };
 
 // Revalidate this page every minute

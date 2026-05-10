@@ -4,14 +4,22 @@ export function middleware(request) {
   const hostname = request.headers.get('host');
   const { pathname, search } = request.nextUrl;
 
-  // Check if the current host is the Vercel domain or the non-www custom domain
-  const isOldDomain = hostname && (hostname.includes('vercel.app') || hostname === 'nssmjcet.in');
-  
-  if (isOldDomain && hostname !== 'www.nssmjcet.in') {
-    // Perform a 301 Permanent Redirect to the primary WWW domain
+  // Block Vercel domain from being indexed by search engines
+  if (hostname && hostname.includes('vercel.app')) {
+    const redirectResponse = NextResponse.redirect(
+      `https://www.nssmjcet.in${pathname}${search}`,
+      { status: 301 }
+    );
+    // Tell Google to remove this Vercel URL from its index
+    redirectResponse.headers.set('X-Robots-Tag', 'noindex, nofollow');
+    return redirectResponse;
+  }
+
+  // Redirect bare domain (nssmjcet.in) → www.nssmjcet.in
+  if (hostname === 'nssmjcet.in') {
     return NextResponse.redirect(
       `https://www.nssmjcet.in${pathname}${search}`,
-      301
+      { status: 301 }
     );
   }
 

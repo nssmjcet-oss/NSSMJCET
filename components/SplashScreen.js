@@ -6,17 +6,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './SplashScreen.module.css';
 
 export default function SplashScreen({ onComplete }) {
-    const [visible, setVisible] = useState(true);
+    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setVisible(false);
-            setTimeout(() => {
+        if (typeof window !== 'undefined') {
+            const hasSeenSplash = sessionStorage.getItem('nss_splash_shown');
+            if (hasSeenSplash === 'true') {
+                setVisible(false);
                 if (onComplete) onComplete();
-            }, 800); // wait for exit animation
-        }, 3200);
+            } else {
+                setVisible(true);
+                sessionStorage.setItem('nss_splash_shown', 'true');
+                const timer = setTimeout(() => {
+                    setVisible(false);
+                    setTimeout(() => {
+                        if (onComplete) onComplete();
+                    }, 800); // wait for exit animation
+                }, 3200);
 
-        return () => clearTimeout(timer);
+                return () => clearTimeout(timer);
+            }
+        }
     }, [onComplete]);
 
     return (

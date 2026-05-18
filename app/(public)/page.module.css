@@ -749,6 +749,10 @@
 
 /* Responsive adjustments */
 @media (max-width: 900px) {
+    .spotlightSection {
+        padding: var(--space-8) var(--space-4);
+    }
+
     .spotlightCard {
         grid-template-columns: 1fr;
         gap: 2rem;
@@ -1109,7 +1113,7 @@
 
 @media (max-width: 640px) {
     .flagshipSection {
-        padding: var(--space-12) 0;
+        padding: var(--space-12) var(--space-4);
         border-radius: 36px;
         margin: var(--space-8) 0;
     }

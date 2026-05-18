@@ -757,12 +757,12 @@
         grid-template-columns: 1fr;
         gap: 2rem;
         padding: var(--space-6);
-        max-width: 550px;
+        max-width: 100%;
     }
 
     .spotlightImageContainer {
-        aspect-ratio: 4 / 5;
-        max-height: 380px;
+        aspect-ratio: 4 / 3;
+        max-height: 320px;
     }
 
     .spotlightTitle {
@@ -782,12 +782,19 @@
     }
     
     .spotlightCard {
-        border-radius: 28px;
-        padding: var(--space-5);
+        border-radius: 22px;
+        padding: var(--space-4);
+        gap: 1.25rem;
     }
     
     .spotlightImageContainer {
-        border-radius: 18px;
+        border-radius: 16px;
+        aspect-ratio: 16 / 9;
+        max-height: 220px;
+    }
+
+    .spotlightTitle {
+        font-size: var(--text-xl);
     }
 }
 
@@ -1316,14 +1323,32 @@
 
 @media (max-width: 640px) {
     .flagshipPortraitImgWrap {
-        height: 170px;
+        height: 200px;
+    }
+    .flagshipPortraitGrid {
+        gap: 16px;
+        margin-top: 24px;
+    }
+    .flagshipPortraitCard {
+        max-width: 100%; /* Full width on phones */
+        width: 100%;
     }
     .flagshipContainer {
-        padding: 32px 16px;
-        border-radius: 24px;
+        padding: 28px 12px;
+        border-radius: 20px;
     }
     .flagshipContainer::before,
     .flagshipContainer::after {
-        border-radius: 24px;
+        border-radius: 20px;
+    }
+    .flagshipPortraitBody {
+        padding: 16px;
+    }
+}
+
+/* ── Super small phones (≤ 380px) ── */
+@media (max-width: 380px) {
+    .flagshipPortraitImgWrap {
+        height: 180px;
     }
 }

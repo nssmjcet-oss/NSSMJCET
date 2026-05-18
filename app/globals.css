@@ -129,11 +129,11 @@ body.marvelous-theme {
     transition: background-color var(--transition-slow), color var(--transition-slow);
 }
 
-/* Global Transition & Reveal */
+/* Global Transition & Reveal — fast so navigation feels instant */
 .marvelous-theme section {
     opacity: 0;
-    transform: translateY(30px);
-    animation: revealSection 1.2s var(--premium-ease) forwards;
+    transform: translateY(12px);
+    animation: revealSection 0.35s ease forwards;
 }
 
 @keyframes revealSection {

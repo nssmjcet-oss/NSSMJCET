@@ -66,11 +66,11 @@ export const AuthProvider = ({ children }) => {
                         return 'user';
                     })();
 
-                    // Race against a 5-second timeout
+                    // Race against a 2-second timeout
                     const timeoutPromise = new Promise(resolve => setTimeout(() => {
                         console.warn('[AuthContext] Role resolution timed out - defaulting to user');
                         resolve('user');
-                    }, 5000));
+                    }, 2000));
 
                     userRole = await Promise.race([rolePromise, timeoutPromise]);
 

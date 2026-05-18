@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import connectToDatabase from '@/lib/mongodb';
 import { Event } from '@/lib/models';
 import EventsClient from './EventsClient';
@@ -43,5 +44,9 @@ async function getEvents() {
 
 export default async function EventsPage() {
     const events = await getEvents();
-    return <EventsClient events={events} />;
+    return (
+        <Suspense fallback={<div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', opacity: 0.5 }}>Loading events...</div>}>
+            <EventsClient events={events} />
+        </Suspense>
+    );
 }

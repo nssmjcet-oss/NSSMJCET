@@ -76,7 +76,7 @@ export async function PUT(request) {
             return NextResponse.json({ message: 'Settings updated' }, { status: 200 });
         }
 
-        const { pageId, title, content, sections } = body;
+        const { pageId, title, content, sections, subtitle, btnText, btnLink, image, isActive } = body;
         if (!pageId) {
             return NextResponse.json({ error: 'Page ID is required' }, { status: 400 });
         }
@@ -84,7 +84,7 @@ export async function PUT(request) {
         // Using findOneAndUpdate with _id: pageId to avoid CastError for custom string IDs like 'about'
         const updated = await Content.findOneAndUpdate(
             { _id: pageId },
-            { _id: pageId, title, content, sections, updatedAt: new Date() },
+            { _id: pageId, title, content, sections, subtitle, btnText, btnLink, image, isActive, updatedAt: new Date() },
             { upsert: true, new: true, setDefaultsOnInsert: true }
         ).lean();
  

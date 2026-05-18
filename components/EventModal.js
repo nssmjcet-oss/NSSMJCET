@@ -65,24 +65,9 @@ export default function EventModal({ event, onClose }) {
                                         <button className={`${styles.navBtn} ${styles.prev}`} onClick={prevImage}>&#10094;</button>
                                         <button className={`${styles.navBtn} ${styles.next}`} onClick={nextImage}>&#10095;</button>
                                         
-                                        {images.length > 10 ? (
-                                            <div className={styles.imageCounter}>
-                                                {currentImageIndex + 1} / {images.length}
-                                            </div>
-                                        ) : (
-                                            <div className={styles.imageDots}>
-                                                {images.map((_, idx) => (
-                                                    <div
-                                                        key={idx}
-                                                        className={`${styles.dot} ${idx === currentImageIndex ? styles.activeDot : ''}`}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setCurrentImageIndex(idx);
-                                                        }}
-                                                    />
-                                                ))}
-                                            </div>
-                                        )}
+                                        <div className={styles.imageCounter}>
+                                            {currentImageIndex + 1} / {images.length}
+                                        </div>
                                     </>
                                 )}
                             </div>
@@ -91,7 +76,11 @@ export default function EventModal({ event, onClose }) {
 
                         <div className={styles.infoSection}>
                             <div className={styles.modalHeader}>
-                                <span className={styles.dateTag}>{formatDate(event.date)}</span>
+                                <span className={styles.dateTag}>
+                                    {event.endDate && event.endDate !== event.date
+                                        ? `${formatDate(event.date)} - ${formatDate(event.endDate)}`
+                                        : formatDate(event.date)}
+                                </span>
                                 <h2 className={styles.title}>{title}</h2>
                                 <div className={styles.locationTag}>
                                     <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">

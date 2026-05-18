@@ -24,11 +24,16 @@
 }
 
 .hero p {
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
     text-transform: uppercase;
-    letter-spacing: 4px;
-    font-weight: 700;
-    color: var(--color-primary-light);
+    letter-spacing: 5px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #FF9933 0%, #128807 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-bottom: var(--space-2);
 }
 
 .filters {
@@ -74,19 +79,25 @@
 }
 
 .eventBox {
-    background: rgba(15, 23, 42, 0.6);
-    /* Dark navy glass for contrast */
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 32px;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
     padding: 0;
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='light'] .eventBox {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 51, 102, 0.06);
+    box-shadow: 0 10px 30px rgba(0, 51, 102, 0.04);
 }
 
 .eventBox::before {
@@ -96,19 +107,26 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at top left, rgba(255, 127, 80, 0.1), transparent 40%);
+    background: radial-gradient(circle at top left, rgba(255, 153, 51, 0.12), transparent 45%);
     opacity: 0;
     transition: opacity 0.5s ease;
     pointer-events: none;
 }
 
 .eventBox:hover {
-    border-color: rgba(59, 130, 246, 0.3);
-    background: rgba(15, 23, 42, 0.8);
-    /* Increased from 0.05 */
+    border-color: rgba(255, 153, 51, 0.4);
+    background: rgba(15, 23, 42, 0.65);
     transform: translateY(-12px) scale(1.02);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4),
-        0 0 20px rgba(255, 127, 80, 0.1);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45),
+        0 0 25px rgba(255, 153, 51, 0.2),
+        0 0 50px rgba(18, 136, 7, 0.1);
+}
+
+[data-theme='light'] .eventBox:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(255, 153, 51, 0.4);
+    box-shadow: 0 30px 60px rgba(255, 153, 51, 0.12),
+        0 0 25px rgba(255, 153, 51, 0.08);
 }
 
 .eventBox:hover::before {
@@ -116,10 +134,12 @@
 }
 
 .imageWrapper {
-    width: 100%;
-    height: 280px;
     position: relative;
+    margin: var(--space-4) var(--space-4) 0;
+    height: 250px;
+    border-radius: 20px;
     overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .imageWrapper::after {
@@ -138,39 +158,50 @@
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .eventBox:hover .eventImage {
-    transform: scale(1.15);
+    transform: scale(1.1);
 }
 
 .eventStatus {
     position: absolute;
     top: var(--space-4);
     left: var(--space-4);
-    padding: var(--space-1.5) var(--space-4);
+    padding: 6px 14px;
     border-radius: var(--radius-full);
-    font-size: var(--text-xs);
+    font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     z-index: 2;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     display: flex;
     align-items: center;
     gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.eventBox:hover .eventStatus {
+    background: rgba(0, 0, 0, 0.85);
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .statusUpcoming {
-    color: #4ade80;
-    box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #128807 0%, #0c6304 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(18, 136, 7, 0.25) !important;
 }
 
 .statusPast {
-    color: #94a3b8;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #475569 0%, #1e293b 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
 .statusDot {
@@ -180,9 +211,14 @@
 }
 
 .statusUpcoming .statusDot {
-    background: #4ade80;
-    box-shadow: 0 0 8px #4ade80;
+    background: #ffffff !important;
+    box-shadow: 0 0 8px #ffffff !important;
     animation: pulse 2s infinite;
+}
+
+.statusPast .statusDot {
+    background: #cbd5e1 !important;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
 }
 
 @keyframes pulse {
@@ -190,12 +226,10 @@
         transform: scale(1);
         opacity: 1;
     }
-
     50% {
         transform: scale(1.5);
         opacity: 0.5;
     }
-
     100% {
         transform: scale(1);
         opacity: 1;
@@ -206,38 +240,43 @@
     position: absolute;
     top: var(--space-4);
     right: var(--space-4);
-    width: 64px;
-    height: 64px;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
+    min-width: 56px;
+    width: auto;
+    padding: 0 10px;
+    height: 56px;
+    background: rgba(255, 153, 51, 0.9);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white;
     z-index: 2;
-    transition: transform 0.3s ease;
+    box-shadow: 0 8px 16px rgba(255, 153, 51, 0.25);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .eventBox:hover .eventDate {
-    transform: scale(1.1);
-    border-color: var(--color-secondary);
+    transform: scale(1.1) rotate(6deg);
+    background: #FF9933;
+    box-shadow: 0 12px 24px rgba(255, 153, 51, 0.45);
 }
 
 .dateDay {
-    font-size: var(--text-2xl);
+    font-size: clamp(0.95rem, 1.2vw, 1.2rem);
     font-weight: 900;
     line-height: 1;
+    white-space: nowrap;
 }
 
 .dateMonth {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--color-secondary-light);
+    color: rgba(255, 255, 255, 0.95);
 }
 
 .eventContent {
@@ -252,15 +291,20 @@
     margin-bottom: var(--space-3);
     font-size: var(--text-xl);
     font-weight: 800;
-    letter-spacing: -0.01em;
-    line-height: 1.3;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    /* Stronger shadow */
+    line-height: 1.35;
+    transition: color 0.3s ease;
+}
+
+[data-theme='light'] .eventContent h3 {
+    color: #0f172a;
+}
+
+.eventBox:hover .eventContent h3 {
+    color: #FF9933;
 }
 
 .eventDescription {
-    color: rgba(255, 255, 255, 0.7);
-    /* More explicit white with opacity */
+    color: rgba(255, 255, 255, 0.65);
     line-height: 1.6;
     margin-bottom: var(--space-6);
     font-size: var(--text-sm);
@@ -271,11 +315,24 @@
     overflow: hidden;
 }
 
+[data-theme='light'] .eventDescription {
+    color: #475569;
+}
+
 .eventMeta {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
     margin-bottom: var(--space-6);
+    background: rgba(255, 255, 255, 0.02);
+    padding: var(--space-3) var(--space-4);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme='light'] .eventMeta {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.04);
 }
 
 .metaRow {
@@ -283,13 +340,16 @@
     align-items: center;
     gap: var(--space-3);
     font-size: var(--text-xs);
-    color: rgba(255, 255, 255, 0.6);
-    /* More explicit visibility */
+    color: rgba(255, 255, 255, 0.65);
     font-weight: 600;
 }
 
+[data-theme='light'] .metaRow {
+    color: #334155;
+}
+
 .metaIcon {
-    color: var(--color-primary-light);
+    color: #FF9933;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -298,36 +358,80 @@
 .viewBtn {
     margin-top: auto;
     width: 100%;
-    padding: var(--space-3.5) var(--space-6);
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
+    padding: var(--space-4) var(--space-6);
+    border-radius: 16px;
+    background: transparent;
+    border: 1.5px solid transparent;
+    background-image: linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.45)), 
+                      linear-gradient(135deg, rgba(255, 153, 51, 0.4) 0%, rgba(18, 136, 7, 0.4) 100%);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    color: rgba(255, 255, 255, 0.95);
     font-weight: 800;
-    font-size: var(--text-sm);
+    font-size: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 3px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='light'] .viewBtn {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), 
+                      linear-gradient(135deg, rgba(255, 153, 51, 0.5) 0%, rgba(18, 136, 7, 0.5) 100%);
+    color: #1e293b;
+    box-shadow: 0 4px 15px rgba(0, 51, 102, 0.04);
+}
+
+.viewBtn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transition: none;
+}
+
+.eventBox:hover .viewBtn::after {
+    left: 100%;
+    transition: left 0.8s ease-in-out;
 }
 
 .eventBox:hover .viewBtn {
-    background: var(--marvel-title-gradient);
+    background-image: linear-gradient(135deg, #FF9933 0%, #128807 100%);
     border-color: transparent;
+    color: white;
+    box-shadow: 0 12px 24px rgba(18, 136, 7, 0.3), 
+                0 0 15px rgba(255, 153, 51, 0.2);
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='light'] .eventBox:hover .viewBtn {
+    color: white;
+    background-image: linear-gradient(135deg, #FF9933 0%, #128807 100%);
+    box-shadow: 0 12px 24px rgba(255, 153, 51, 0.25), 
+                0 0 15px rgba(18, 136, 7, 0.15);
 }
 
 .btnArrow {
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+    color: #FF9933;
 }
 
 .eventBox:hover .btnArrow {
-    transform: translateX(4px) scale(1.2);
+    transform: translateX(6px) scale(1.2);
+    color: white;
 }
 
 .noEvents {
@@ -370,4 +474,102 @@
     .eventContent {
         padding: var(--space-5);
     }
+}
+
+/* --- Premium Year Slider Section --- */
+.yearSliderContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    margin-bottom: var(--space-12);
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px) saturate(200%);
+    padding: var(--space-6) var(--space-8);
+    border-radius: 40px;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='light'] .yearSliderContainer {
+    background: rgba(255, 255, 255, 0.75);
+    border-color: rgba(0, 51, 102, 0.08);
+    box-shadow: 0 12px 35px rgba(0, 51, 102, 0.05);
+}
+
+.yearSliderLabel {
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #FF9933;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+[data-theme='light'] .yearSliderLabel {
+    color: #1e293b;
+}
+
+.yearSlider {
+    display: flex;
+    gap: var(--space-4);
+    overflow-x: auto;
+    width: 100%;
+    justify-content: center;
+    padding: var(--space-2) var(--space-2);
+    -webkit-overflow-scrolling: touch;
+}
+
+.yearSlider::-webkit-scrollbar {
+    display: none;
+}
+
+.yearTab {
+    padding: var(--space-3) var(--space-8);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+[data-theme='light'] .yearTab {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.06);
+    color: #334155;
+}
+
+.yearTab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 153, 51, 0.5);
+    color: white;
+    transform: translateY(-3px) scale(1.02);
+}
+
+[data-theme='light'] .yearTab:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(255, 153, 51, 0.5);
+    color: #0f172a;
+}
+
+.yearTabActive {
+    background: linear-gradient(135deg, #FF9933 0%, #128807 100%) !important;
+    border-color: transparent !important;
+    color: white !important;
+    box-shadow: 0 10px 25px rgba(18, 136, 7, 0.35),
+                0 0 15px rgba(255, 153, 51, 0.25);
+    transform: translateY(-2px) scale(1.05);
 }

@@ -2,13 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageToggle from './LanguageToggle';
 import styles from './Navbar.module.css';
-import { canAccessAdminPanel } from '@/lib/rbac';
 import { useAuth } from '@/contexts/AuthContext';
 
 const translations = {
@@ -16,7 +15,6 @@ const translations = {
         home: 'Home',
         about: 'About NSS',
         unit: 'Unit Details',
-        events: 'Events',
         events: 'Events',
         team: 'Team',
         announcements: 'Announcements',
@@ -31,7 +29,6 @@ const translations = {
         about: 'NSS గురించి',
         unit: 'యూనిట్ వివరాలు',
         events: 'ఈవెంట్స్',
-        events: 'ఈవెంట్స్',
         team: 'టీమ్',
         announcements: 'ప్రకటనలు',
         volunteer: 'మాతో చేరండి',
@@ -44,7 +41,6 @@ const translations = {
         home: 'होम',
         about: 'एनएसएस के बारे में',
         unit: 'यूनिट विवरण',
-        events: 'कार्यक्रम',
         events: 'कार्यक्रम',
         team: 'टीम',
         announcements: 'घोषणाएं',
@@ -64,6 +60,9 @@ export default function Navbar() {
     const { language } = useLanguage();
     const pathname = usePathname();
     const t = translations[language] || translations['en'] || translations.en;
+
+    // Magnetic Button Coordinates
+    const [magneticCoords, setMagneticCoords] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
         const handleScroll = () => {
@@ -105,6 +104,43 @@ export default function Navbar() {
         }
     };
 
+    // Magnetic Hover Event Handlers
+    const handleMagneticMove = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        setMagneticCoords({ x: x * 0.35, y: y * 0.35 });
+    };
+
+    const handleMagneticLeave = () => {
+        setMagneticCoords({ x: 0, y: 0 });
+    };
+
+    // Stagger animation rules for mobile menu items
+    const mobileContainerVariants = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.05,
+                delayChildren: 0.15
+            }
+        }
+    };
+
+    const mobileItemVariants = {
+        hidden: { opacity: 0, x: -30 },
+        show: { 
+            opacity: 1, 
+            x: 0, 
+            transition: { 
+                type: 'spring', 
+                stiffness: 280, 
+                damping: 25 
+            } 
+        }
+    };
+
     return (
         <>
             <motion.nav
@@ -139,7 +175,11 @@ export default function Navbar() {
                                     >
                                         {item.label}
                                         {pathname === item.href && (
-                                            null
+                                            <motion.span 
+                                                layoutId="navActiveUnderline"
+                                                className={styles.activeUnderline}
+                                                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                                            />
                                         )}
                                     </Link>
                                 ))}
@@ -150,9 +190,18 @@ export default function Navbar() {
                             <div className={styles.navActions}>
                                 <LanguageToggle />
                                 <div className={styles.authButtons}>
-                                    <Link href="/volunteer" className={`${styles.volunteerLink} ${pathname === '/volunteer' ? styles.active : ''}`}>
-                                        {t.volunteer}
-                                    </Link>
+                                    {/* Magnetic Join Us button */}
+                                    <motion.div
+                                        onMouseMove={handleMagneticMove}
+                                        onMouseLeave={handleMagneticLeave}
+                                        animate={{ x: magneticCoords.x, y: magneticCoords.y }}
+                                        transition={{ type: "spring", stiffness: 150, damping: 15 }}
+                                        style={{ display: 'inline-block' }}
+                                    >
+                                        <Link href="/volunteer" className={`${styles.volunteerLink} ${pathname === '/volunteer' ? styles.active : ''}`}>
+                                            {t.volunteer}
+                                        </Link>
+                                    </motion.div>
 
                                     {session && (
                                         <Link href="/admin" className="marvelous-btn marvelous-btn-outline marvelous-btn-sm" style={{ padding: '8px 16px', fontSize: '12px' }}>
@@ -172,7 +221,7 @@ export default function Navbar() {
                 </div>
             </motion.nav>
 
-            {/* Hamburger — outside nav so display:none on navContainer won't hide it */}
+            {/* Hamburger Wrapper */}
             <div className={styles.hamburgerWrapper} onClick={toggleMenu}>
                 <button className={styles.menuToggle} aria-label="Toggle menu">
                     <span className={styles.hamburger}></span>
@@ -183,33 +232,62 @@ export default function Navbar() {
 
             <AnimatePresence>
                 {isMenuOpen && (
-                    <motion.div className={styles.mobileOverlay} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+                    <motion.div 
+                        className={styles.mobileOverlay} 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        exit={{ opacity: 0 }} 
+                        transition={{ duration: 0.3 }}
+                    >
                         <button className={styles.mobileCloseBtn} onClick={toggleMenu} aria-label="Close menu">×</button>
-                        <motion.div className={styles.mobileMenuContent} initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }} transition={{ duration: 0.3, delay: 0.1 }}>
+                        
+                        <motion.div 
+                            className={styles.mobileMenuContent} 
+                            variants={mobileContainerVariants}
+                            initial="hidden"
+                            animate="show"
+                            exit="hidden"
+                        >
                             {navItems.map((item) => (
-                                <Link key={item.href} href={item.href} className={`${styles.mobileMenuItem} ${pathname === item.href ? styles.mobileMenuItemActive : ''}`} onClick={toggleMenu}>
-                                    {item.label}
-                                </Link>
+                                <motion.div key={item.href} variants={mobileItemVariants}>
+                                    <Link href={item.href} className={`${styles.mobileMenuItem} ${pathname === item.href ? styles.mobileMenuItemActive : ''}`} onClick={toggleMenu}>
+                                        {item.label}
+                                    </Link>
+                                </motion.div>
                             ))}
-                            <div className={styles.mobileDivider}></div>
-                            <Link href="/volunteer" className={`${styles.mobileMenuItem} ${styles.mobileMenuItemCTA}`} onClick={toggleMenu}>
-                                {t.volunteer}
-                            </Link>
-                            <div className={styles.mobileDivider}></div>
-                            {session && (
-                                <Link href="/admin" className={styles.mobileMenuItem} onClick={toggleMenu}>
-                                    {t.admin}
+                            
+                            <motion.div variants={mobileItemVariants} className={styles.mobileDivider}></motion.div>
+                            
+                            <motion.div variants={mobileItemVariants}>
+                                <Link href="/volunteer" className={`${styles.mobileMenuItem} ${styles.mobileMenuItemCTA}`} onClick={toggleMenu}>
+                                    {t.volunteer}
                                 </Link>
-                            )}
+                            </motion.div>
+                            
                             {session && (
-                                <button onClick={() => { toggleMenu(); handleLogout(); }} className={styles.mobileMenuItem}>
-                                    {t.logout}
-                                </button>
+                                <>
+                                    <motion.div variants={mobileItemVariants} className={styles.mobileDivider}></motion.div>
+                                    <motion.div variants={mobileItemVariants}>
+                                        <Link href="/admin" className={styles.mobileMenuItem} onClick={toggleMenu}>
+                                            {t.admin}
+                                        </Link>
+                                    </motion.div>
+                                </>
                             )}
-                            <div className={styles.mobileDivider}></div>
-                            <div className={styles.mobileLanguageToggle}>
+                            
+                            {session && (
+                                <motion.div variants={mobileItemVariants}>
+                                    <button onClick={() => { toggleMenu(); handleLogout(); }} className={styles.mobileMenuItem}>
+                                        {t.logout}
+                                    </button>
+                                </motion.div>
+                            )}
+                            
+                            <motion.div variants={mobileItemVariants} className={styles.mobileDivider}></motion.div>
+                            
+                            <motion.div variants={mobileItemVariants} className={styles.mobileLanguageToggle}>
                                 <LanguageToggle />
-                            </div>
+                            </motion.div>
                         </motion.div>
                     </motion.div>
                 )}

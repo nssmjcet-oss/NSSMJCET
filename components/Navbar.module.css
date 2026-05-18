@@ -259,21 +259,19 @@
 }
 
 .navLinks a.active {
-    color: var(--color-saffron) !important; /* Premium Saffron for active */
+    color: #CC0000 !important; /* NSS Red for active link text */
     font-weight: 700;
 }
 
-.navLinks a.active::after {
-    content: '';
+.activeUnderline {
     position: absolute;
     bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30px;
+    left: 0;
+    right: 0;
     height: 3px;
-    background: var(--gradient-saffron);
-    border-radius: var(--radius-full);
-    box-shadow: var(--marvel-glow-saffron);
+    background: #003366; /* NSS Blue for active underline */
+    border-radius: 99px;
+    box-shadow: 0 1px 6px rgba(0, 51, 102, 0.2);
 }
 
 .activeIndicator {

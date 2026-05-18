@@ -1,36 +1,11 @@
 .teamPage {
     min-height: 100vh;
-    padding-top: var(--space-12);
+    padding-top: clamp(120px, 12vw, 160px);
     background: var(--marvel-bg);
     color: var(--marvel-text);
 }
 
-.hero {
-    padding: var(--space-8) 0;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-}
 
-.hero h1 {
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    font-weight: 800;
-    margin-bottom: var(--space-2);
-    background: var(--marvel-title-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -2px;
-}
-
-.hero p {
-    font-size: var(--text-xl);
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    font-weight: 700;
-    color: #FF9933;
-    /* Saffron instead of blue */
-}
 
 .section {
     margin-bottom: var(--space-24);
@@ -39,12 +14,35 @@
 }
 
 .sectionTitle {
+    font-family: 'Outfit', sans-serif;
     text-align: center;
-    font-size: var(--text-4xl);
-    font-weight: 800;
-    margin-bottom: var(--space-12);
-    color: var(--marvel-text);
-    letter-spacing: -1px;
+    font-size: clamp(2rem, 5.5vw, 3.2rem);
+    font-weight: 850;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: var(--space-2);
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    /* Premium high-contrast saffron-to-green gradient text */
+    background: linear-gradient(135deg, #FF9933 0%, #FFA844 45%, #138808 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* Soft premium drop shadow */
+    filter: drop-shadow(0 2px 10px rgba(255, 153, 51, 0.15));
+}
+
+/* Decorative accent line under each section title */
+.sectionTitle::after {
+    content: '';
+    display: block;
+    margin: 14px auto 0;
+    width: 80px;
+    height: 4px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #FF9933, #128807);
+    box-shadow: 0 1px 8px rgba(255, 153, 51, 0.3);
 }
 
 .teamGrid {
@@ -284,4 +282,231 @@
     .compactMemberBox .position {
         font-size: var(--text-xs);
     }
+}
+
+/* Filter Bar Container */
+.filterContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    justify-content: center;
+    margin: var(--space-8) 0 var(--space-12);
+    padding: var(--space-2) 0;
+}
+
+/* Individual Filter Button */
+.filterBtn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--marvel-text-dim);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: 0.5px;
+}
+
+[data-theme='light'] .filterBtn {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: var(--color-gray-600);
+}
+
+/* Hover State */
+.filterBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--marvel-text);
+    transform: translateY(-1px);
+}
+
+[data-theme='light'] .filterBtn:hover {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.15);
+    color: var(--color-gray-900);
+}
+
+/* Active State */
+.filterBtnActive {
+    background: #CC0000 !important;
+    border-color: #CC0000 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(204, 0, 0, 0.25);
+}
+
+/* Active Filter Announcement Banner */
+.filterBanner {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--marvel-text);
+    padding: var(--space-6) var(--space-8);
+    border-radius: 20px;
+    max-width: 800px;
+    margin: 0 auto var(--space-12);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme='light'] .filterBanner {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 153, 51, 0.2);
+    box-shadow: 0 8px 32px rgba(255, 153, 51, 0.08);
+}
+
+.filterQuoteTitle {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: var(--space-2);
+    opacity: 0.85;
+}
+
+.filterQuoteText {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-style: italic;
+    line-height: 1.5;
+    font-weight: 500;
+    margin: 0;
+    color: var(--marvel-text);
+    background: linear-gradient(135deg, #FF9933 0%, #128807 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+[data-theme='light'] .filterQuoteText {
+    background: linear-gradient(135deg, #E65C00 0%, #0B6603 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Premium Year Slider Section */
+.yearSliderContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    margin-bottom: var(--space-12);
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px) saturate(200%);
+    padding: var(--space-6) var(--space-8);
+    border-radius: 40px;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='light'] .yearSliderContainer {
+    background: rgba(255, 255, 255, 0.75);
+    border-color: rgba(0, 51, 102, 0.08);
+    box-shadow: 0 12px 35px rgba(0, 51, 102, 0.05);
+}
+
+.yearSliderLabel {
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #FF9933;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+[data-theme='light'] .yearSliderLabel {
+    color: #1e293b;
+}
+
+.yearSlider {
+    display: flex;
+    gap: var(--space-4);
+    overflow-x: auto;
+    width: 100%;
+    justify-content: center;
+    padding: var(--space-2) var(--space-2);
+    -webkit-overflow-scrolling: touch;
+}
+
+.yearSlider::-webkit-scrollbar {
+    display: none;
+}
+
+.yearTab {
+    padding: var(--space-3) var(--space-8);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+[data-theme='light'] .yearTab {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.06);
+    color: #334155;
+}
+
+.yearTab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 153, 51, 0.5);
+    color: white;
+    transform: translateY(-3px) scale(1.02);
+}
+
+[data-theme='light'] .yearTab:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(255, 153, 51, 0.5);
+    color: #0f172a;
+}
+
+.yearTabActive {
+    background: linear-gradient(135deg, #FF9933 0%, #128807 100%) !important;
+    border-color: transparent !important;
+    color: white !important;
+    box-shadow: none !important;
+    transform: translateY(-2px) scale(1.05);
+}
+
+/* Centered Section Subtitle Styling */
+.sectionSubtitle {
+    font-family: 'Outfit', sans-serif;
+    text-align: center;
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: var(--space-12);
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+[data-theme='light'] .sectionSubtitle {
+    color: rgba(15, 23, 42, 0.7);
 }

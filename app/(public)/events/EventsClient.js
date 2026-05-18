@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { formatDate } from '@/utils/formatters';
 import styles from './events.module.css';
@@ -12,7 +13,7 @@ const translations = {
     // ... same as before
     en: {
         title: 'Events',
-        subtitle: 'Upcoming and Past Events',
+        subtitle: 'Empowering Communities, Inspiring Change',
         upcoming: 'Upcoming Events',
         past: 'Past Events',
         all: 'All Events',
@@ -23,7 +24,7 @@ const translations = {
     },
     te: {
         title: 'ఈవెంట్స్',
-        subtitle: 'రాబోయే మరియు గత ఈవెంట్స్',
+        subtitle: 'సమాజ సేవ - నిరంతర ప్రయాణం',
         upcoming: 'రాబోయే ఈవెంట్స్',
         past: 'గత ఈవెంట్స్',
         all: 'అన్ని ఈవెంట్స్',
@@ -34,7 +35,7 @@ const translations = {
     },
     hi: {
         title: 'कार्यक्रम',
-        subtitle: 'आगामी और पिछले कार्यक्रम',
+        subtitle: 'सच्ची सेवा, निरंतर बदलाव',
         upcoming: 'आगामी कार्यक्रम',
         past: 'पिछले कार्यक्रम',
         all: 'सभी कार्यक्रम',
@@ -49,22 +50,70 @@ export default function EventsClient({ events }) {
     const { language } = useLanguage();
     const t = translations[language];
     const [filter, setFilter] = useState('all');
+    const [selectedYear, setSelectedYear] = useState('2025-2026'); // Default to 2025-2026 as requested
     const [selectedEvent, setSelectedEvent] = useState(null);
+    const searchParams = useSearchParams();
+
+    // Deep-link: /events?open=<eventId> opens that event's modal automatically
+    useEffect(() => {
+        const openId = searchParams.get('open');
+        if (openId && events.length > 0) {
+            const target = events.find(ev => (ev.id || ev._id) === openId);
+            if (target) {
+                setSelectedYear('ALL'); // ensure the event is visible
+                setFilter('all');
+                setTimeout(() => setSelectedEvent(target), 300);
+            }
+        }
+    }, [searchParams, events]);
+
+    // Fallback: Automatically extract academic year from date if not manually configured
+    const getAcademicYear = (dateStr) => {
+        if (!dateStr) return '2025-2026';
+        const date = new Date(dateStr);
+        const year = date.getFullYear();
+        const month = date.getMonth(); // 0-indexed (June is 5)
+        
+        if (month >= 5) {
+            return `${year}-${year + 1}`;
+        } else {
+            return `${year - 1}-${year}`;
+        }
+    };
+
+    // Extract dynamic unique years from active database events, making sure 2025-2026 is visible
+    const defaultYears = ['2025-2026', '2024-2025'];
+    const academicYears = Array.from(
+        new Set([
+            'ALL',
+            ...defaultYears,
+            ...events.map(e => e.academicYear || getAcademicYear(e.date))
+        ])
+    ).filter(Boolean).sort((a, b) => {
+        if (a === 'ALL') return -1;
+        if (b === 'ALL') return 1;
+        return a.localeCompare(b); // Ascending chronological order
+    });
 
     const now = new Date();
     const filteredEvents = events.filter(event => {
-        // Prioritize manual eventType if it exists
+        // 1. Filter by Status/Date (Upcoming / Past)
+        let matchesCategory = true;
         if (event.eventType) {
-            if (filter === 'upcoming') return event.eventType === 'upcoming';
-            if (filter === 'past') return event.eventType === 'past';
-            return true;
+            if (filter === 'upcoming') matchesCategory = event.eventType === 'upcoming';
+            else if (filter === 'past') matchesCategory = event.eventType === 'past';
+        } else {
+            const eventDate = new Date(event.date);
+            if (filter === 'upcoming') matchesCategory = eventDate >= now;
+            else if (filter === 'past') matchesCategory = eventDate < now;
         }
 
-        // Fallback to date-based logic for older events
-        const eventDate = new Date(event.date);
-        if (filter === 'upcoming') return eventDate >= now;
-        if (filter === 'past') return eventDate < now;
-        return true;
+        if (!matchesCategory) return false;
+
+        // 2. Filter by Academic Year
+        if (selectedYear === 'ALL') return true;
+        const eventYear = event.academicYear || getAcademicYear(event.date);
+        return eventYear === selectedYear;
     });
 
     return (
@@ -88,30 +137,28 @@ export default function EventsClient({ events }) {
             </section>
 
             <div className="container">
+                {/* Elegant Dynamic Year Slider - Premium styling relevant to the light/glass bg theme */}
                 <motion.div
-                    className={styles.filters}
+                    className={styles.yearSliderContainer}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
+                    transition={{ delay: 0.45 }}
                 >
-                    <button
-                        className={`${styles.filterBtn} ${filter === 'all' ? styles.filterBtnActive : ''}`}
-                        onClick={() => setFilter('all')}
-                    >
-                        {t.all}
-                    </button>
-                    <button
-                        className={`${styles.filterBtn} ${filter === 'upcoming' ? styles.filterBtnActive : ''}`}
-                        onClick={() => setFilter('upcoming')}
-                    >
-                        {t.upcoming}
-                    </button>
-                    <button
-                        className={`${styles.filterBtn} ${filter === 'past' ? styles.filterBtnActive : ''}`}
-                        onClick={() => setFilter('past')}
-                    >
-                        {t.past}
-                    </button>
+                    <div className={styles.yearSliderLabel}>
+                        <Calendar size={14} style={{ color: '#FF9933' }} />
+                        <span>Academic Session</span>
+                    </div>
+                    <div className={styles.yearSlider}>
+                        {academicYears.map((year) => (
+                            <button
+                                key={year}
+                                className={`${styles.yearTab} ${selectedYear === year ? styles.yearTabActive : ''}`}
+                                onClick={() => setSelectedYear(year)}
+                            >
+                                {year === 'ALL' ? 'All Sessions' : year}
+                            </button>
+                        ))}
+                    </div>
                 </motion.div>
 
                 <div className={styles.resultsArea}>
@@ -170,7 +217,16 @@ export default function EventsClient({ events }) {
                                                 </div>
                                                 <div className={styles.eventDate}>
                                                     <div className={styles.dateDay}>
-                                                        {eventDate.getDate()}
+                                                        {(() => {
+                                                            const startDay = eventDate.getDate();
+                                                            if (event.endDate && event.endDate !== event.date) {
+                                                                const endDateObj = new Date(event.endDate);
+                                                                if (endDateObj.getMonth() === eventDate.getMonth() && endDateObj.getFullYear() === eventDate.getFullYear()) {
+                                                                    return `${startDay}-${endDateObj.getDate()}`;
+                                                                }
+                                                            }
+                                                            return startDay;
+                                                        })()}
                                                     </div>
                                                     <div className={styles.dateMonth}>
                                                         {eventDate.toLocaleDateString(language === 'en' ? 'en-US' : language === 'te' ? 'te-IN' : 'hi-IN', { month: 'short' })}
@@ -185,7 +241,11 @@ export default function EventsClient({ events }) {
                                                 <div className={styles.eventMeta}>
                                                     <div className={styles.metaRow}>
                                                         <Calendar size={14} className={styles.metaIcon} />
-                                                        <span>{formatDate(event.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}</span>
+                                                        <span>
+                                                            {event.endDate && event.endDate !== event.date
+                                                                ? `${formatDate(event.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')} - ${formatDate(event.endDate, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}`
+                                                                : formatDate(event.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}
+                                                        </span>
                                                     </div>
                                                     <div className={styles.metaRow}>
                                                         <MapPin size={14} className={styles.metaIcon} />

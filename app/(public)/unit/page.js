@@ -125,7 +125,11 @@ export default function UnitPage() {
                                     </div>
                                     <div className={styles.contactText}>
                                         <label>Phone</label>
-                                        <span>+91 99637 43377</span>
+                                        <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
+                                            <span><strong>AYAN:</strong> +91 99637 43377</span>
+                                            <span style={{ color: 'rgba(0,0,0,0.2)', fontWeight: 300 }}>|</span>
+                                            <span><strong>ADNAN:</strong> +91 99638 93388</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className={styles.contactRow}>

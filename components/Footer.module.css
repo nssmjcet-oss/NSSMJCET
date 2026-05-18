@@ -15,7 +15,7 @@
 
 .footerContent {
     display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr 1fr;
+    grid-template-columns: 2fr 1.5fr 1fr 1.5fr;
     gap: var(--space-8);
     margin-bottom: var(--space-4);
 }
@@ -203,8 +203,37 @@
 @media (max-width: 1024px) {
     .footerContent {
         grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-16);
+        gap: var(--space-10);
     }
+}
+
+.mapContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.mapLink {
+    display: block;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1e3a8a;
+    background: #f0f4ff;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+    border-radius: 0 0 12px 12px;
+}
+
+.mapLink:hover {
+    background: #dbeafe;
+    color: #1e40af;
 }
 
 @media (max-width: 768px) {

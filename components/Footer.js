@@ -83,16 +83,6 @@ export default function Footer() {
                         </p>
                     </div>
 
-                    <div className={styles.footerSection}>
-                        <h4 className={styles.sectionTitle}>{t.quickLinks}</h4>
-                        <ul className={styles.footerLinks}>
-                            <li><Link href="/">{t.home}</Link></li>
-                            <li><Link href="/about">{t.about}</Link></li>
-                            <li><Link href="/announcements">{t.announcements}</Link></li>
-                            <li><Link href="/events">{t.events}</Link></li>
-                            <li><Link href="/volunteer">{t.volunteer}</Link></li>
-                        </ul>
-                    </div>
 
                     <div className={styles.footerSection}>
                         <h4 className={styles.sectionTitle}>{t.contact}</h4>
@@ -110,7 +100,11 @@ export default function Footer() {
                             </li>
                             <li>
                                 <span className={styles.contactIcon}>📞</span>
-                                <a href="tel:+919963743377">{t.phone}</a>
+                                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
+                                    <p style={{ margin: 0 }}><span style={{ fontWeight: 600 }}>AYAN:</span> <a href="tel:+919963743377" style={{ textDecoration: 'none' }}>+91 99637 43377</a></p>
+                                    <span style={{ color: 'rgba(0,0,0,0.2)', fontWeight: 300 }}>|</span>
+                                    <p style={{ margin: 0 }}><span style={{ fontWeight: 600 }}>ADNAN:</span> <a href="tel:+919963893388" style={{ textDecoration: 'none' }}>+91 99638 93388</a></p>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -132,6 +126,31 @@ export default function Footer() {
                                 <svg viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                                 </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Google Maps — MJCET Location */}
+                    <div className={styles.footerSection}>
+                        <h4 className={styles.sectionTitle}>Find Us</h4>
+                        <div className={styles.mapContainer}>
+                            <iframe
+                                src="https://maps.google.com/maps?q=Muffakham+Jah+College+of+Engineering+%26+Technology,+Road+No.+3,+Banjara+Hills,+Hyderabad,+Telangana+500034&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                                width="100%"
+                                height="200"
+                                style={{ border: 0, borderRadius: '12px 12px 0 0', display: 'block' }}
+                                allowFullScreen
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                                title="MJCET Location"
+                            />
+                            <a
+                                href="https://maps.app.goo.gl/6NW8rS9rp4c3Fuwj7"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.mapLink}
+                            >
+                                📍 Open in Google Maps
                             </a>
                         </div>
                     </div>

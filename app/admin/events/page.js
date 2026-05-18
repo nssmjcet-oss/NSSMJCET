@@ -191,7 +191,11 @@ export default function EventsPage() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--marvel-text-dim)', fontSize: '14px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         <Calendar size={14} style={{ color: '#3b82f6' }} />
-                                        <span>{formatDate(event.date)}</span>
+                                        <span>
+                                            {event.endDate && event.endDate !== event.date
+                                                ? `${formatDate(event.date)} - ${formatDate(event.endDate)}`
+                                                : formatDate(event.date)}
+                                        </span>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         <MapPin size={14} style={{ color: '#3b82f6' }} />
@@ -282,10 +286,12 @@ function EventFormModal({ event, onClose, onSuccess }) {
             hi: event?.description?.hi || '',
         },
         date: event?.date ? new Date(event.date).toISOString().split('T')[0] : '',
+        endDate: event?.endDate ? new Date(event.endDate).toISOString().split('T')[0] : '',
         location: event?.location || '',
         images: event?.images || [],
         status: event?.status || 'published',
         eventType: event?.eventType || 'upcoming',
+        academicYear: event?.academicYear || '2025-2026',
     });
 
     const [loading, setLoading] = useState(false);
@@ -326,11 +332,11 @@ function EventFormModal({ event, onClose, onSuccess }) {
         setError(''); // Clear previous errors when starting new upload
         try {
             const uploadPromises = files.map(async (file) => {
-                // Use smaller dimensions and lower quality to fit Firestore 1MB document limit
+                // Shifted to MongoDB: raise compression resolution to HD (1920x1920) and high quality (0.9)
                 const dataUrl = await compressImageToDataURL(file, {
-                    maxWidth: 800,
-                    maxHeight: 800,
-                    quality: 0.6
+                    maxWidth: 1920,
+                    maxHeight: 1920,
+                    quality: 0.9
                 });
                 return dataUrl;
             });
@@ -493,15 +499,25 @@ function EventFormModal({ event, onClose, onSuccess }) {
                             )
                         ))}
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Event Date *</label>
+                                <label className={styles.label}>Start Date *</label>
                                 <input
                                     type="date"
                                     className={styles.input}
                                     value={formData.date}
                                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                                     required
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.label}>End Date (Optional)</label>
+                                <input
+                                    type="date"
+                                    className={styles.input}
+                                    value={formData.endDate}
+                                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                                 />
                             </div>
 
@@ -544,6 +560,45 @@ function EventFormModal({ event, onClose, onSuccess }) {
                                     </div>
                                 ))}
                             </div>
+                        </div>
+
+                        {/* Dynamic Academic Session Selection */}
+                        <div style={{ display: 'grid', gridTemplateColumns: (!['2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022'].includes(formData.academicYear) || formData.academicYear === '') ? '1fr 1fr' : '1fr', gap: '24px', marginBottom: '24px' }}>
+                            <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+                                <label className={styles.label}>Academic Session *</label>
+                                <select
+                                    className={styles.select}
+                                    value={['2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022'].includes(formData.academicYear) ? formData.academicYear : 'custom'}
+                                    onChange={(e) => {
+                                        if (e.target.value !== 'custom') {
+                                            setFormData({ ...formData, academicYear: e.target.value });
+                                        } else {
+                                            setFormData({ ...formData, academicYear: '' });
+                                        }
+                                    }}
+                                >
+                                    <option value="2025-2026">2025-2026</option>
+                                    <option value="2024-2025">2024-2025</option>
+                                    <option value="2023-2024">2023-2024</option>
+                                    <option value="2022-2023">2022-2023</option>
+                                    <option value="2021-2022">2021-2022</option>
+                                    <option value="custom">Other / Custom Year...</option>
+                                </select>
+                            </div>
+
+                            {(!['2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022'].includes(formData.academicYear) || formData.academicYear === '') && (
+                                <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+                                    <label className={styles.label}>Enter Custom Year *</label>
+                                    <input
+                                        type="text"
+                                        className={styles.input}
+                                        value={formData.academicYear || ''}
+                                        onChange={(e) => setFormData({ ...formData, academicYear: e.target.value })}
+                                        placeholder="e.g. 2026-2027"
+                                        required
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>

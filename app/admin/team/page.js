@@ -16,6 +16,9 @@ export default function TeamPage() {
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [translating, setTranslating] = useState(false);
+    const [selectedAdminYear, setSelectedAdminYear] = useState('2025-2026');
+    const [customYears, setCustomYears] = useState(['2025-2026']);
+    const [newYearInput, setNewYearInput] = useState('');
     const [formData, setFormData] = useState({
         name: { en: '', te: '', hi: '' },
         role: 'Core',
@@ -24,7 +27,9 @@ export default function TeamPage() {
         linkedin: '',
         github: '',
         image: '',
-        order: 0
+        order: 0,
+        academicYear: '2025-2026',
+        quote: { en: '', te: '', hi: '' }
     });
 
     const handleAutoTranslate = async (field, value) => {
@@ -151,7 +156,13 @@ export default function TeamPage() {
             linkedin: member?.linkedin || '',
             github: member?.github || '',
             image: member?.image || '',
-            order: member?.order || 0
+            order: member?.order || 0,
+            academicYear: member?.academicYear || selectedAdminYear,
+            quote: typeof member?.quote === 'object' ? {
+                en: member.quote.en || '',
+                te: member.quote.te || '',
+                hi: member.quote.hi || ''
+            } : { en: member?.quote || '', te: '', hi: '' }
         });
         setIsModalOpen(true);
     };
@@ -170,6 +181,99 @@ export default function TeamPage() {
                 <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => openModal()}>+ Add Member</button>
             </div>
 
+            {/* Year Selector with Custom Year Adding */}
+            <div style={{
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'center',
+                marginBottom: '20px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                padding: '14px 20px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                flexWrap: 'wrap'
+            }}>
+                <label style={{ fontWeight: '700', fontSize: '14px', color: '#FF9933', textTransform: 'uppercase', letterSpacing: '1px' }}>Academic Session:</label>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    {/* Dynamic year tabs: from DB + customYears, deduplicated */}
+                    {Array.from(new Set([
+                        ...customYears,
+                        ...team.map(m => m.academicYear).filter(Boolean)
+                    ])).sort((a, b) => b.localeCompare(a)).map((yr) => (
+                        <button
+                            key={yr}
+                            type="button"
+                            onClick={() => setSelectedAdminYear(yr)}
+                            style={{
+                                padding: '8px 16px',
+                                borderRadius: '20px',
+                                border: '1px solid',
+                                borderColor: selectedAdminYear === yr ? 'transparent' : 'rgba(255,255,255,0.15)',
+                                background: selectedAdminYear === yr ? 'linear-gradient(135deg, #FF9933 0%, #128807 100%)' : 'rgba(255,255,255,0.03)',
+                                color: '#fff',
+                                fontSize: '13px',
+                                fontWeight: '700',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease'
+                            }}
+                        >
+                            {yr}
+                        </button>
+                    ))}
+
+                    {/* Add custom year input */}
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginLeft: '8px' }}>
+                        <input
+                            type="text"
+                            placeholder="e.g. 2026-2027"
+                            value={newYearInput}
+                            onChange={(e) => setNewYearInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    const yr = newYearInput.trim();
+                                    if (yr && /^\d{4}-\d{4}$/.test(yr) && !customYears.includes(yr)) {
+                                        setCustomYears(prev => [...prev, yr]);
+                                        setSelectedAdminYear(yr);
+                                    }
+                                    setNewYearInput('');
+                                }
+                            }}
+                            style={{
+                                padding: '7px 12px',
+                                borderRadius: '20px',
+                                border: '1px dashed rgba(255,153,51,0.5)',
+                                background: 'rgba(255,153,51,0.05)',
+                                color: '#fff',
+                                fontSize: '13px',
+                                outline: 'none',
+                                width: '110px'
+                            }}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const yr = newYearInput.trim();
+                                if (yr && /^\d{4}-\d{4}$/.test(yr) && !customYears.includes(yr)) {
+                                    setCustomYears(prev => [...prev, yr]);
+                                    setSelectedAdminYear(yr);
+                                }
+                                setNewYearInput('');
+                            }}
+                            style={{
+                                padding: '7px 14px',
+                                borderRadius: '20px',
+                                border: 'none',
+                                background: 'linear-gradient(135deg, #FF9933, #128807)',
+                                color: '#fff',
+                                fontSize: '13px',
+                                fontWeight: '700',
+                                cursor: 'pointer'
+                            }}
+                        >+ Add</button>
+                    </div>
+                </div>
+            </div>
+
             <div className={styles.card}>
                 <div className={styles.tableContainer}>
                     <table className={styles.table}>
@@ -179,16 +283,17 @@ export default function TeamPage() {
                                 <th className={styles.th}>Name</th>
                                 <th className={styles.th}>Category</th>
                                 <th className={styles.th}>Position</th>
+                                <th className={styles.th}>Year</th>
                                 <th className={styles.th}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {team.length === 0 ? (
+                            {team.filter(m => (m.academicYear || '2025-2026') === selectedAdminYear).length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" className={styles.emptyState}>No team members found</td>
+                                    <td colSpan="6" className={styles.emptyState}>No team members found for {selectedAdminYear}</td>
                                 </tr>
                             ) : (
-                                team.map((member) => (
+                                team.filter(m => (m.academicYear || '2025-2026') === selectedAdminYear).map((member) => (
                                     <tr key={member.id} className={styles.tr}>
                                         <td className={styles.td}>
                                             <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', background: '#eee' }}>
@@ -206,6 +311,7 @@ export default function TeamPage() {
                                             </span>
                                         </td>
                                         <td className={styles.td}>{typeof member.position === 'object' ? member.position.en : (member.position || '-')}</td>
+                                        <td className={styles.td}>{member.academicYear || '2025-2026'}</td>
                                         <td className={styles.td}>
                                             <button
                                                 className={`${styles.btn} ${styles.btnSm} ${styles.btnSecondary}`}
@@ -271,7 +377,7 @@ export default function TeamPage() {
                                         />
                                     </div>
 
-                                    <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                                    <div className={styles.formGroup}>
                                         <label className={styles.label}>Group / Category *</label>
                                         <select
                                             className={styles.input}
@@ -283,6 +389,24 @@ export default function TeamPage() {
                                             <option value="GB">Governing Body (GB)</option>
                                             <option value="Execom">Executive Committee (Execom)</option>
                                             <option value="Core">Core Members</option>
+                                        </select>
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Academic Year *</label>
+                                        <select
+                                            className={styles.input}
+                                            value={formData.academicYear}
+                                            onChange={(e) => setFormData({ ...formData, academicYear: e.target.value })}
+                                            required
+                                            style={{ appearance: 'auto' }}
+                                        >
+                                            {Array.from(new Set([
+                                                ...customYears,
+                                                ...team.map(m => m.academicYear).filter(Boolean)
+                                            ])).sort((a, b) => b.localeCompare(a)).map((yr) => (
+                                                <option key={yr} value={yr}>{yr}</option>
+                                            ))}
                                         </select>
                                     </div>
 
@@ -316,6 +440,36 @@ export default function TeamPage() {
                                         />
                                     </div>
 
+                                    <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                                        <label className={styles.label}>Quote (English - Will Auto-Translate)</label>
+                                        <textarea
+                                            className={styles.input}
+                                            placeholder="Member's custom quote/phrase..."
+                                            value={formData.quote?.en || ''}
+                                            onChange={(e) => setFormData({ ...formData, quote: { ...formData.quote, en: e.target.value } })}
+                                            onBlur={(e) => handleAutoTranslate('quote', e.target.value)}
+                                            rows={2}
+                                        />
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Quote (Telugu)</label>
+                                        <textarea
+                                            className={styles.input}
+                                            value={formData.quote?.te || ''}
+                                            onChange={(e) => setFormData({ ...formData, quote: { ...formData.quote, te: e.target.value } })}
+                                            rows={2}
+                                        />
+                                    </div>
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Quote (Hindi)</label>
+                                        <textarea
+                                            className={styles.input}
+                                            value={formData.quote?.hi || ''}
+                                            onChange={(e) => setFormData({ ...formData, quote: { ...formData.quote, hi: e.target.value } })}
+                                            rows={2}
+                                        />
+                                    </div>
+
                                     <div className={styles.formGroup}>
                                         <label className={styles.label}>LinkedIn URL</label>
                                         <input
@@ -342,7 +496,7 @@ export default function TeamPage() {
                                             type="number"
                                             className={styles.input}
                                             value={formData.order}
-                                            onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
+                                            onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
                                         />
                                     </div>
                                     <div className={styles.formGroup}>

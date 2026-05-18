@@ -229,6 +229,7 @@
     font-size: var(--text-lg);
 }
 
+
 /* RESPONSIVE */
 @media (max-width: 1100px) {
     .devGrid {

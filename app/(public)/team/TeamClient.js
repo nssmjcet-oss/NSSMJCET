@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './team.module.css';
 import { motion } from 'framer-motion';
@@ -9,36 +10,107 @@ const translations = {
         title: 'Our Team',
         subtitle: 'Meet the NSS MJCET Team',
         gbs: 'Governing Body',
+        gbsSubtitle: 'The pillars of NSS MJCET — steering our mission with authority, wisdom, and unwavering commitment to society.',
         execom: 'Executive Committee',
-        core: 'Core Members',
+        execomSubtitle: 'The execution force behind every initiative — translating vision into action, and passion into impact.',
+
+        core: 'Our Core Team',
+        coreSubtitle: 'Meet the dedicated force driving our initiatives and carrying forward the spirit of community service.',
         noMembers: 'No team members found',
     },
     te: {
         title: 'మా టీమ్',
         subtitle: 'NSS MJCET టీమ్‌ను కలవండి',
         gbs: 'గవర్నింగ్ బాడీ',
+        gbsSubtitle: 'NSS MJCET యొక్క స్తంభాలు — అధికారం, జ్ఞానం మరియు సమాజంపై అచంచలమైన నిబద్ధతతో మా మిషన్‌ను నడిపించే నాయకులు.',
         execom: 'ఎగ్జిక్యూటివ్ కమిటీ',
-        core: 'కోర్ సభ్యులు',
+        execomSubtitle: 'ప్రతి చొరవ వెనక అమలు శక్తి — దృష్టిని చర్యగా మరియు అభిరుచిని ప్రభావంగా మార్చే బృందం.',
+
+        core: 'మా కోర్ టీమ్',
+        coreSubtitle: 'మా కార్యక్రమాలను ముందుకు నడిపిస్తూ, సమాజ సేవా స్ఫూర్తిని కొనసాగించే అంకితభావం గల సభ్యులను కలవండి.',
         noMembers: 'టీమ్ సభ్యులు కనుగొనబడలేదు',
     },
     hi: {
         title: 'हमारी टीम',
         subtitle: 'एनएसएस एमजेसीईटी टीम से मिलें',
         gbs: 'शासी निकाय',
+        gbsSubtitle: 'NSS MJCET के स्तंभ — अधिकार, ज्ञान और समाज के प्रति अटल प्रतिबद्धता के साथ हमारे मिशन का संचालन करते हैं।',
         execom: 'कार्यकारी समिति',
-        core: 'मुख्य सदस्य',
+        execomSubtitle: 'हर पहल के पीछे की क्रियान्वयन शक्ति — दृष्टि को कार्य में और जुनून को प्रभाव में बदलने वाली टीम।',
+
+        core: 'हमारी कोर टीम',
+        coreSubtitle: 'हमारी पहलों को आगे बढ़ाने और समाज सेवा की भावना को जीवित रखने वाले समर्पित सदस्यों से मिलें।',
         noMembers: 'कोई टीम सदस्य नहीं मिला',
     },
+};
+
+const filterQuotes = {
+    HR: { en: "“Managing talent, cultivating leadership, and fostering the spirit of volunteerism.”", te: "“ప్రతిభను నిర్వహించడం, నాయకత్వాన్ని పెంపొందించడం మరియు స్వచ్ఛంద స్ఫూర్తిని పెంపొందించడం.”", hi: "“प्रतिभा का प्रबंधन, नेतृत्व का विकास और स्वयंसेवा की भावना को बढ़ावा देना।”" },
+    MEDIA: { en: "“Capturing moments, telling stories, and bringing our social impact to life.”", te: "“క్షణాలను బంధించడం, కథలు చెప్పడం మరియు మా సామాజిక ప్రభావాన్ని సజీవం చేయడం.”", hi: "“क्षणों को कैद करना, कहानियां सुनाना और हमारे सामाजिक प्रभाव को जीवंत करना।”" },
+    DESIGN: { en: "“Visualizing change, crafting identity, and designing experiences that inspire action.”", te: "“మార్పును ఊహించడం, గుర్తింపును రూపొందించడం మరియు చర్యను ప్రేరేపించే అనుభవాలను రూపొందించడం.”", hi: "“बदलाव की कल्पना करना, पहचान बनाना और ऐसे अनुभवों को डिजाइन करना जो कार्रवाई को प्रेरित करें।”" },
+    DOC: { en: "“Recording milestones, writing history, and preserving our legacy of selfless service.”", te: "“మైలురాళ్లను రికార్డ్ చేయడం, చరిత్ర రాయడం మరియు నిస్వార్థ సేవ యొక్క మా వారసత్వాన్ని కాపాడటం.”", hi: "“मील के पत्थर दर्ज करना, इतिहास लिखना और निस्वार्थ सेवा की हमारी विरासत को संजोना।”" },
+    EVENTS: { en: "“Creating opportunities, orchestrating action, and transforming ideas into execution.”", te: "“అవకాశాలను సృష్టించడం, చర్యను ఆర్కెస్ట్రేట్ చేయడం మరియు ఆలోచనలను అమలులోకి మార్చడం.”", hi: "“अवसर पैदा करना, कार्रवाई को व्यवस्थित करना और विचारों को क्रियान्वयन में बदलना।”" },
+    MARKETING: { en: "“Amplifying voices, building connections, and driving our mission to the world.”", te: "“స్వరాలను విస్తరించడం, కనెక్షన్‌లను నిర్మించడం మరియు ప్రపంచానికి మా మిషన్‌ను నడపడం.”", hi: "“आवाज़ों को बुलंद करना, संबंध बनाना और दुनिया में हमारे मिशन को आगे बढ़ना।”" },
+    PR: { en: "“Fostering relationships, building trust, and connecting communities for social good.”", te: "“సంబంధాలను పెంపొжденచడం, నమ్మకాన్ని నిర్మించడం మరియు సామాజిక మంచి కోసం సంఘాలను అనుసంధానించడం.”", hi: "“संबंधों को बढ़ावा देना, विश्वास का निर्माण करना और सामाजिक भलाई के लिए समुदायों को जोड़ना।”" },
+    LOGISTICS: { en: "“Managing execution, coordinating operations, and making every initiative seamless.”", te: "“అమలును నిర్వహించడం, కార్యకలాపాలను సమన్వయం చేయడం మరియు ప్రతి చొరవను అతుకులు లేకుండా చేయడం.”", hi: "“क्रियान्वयन का प्रबंधन, संचालन का समन्वय और हर पहल को निर्बाध बनाना।”" },
+    TECH: { en: "“Coding for change, building platforms, and empowering social service through technology.”", te: "“మార్పు కోసం కోడింగ్, ప్లాట్‌ఫారమ్‌లను నిర్మించడం మరియు సాంకేతికత ద్వారా సామాజిక సేవను బలోపేతం చేయడం.”", hi: "“बदलाव के लिए कोडिंग, प्लेटफॉर्म बनाना और तकनीक के माध्यम से समाज सेवा को सशक्त बनाना।”" }
 };
 
 export default function TeamClient({ members }) {
     const { language } = useLanguage();
     const t = translations[language];
 
+    const [execomFilter, setExecomFilter] = useState('ALL');
+    const [coreFilter, setCoreFilter] = useState('ALL');
+    const [selectedYear, setSelectedYear] = useState('2025-2026'); // Default to 2025-2026 as requested
 
-    const gbsMembers = members.filter(m => m.role === 'GB');
-    const execomMembers = members.filter(m => m.role === 'Execom');
-    const coreMembers = members.filter(m => m.role === 'Core');
+    const filters = ['ALL', 'HR', 'PR', 'MEDIA', 'DESIGN', 'DOC', 'EVENTS', 'MARKETING', 'LOGISTICS', 'TECH'];
+
+    // Only show years that have actual members, plus always include 2025-2026
+    const academicYears = Array.from(
+        new Set([
+            '2025-2026',
+            ...members.map(m => m.academicYear).filter(Boolean)
+        ])
+    ).sort((a, b) => b.localeCompare(a));
+
+    const matchesFilter = (member, filter) => {
+        if (filter === 'ALL') return true;
+        const pos = (typeof member.position === 'object' ? (member.position.en || '') : (member.position || '')).toLowerCase();
+        
+        switch (filter) {
+            case 'HR':
+                return pos.includes('human resources') || pos.includes('hr');
+            case 'MEDIA':
+                return pos.includes('media');
+            case 'DESIGN':
+                return pos.includes('design');
+            case 'DOC':
+                return pos.includes('documentation') || pos.includes('doc');
+            case 'EVENTS':
+                return pos.includes('event');
+            case 'LOGISTICS':
+                return pos.includes('logistics');
+            case 'MARKETING':
+                return pos.includes('marketing');
+            case 'TECH':
+                return pos.includes('tech') || pos.includes('web master') || pos.includes('web');
+            case 'PR':
+                return pos.includes('public relation') || pos.includes('pr');
+            default:
+                return false;
+        }
+    };
+
+    // Filter members first by Year (defaulting missing fields to 2025-2026)
+    const yearMembers = members.filter(m => (m.academicYear || '2025-2026') === selectedYear);
+
+    const gbsMembers = yearMembers.filter(m => m.role === 'GB');
+    const execomMembers = yearMembers.filter(m => m.role === 'Execom');
+    const coreMembers = yearMembers.filter(m => m.role === 'Core');
+
+    const filteredExecom = execomMembers.filter(m => matchesFilter(m, execomFilter));
+    const filteredCore = coreMembers.filter(m => matchesFilter(m, coreFilter));
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -52,25 +124,33 @@ export default function TeamClient({ members }) {
 
     return (
         <div className={styles.teamPage}>
-            <section className={styles.hero}>
-                <div className="container">
-                    <motion.h1
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                    >
-                        {t.title}
-                    </motion.h1>
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                    >
-                        {t.subtitle}
-                    </motion.p>
-                </div>
-            </section>
 
             <div className="container">
+                {/* Elegant Dynamic Year Slider */}
+                <motion.div
+                    className={styles.yearSliderContainer}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.25 }}
+                >
+
+                    <div className={styles.yearSlider}>
+                        {academicYears.map((year) => (
+                            <button
+                                key={year}
+                                className={`${styles.yearTab} ${selectedYear === year ? styles.yearTabActive : ''}`}
+                                onClick={() => {
+                                    setSelectedYear(year);
+                                    setExecomFilter('ALL');
+                                    setCoreFilter('ALL');
+                                }}
+                            >
+                                {year}
+                            </button>
+                        ))}
+                    </div>
+                </motion.div>
+
                 {gbsMembers.length > 0 && (
                     <section className={styles.section}>
                         <motion.h2
@@ -81,6 +161,15 @@ export default function TeamClient({ members }) {
                         >
                             {t.gbs}
                         </motion.h2>
+                        <motion.p
+                            className={styles.sectionSubtitle}
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
+                        >
+                            {t.gbsSubtitle}
+                        </motion.p>
                         <motion.div
                             className={styles.teamGrid}
                             variants={containerVariants}
@@ -91,7 +180,6 @@ export default function TeamClient({ members }) {
                             {gbsMembers.map((member, idx) => (
                                 <MemberCard key={member._id} member={member} priority={idx < 4} />
                             ))}
-
                         </motion.div>
                     </section>
                 )}
@@ -106,18 +194,58 @@ export default function TeamClient({ members }) {
                         >
                             {t.execom}
                         </motion.h2>
-                        <motion.div
-                            className={styles.teamGrid}
-                            variants={containerVariants}
-                            initial="hidden"
-                            whileInView="visible"
+                        <motion.p
+                            className={styles.sectionSubtitle}
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
                         >
-                            {execomMembers.map((member, idx) => (
-                                <MemberCard key={member._id} member={member} priority={idx < 4} />
-                            ))}
+                            {t.execomSubtitle}
+                        </motion.p>
 
-                        </motion.div>
+                        {/* Separate Department Filter Bar for Execom */}
+                        <div className={styles.filterContainer}>
+                            {filters.map((filter) => (
+                                <button
+                                    key={filter}
+                                    className={`${styles.filterBtn} ${execomFilter === filter ? styles.filterBtnActive : ''}`}
+                                    onClick={() => setExecomFilter(filter)}
+                                >
+                                    {filter}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Active Filter Announcement Banner for Execom */}
+                        {execomFilter !== 'ALL' && filterQuotes[execomFilter] && (
+                            <div className={styles.filterBanner}>
+                                <div className={styles.filterQuoteTitle}>
+                                    <span style={{ textTransform: 'uppercase', color: '#FF9933' }}>{execomFilter}</span>
+                                </div>
+                                <p className={styles.filterQuoteText}>
+                                    {filterQuotes[execomFilter][language] || filterQuotes[execomFilter].en}
+                                </p>
+                            </div>
+                        )}
+
+                        {filteredExecom.length > 0 ? (
+                            <motion.div
+                                className={styles.teamGrid}
+                                variants={containerVariants}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                            >
+                                {filteredExecom.map((member, idx) => (
+                                    <MemberCard key={member._id} member={member} priority={idx < 4} />
+                                ))}
+                            </motion.div>
+                        ) : (
+                            <div className={styles.noMembers}>
+                                <p>{t.noMembers} for the selected department</p>
+                            </div>
+                        )}
                     </section>
                 )}
 
@@ -131,22 +259,64 @@ export default function TeamClient({ members }) {
                         >
                             {t.core}
                         </motion.h2>
-                        <motion.div
-                            className={styles.compactGrid}
-                            variants={containerVariants}
-                            initial="hidden"
-                            whileInView="visible"
+                        <motion.p
+                            className={styles.sectionSubtitle}
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
                         >
-                            {coreMembers.map((member, idx) => (
-                                <MemberCard key={member._id} member={member} compact={true} priority={idx < 8} />
-                            ))}
+                            {t.coreSubtitle}
+                        </motion.p>
 
-                        </motion.div>
+                        {/* Separate Department Filter Bar for Core */}
+                        <div className={styles.filterContainer}>
+                            {filters.map((filter) => (
+                                <button
+                                    key={filter}
+                                    className={`${styles.filterBtn} ${coreFilter === filter ? styles.filterBtnActive : ''}`}
+                                    onClick={() => setCoreFilter(filter)}
+                                >
+                                    {filter}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Active Filter Announcement Banner for Core */}
+                        {coreFilter !== 'ALL' && filterQuotes[coreFilter] && (
+                            <div className={styles.filterBanner}>
+                                <div className={styles.filterQuoteTitle}>
+                                    <span style={{ textTransform: 'uppercase', color: '#FF9933' }}>{coreFilter}</span>
+                                </div>
+                                <p className={styles.filterQuoteText}>
+                                    {filterQuotes[coreFilter][language] || filterQuotes[coreFilter].en}
+                                </p>
+                            </div>
+                        )}
+
+                        {filteredCore.length > 0 ? (
+                            <motion.div
+                                className={styles.teamGrid}
+                                variants={containerVariants}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                            >
+                                {filteredCore.map((member, idx) => (
+                                    <MemberCard key={member._id} member={member} priority={idx < 8} />
+                                ))}
+                            </motion.div>
+                        ) : (
+                            <div className={styles.noMembers}>
+                                <p>{t.noMembers} for the selected department</p>
+                            </div>
+                        )}
                     </section>
                 )}
 
-                {members.length === 0 && (
+
+
+                {yearMembers.length === 0 && (
                     <div className={styles.noMembers}>
                         <p>{t.noMembers}</p>
                     </div>

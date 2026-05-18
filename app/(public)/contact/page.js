@@ -166,7 +166,11 @@ export default function ContactPage() {
                                 <div className={styles.infoIcon}>📞</div>
                                 <div>
                                     <h4>{t.phone}</h4>
-                                    <p>+91 99637 43377</p>
+                                    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
+                                        <p style={{ margin: 0 }}><span style={{ fontWeight: 600 }}>AYAN:</span> <a href="tel:+919963743377" style={{ textDecoration: 'none', color: 'inherit' }}>+91 99637 43377</a></p>
+                                        <span style={{ color: 'rgba(0,0,0,0.2)', fontWeight: 300 }}>|</span>
+                                        <p style={{ margin: 0 }}><span style={{ fontWeight: 600 }}>ADNAN:</span> <a href="tel:+919963893388" style={{ textDecoration: 'none', color: 'inherit' }}>+91 99638 93388</a></p>
+                                    </div>
                                 </div>
                             </div>
 

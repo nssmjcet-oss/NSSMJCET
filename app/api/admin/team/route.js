@@ -40,7 +40,7 @@ export async function POST(request) {
 
         await connectToDatabase();
         const body = await request.json();
-        const { name, role, position, email, linkedin, github, image, order } = body;
+        const { name, role, position, email, linkedin, github, image, order, academicYear, quote } = body;
 
         if (!name || (!name.en && typeof name !== 'string')) {
             return NextResponse.json({ error: 'Name is required' }, { status: 400 });
@@ -58,6 +58,8 @@ export async function POST(request) {
             github: github || '',
             image: await maybeUploadImage(image, 'team') || '',
             order: order !== undefined ? order : 0,
+            academicYear: academicYear || '2025-2026',
+            quote: quote || { en: '', te: '', hi: '' },
             createdAt: new Date(),
             updatedAt: new Date(),
         };

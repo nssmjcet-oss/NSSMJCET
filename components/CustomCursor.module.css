@@ -19,13 +19,13 @@
 /* ─── Center dot ───────────────────────────────────────── */
 .cursorDot {
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: radial-gradient(circle, #FF9933 0%, #e07a00 100%);
     box-shadow:
-        0 0 10px rgba(255,153,51,0.9),
-        0 0 20px rgba(255,153,51,0.5);
+        0 0 6px rgba(255,153,51,0.9),
+        0 0 12px rgba(255,153,51,0.5);
     pointer-events: none;
     z-index: 1000000;
     will-change: transform;
@@ -36,19 +36,19 @@
 
 /* dot grows + turns green on hover */
 .cursorDot.hovering {
-    width: 32px;
-    height: 32px;
+    width: 10px;
+    height: 10px;
     background: radial-gradient(circle, #1db811 0%, #138808 100%);
     box-shadow:
-        0 0 15px rgba(19,136,8,0.9),
-        0 0 30px rgba(19,136,8,0.5);
+        0 0 8px rgba(19,136,8,0.9),
+        0 0 16px rgba(19,136,8,0.5);
 }
 
 /* ─── Chakra ring ──────────────────────────────────────── */
 .cursorRing {
     position: absolute;
-    width: 90px;
-    height: 90px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     pointer-events: none;
     z-index: 999999;
@@ -64,8 +64,8 @@
 }
 
 .cursorRing.ringHovering {
-    width: 130px;
-    height: 130px;
+    width: 48px;
+    height: 48px;
     color: #138808;
 }
 

@@ -13,23 +13,36 @@
 }
 
 .leadershipContainer {
-    max-width: 950px;
+    max-width: 1400px;
     margin: 0 auto;
     position: relative;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    gap: var(--space-8);
+    align-items: stretch;
+    justify-content: center;
 }
 
 .cardSection {
-    width: 100%;
-    margin-bottom: var(--space-20);
+    flex: 1;
+    min-width: 0;
     position: relative;
     z-index: 2;
 }
 
-.cardSection:last-child {
-    margin-bottom: 0;
+@media (max-width: 1200px) {
+    .leadershipContainer {
+        flex-direction: column;
+        align-items: center;
+        max-width: 950px;
+    }
+    .cardSection {
+        width: 100%;
+        margin-bottom: var(--space-20);
+    }
+    .cardSection:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .sectionTitle {
@@ -83,16 +96,16 @@
     -webkit-backdrop-filter: var(--glass-blur);
     border: none;
     position: relative;
-    border-radius: 48px;
-    padding: var(--space-10) var(--space-12);
+    border-radius: 32px;
+    padding: var(--space-6) var(--space-6);
     display: grid;
-    grid-template-columns: 340px 1fr;
-    gap: var(--space-12);
+    grid-template-columns: 200px 1fr;
+    gap: var(--space-8);
     box-shadow: 
         0 20px 60px -10px rgba(0, 0, 0, 0.08),
         inset 0 1px 1px rgba(255, 255, 255, 0.8);
     overflow: hidden;
-    min-height: 500px;
+    min-height: 340px;
     transition: all var(--transition-slow);
 }
 
@@ -126,7 +139,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: 48px;
+    border-radius: 32px;
     padding: 2px;
     background: linear-gradient(135deg, 
         rgba(255, 255, 255, 0.8), 
@@ -186,10 +199,10 @@
 .imgContainer {
     width: 100%;
     aspect-ratio: 4 / 5;
-    border-radius: 28px;
+    border-radius: 20px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
     background: rgba(255, 255, 255, 0.1);
 }
 
@@ -219,16 +232,16 @@
 
 .badge {
     position: absolute;
-    top: 24px;
-    right: 24px;
+    top: 12px;
+    right: 12px;
     background: white;
-    padding: 10px 20px;
+    padding: 6px 12px;
     border-radius: 100px;
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 950;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    letter-spacing: 1px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
     color: var(--heading);
     z-index: 10;
 }
@@ -254,37 +267,42 @@
 }
 
 .name {
-    font-size: 2.8rem;
-    font-weight: 950;
+    font-size: 1.7rem;
+    font-weight: 900;
     color: var(--heading);
-    margin-bottom: var(--space-4);
-    letter-spacing: -2px;
-    line-height: 1.1;
+    margin-bottom: var(--space-2);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
 }
 
 .departmentBlock {
     display: flex;
     align-items: center;
-    gap: var(--space-6);
+    gap: var(--space-3);
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 24px;
-    padding: var(--space-6) var(--space-8);
-    margin-bottom: var(--space-8);
+    border-radius: 16px;
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-4);
     width: fit-content;
 }
 
 .deptIcon {
-    width: 44px;
-    height: 44px;
+    width: 32px;
+    height: 32px;
     background: white;
-    border-radius: 12px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--heading);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.deptIcon svg {
+    width: 16px;
+    height: 16px;
 }
 
 .deptContent {
@@ -302,7 +320,7 @@
 .divider {
     height: 1px;
     background: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent);
-    margin: var(--space-8) 0;
+    margin: var(--space-4) 0;
 }
 
 .quoteWrapper {
@@ -330,8 +348,8 @@
 .quote {
     font-style: italic;
     color: var(--quote);
-    line-height: 1.6;
-    font-size: 1.2rem;
+    line-height: 1.5;
+    font-size: 0.95rem;
     font-weight: 500;
 }
 

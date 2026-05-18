@@ -206,7 +206,7 @@ function FlagshipModal({ flagship, onClose, onSuccess }) {
 
                         {/* Link to Event */}
                         <div className={styles.formGroup}>
-                            <label className={styles.label}>Linked Event (for "More Info" button)</label>
+                            <label className={styles.label}>Linked Event (for &quot;More Info&quot; button)</label>
                             <select
                                 className={styles.select}
                                 value={form.linkedEventId}
@@ -219,7 +219,7 @@ function FlagshipModal({ flagship, onClose, onSuccess }) {
                                     </option>
                                 ))}
                             </select>
-                            <p style={{ fontSize: '11px', color: '#9ca3af', marginTop: '6px' }}>When selected, "More Info" button will open that event's detail modal on the Events page.</p>
+                            <p style={{ fontSize: '11px', color: '#9ca3af', marginTop: '6px' }}>When selected, &quot;More Info&quot; button will open that event&apos;s detail modal on the Events page.</p>
                         </div>
 
                         {/* Display Order */}
@@ -251,14 +251,14 @@ function FlagshipModal({ flagship, onClose, onSuccess }) {
                                         placeholder="e.g. SPANDAN" />
                                 </div>
                                 <div className={styles.formGroup}>
-                                    <label className={styles.label}>Short Tag ({lang.toUpperCase()}) — e.g. "Saves Lives"</label>
+                                    <label className={styles.label}>Short Tag ({lang.toUpperCase()}) — e.g. &quot;Saves Lives&quot;</label>
                                     <input type="text" className={styles.input} value={form.tag[lang]}
                                         onChange={e => setForm(p => ({ ...p, tag: { ...p.tag, [lang]: e.target.value } }))}
                                         onBlur={lang === 'en' ? e => handleAutoTranslate('tag', e.target.value) : undefined}
                                         placeholder="Short category tag" />
                                 </div>
                                 <div className={styles.formGroup}>
-                                    <label className={styles.label}>Tagline ({lang.toUpperCase()}) — e.g. "Mega Blood Drive"</label>
+                                    <label className={styles.label}>Tagline ({lang.toUpperCase()}) — e.g. &quot;Mega Blood Drive&quot;</label>
                                     <input type="text" className={styles.input} value={form.tagline[lang]}
                                         onChange={e => setForm(p => ({ ...p, tagline: { ...p.tagline, [lang]: e.target.value } }))}
                                         onBlur={lang === 'en' ? e => handleAutoTranslate('tagline', e.target.value) : undefined}

@@ -220,6 +220,15 @@
     .hamburgerWrapper {
         display: flex;
     }
+
+    .logoWrapper {
+        width: 56px !important;
+        height: 56px !important;
+    }
+
+    .largeLogo {
+        height: 46px !important;
+    }
 }
 
 .navLinks {
@@ -473,8 +482,13 @@
 }
 
 @media (max-width: 480px) {
+    .logoWrapper {
+        width: 48px !important;
+        height: 48px !important;
+    }
+
     .largeLogo {
-        height: 40px;
+        height: 38px !important;
     }
 
     .navbar {

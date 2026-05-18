@@ -237,6 +237,48 @@ export default function ContentPage() {
         }
     };
 
+    const handleClearLiveEvent = async () => {
+        if (!confirm('Are you sure you want to clear/delete the Live Event? This will remove it from the home page.')) return;
+        setSaving(true);
+        try {
+            const clearedEvent = {
+                pageId: 'live_event',
+                title: { en: '', te: '', hi: '' },
+                content: { en: '', te: '', hi: '' },
+                subtitle: { en: 'Live Event', te: 'లైవ్ ఈవెంట్', hi: 'लाइव कार्यक्रम' },
+                btnText: { en: 'View Details', te: 'మరింత సమాచారం', hi: 'विवरण देखें' },
+                btnLink: '',
+                image: '',
+                isActive: false,
+                sections: []
+            };
+
+            await adminFetch('/api/admin/content', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'content', ...clearedEvent }),
+            });
+
+            setFormData(clearedEvent);
+
+            // Revalidate pages
+            await Promise.all([
+                adminFetch('/api/revalidate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: '/' }),
+                }),
+            ]).catch(err => console.log('Revalidation error:', err));
+
+            alert('Live Event spotlight successfully cleared/deleted.');
+        } catch (error) {
+            console.error('Error clearing live event', error);
+            alert('Failed to clear live event');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     // Helper functions for dynamic sections
     const addSection = () => {
         setFormData({
@@ -725,7 +767,17 @@ export default function ContentPage() {
                         </>
                     )}
 
-                    <div style={{ display: 'flex', justifySelf: 'end', marginTop: '1rem' }}>
+                    <div style={{ display: 'flex', justifySelf: 'end', marginTop: '1rem', gap: '12px' }}>
+                        {selectedPage === 'live_event' && formData.image && (
+                            <button
+                                type="button"
+                                className={`${styles.btn} ${styles.btnDanger}`}
+                                onClick={handleClearLiveEvent}
+                                disabled={saving}
+                            >
+                                Clear/Delete Live Event
+                            </button>
+                        )}
                         <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`} disabled={saving}>
                             {saving ? 'Saving...' : 'Save Changes'}
                         </button>

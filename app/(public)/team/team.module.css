@@ -3,6 +3,27 @@
     padding-top: clamp(120px, 12vw, 160px);
     background: var(--marvel-bg);
     color: var(--marvel-text);
+    position: relative;
+    overflow: hidden;
+}
+
+.teamPage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    background-position: center top;
+    pointer-events: none;
+    z-index: 0;
+}
+
+[data-theme='light'] .teamPage::before {
+    background-image: 
+        linear-gradient(rgba(0, 0, 0, 0.01) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.01) 1px, transparent 1px);
 }
 
 
@@ -99,8 +120,8 @@
 }
 
 .memberAvatar {
-    width: 200px;
-    height: 200px;
+    width: 240px;
+    height: 240px;
     margin: 0 auto var(--space-6);
     border-radius: 20px;
     overflow: hidden;
@@ -111,8 +132,8 @@
 }
 
 .compactMemberBox .memberAvatar {
-    width: 150px;
-    height: 150px;
+    width: 185px;
+    height: 185px;
     margin: 0 auto var(--space-4);
     border-radius: 16px;
 }
@@ -130,9 +151,7 @@
 .avatarGlowOverlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top,
-            rgba(255, 153, 51, 0.2) 0%,
-            transparent 55%);
+    background: linear-gradient(to top, rgba(255, 153, 51, 0.2) 0%, transparent 55%);
     opacity: 0;
     transition: opacity 0.45s ease;
     pointer-events: none;
@@ -141,6 +160,18 @@
 
 .memberBox:hover .avatarGlowOverlay {
     opacity: 1;
+}
+
+.cardGb .avatarGlowOverlay {
+    background: linear-gradient(to top, rgba(139, 92, 246, 0.25) 0%, transparent 55%);
+}
+
+.cardExecom .avatarGlowOverlay {
+    background: linear-gradient(to top, rgba(59, 130, 246, 0.2) 0%, transparent 55%);
+}
+
+.cardCore .avatarGlowOverlay {
+    background: linear-gradient(to top, rgba(16, 185, 129, 0.2) 0%, transparent 55%);
 }
 
 .memberAvatar img {
@@ -264,14 +295,14 @@
     }
 
     .memberAvatar {
-        width: 120px;
-        height: 120px;
+        width: 210px;
+        height: 210px;
         border-radius: 25px;
     }
 
     .compactMemberBox .memberAvatar {
-        width: 100px;
-        height: 100px;
+        width: 145px;
+        height: 145px;
         border-radius: 16px;
     }
 
@@ -509,4 +540,342 @@
 
 [data-theme='light'] .sectionSubtitle {
     color: rgba(15, 23, 42, 0.7);
+}
+
+/* ==========================================================================
+   Role-Specific Card Redesigns (GB, Execom, Core)
+   ========================================================================== */
+
+/* --- Governing Body (GB): Majestic Royal Purple Theme --- */
+.cardGb {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(15, 10, 25, 0.8) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.28);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+    position: relative;
+}
+
+[data-theme='light'] .cardGb {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(253, 251, 255, 0.96) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.06);
+}
+
+.avatarGb {
+    border: 2.5px solid rgba(139, 92, 246, 0.45);
+    border-radius: 20px !important; /* Premium square format with rounded corners */
+    position: relative;
+}
+
+.avatarGb::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    border-radius: 24px; /* Matching rounded square outer halo */
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.compactMemberBox .avatarGb {
+    border-radius: 16px !important;
+}
+
+.compactMemberBox .avatarGb::after {
+    border-radius: 20px;
+}
+
+.memberBox:hover .avatarGb {
+    border-color: rgba(139, 92, 246, 0.95);
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.35), 0 0 0 4px rgba(139, 92, 246, 0.1);
+}
+
+.memberBox:hover .avatarGb::after {
+    inset: -9px;
+    border-color: rgba(139, 92, 246, 0.85);
+    transform: scale(1.02);
+}
+
+.socialGb {
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.22);
+    color: #a78bfa !important;
+}
+
+.socialGb:hover {
+    background: rgba(139, 92, 246, 0.2) !important;
+    border-color: #8b5cf6 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
+}
+
+
+
+/* --- Executive Committee (Execom): Cyber Electric Blue/Cyan Theme --- */
+.cardExecom {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.04) 0%, rgba(15, 15, 15, 0.8) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+}
+
+[data-theme='light'] .cardExecom {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(255, 255, 255, 0.95) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.06);
+}
+
+.avatarExecom {
+    border: 2px solid rgba(59, 130, 246, 0.35);
+    border-radius: 50% !important; /* Perfect circular avatars for Execom */
+}
+
+.compactMemberBox .avatarExecom {
+    border-radius: 50% !important;
+}
+
+.memberBox:hover .avatarExecom {
+    border-color: rgba(59, 130, 246, 0.85);
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.3), 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.socialExecom {
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: #60a5fa !important;
+}
+
+.socialExecom:hover {
+    background: rgba(59, 130, 246, 0.25) !important;
+    border-color: #3b82f6 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.cyberCornerDeco {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 14px;
+    height: 14px;
+    border-top: 2px solid rgba(59, 130, 246, 0.6);
+    border-left: 2px solid rgba(59, 130, 246, 0.6);
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.memberBox:hover .cyberCornerDeco {
+    width: 20px;
+    height: 20px;
+    border-color: rgba(59, 130, 246, 0.9);
+}
+
+/* --- Core Team: Modern Green Theme --- */
+.cardCore {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.03) 0%, rgba(15, 15, 15, 0.8) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+    position: relative;
+}
+
+[data-theme='light'] .cardCore {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, rgba(255, 255, 255, 0.95) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.04);
+}
+
+/* Removed old bottom expanding line as it's replaced by .coreFrame */
+
+.avatarCore {
+    border: 2px solid rgba(16, 185, 129, 0.3);
+    border-radius: 50% !important; /* Perfect circular avatars for Core */
+    position: relative;
+}
+
+.avatarCore::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border: 1.5px dashed rgba(16, 185, 129, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.compactMemberBox .avatarCore {
+    border-radius: 50% !important;
+}
+
+.memberBox:hover .avatarCore {
+    border-color: rgba(16, 185, 129, 0.8);
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.25), 0 0 0 4px rgba(16, 185, 129, 0.08);
+}
+
+.memberBox:hover .avatarCore::after {
+    transform: rotate(45deg);
+    border-color: rgba(16, 185, 129, 0.85);
+    inset: -9px;
+}
+
+.socialCore {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #34d399 !important;
+}
+
+.socialCore:hover {
+    background: rgba(16, 185, 129, 0.25) !important;
+    border-color: #10b981 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+/* ==========================================================================
+   Static Frame Decorations for Cards
+   ========================================================================== */
+
+/* --- GB: Majestic Royal Purple Gradient Frame --- */
+.gbFrame {
+    position: absolute;
+    inset: 16px;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 14px;
+    border: 1px double rgba(139, 92, 246, 0.15);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gbFrame::before,
+.gbFrame::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border-color: rgba(139, 92, 246, 0.4);
+    border-style: solid;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Top-Left luxury bracket */
+.gbFrame::before {
+    top: -2px;
+    left: -2px;
+    border-width: 2.5px 0 0 2.5px;
+    border-radius: 6px 0 0 0;
+}
+
+/* Bottom-Right luxury bracket */
+.gbFrame::after {
+    bottom: -2px;
+    right: -2px;
+    border-width: 0 2.5px 2.5px 0;
+    border-radius: 0 0 6px 0;
+}
+
+.memberBox:hover .gbFrame {
+    inset: 12px;
+    border-color: rgba(139, 92, 246, 0.45);
+}
+
+.memberBox:hover .gbFrame::before,
+.memberBox:hover .gbFrame::after {
+    border-color: rgba(139, 92, 246, 1);
+    width: 45px;
+    height: 45px;
+}
+
+/* --- Execom: Cybernetic Corner Brackets --- */
+.execomFrame {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    border-radius: inherit;
+    transition: all 0.4s ease;
+}
+
+.execomFrame::before,
+.execomFrame::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-color: rgba(59, 130, 246, 0.4);
+    border-style: solid;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Top-Right Bracket */
+.execomFrame::before {
+    top: 12px;
+    right: 12px;
+    border-width: 2px 2px 0 0;
+    border-radius: 0 8px 0 0;
+}
+
+/* Bottom-Left Bracket */
+.execomFrame::after {
+    bottom: 12px;
+    left: 12px;
+    border-width: 0 0 2px 2px;
+    border-radius: 0 0 0 8px;
+}
+
+.memberBox:hover .execomFrame::before {
+    width: 50px;
+    height: 50px;
+    top: 8px;
+    right: 8px;
+    border-color: rgba(59, 130, 246, 0.9);
+}
+
+.memberBox:hover .execomFrame::after {
+    width: 50px;
+    height: 50px;
+    bottom: 8px;
+    left: 8px;
+    border-color: rgba(59, 130, 246, 0.9);
+}
+
+/* --- Core: Modern Accent Frame --- */
+.coreFrame {
+    position: absolute;
+    inset: 16px;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: 14px;
+    pointer-events: none;
+    z-index: 1;
+    transition: all 0.4s ease;
+}
+
+.coreFrame::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    background: rgba(16, 185, 129, 0.6);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.coreFrame::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    background: rgba(16, 185, 129, 0.6);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.memberBox:hover .coreFrame {
+    border-color: rgba(16, 185, 129, 0.4);
+    inset: 12px;
+}
+
+.memberBox:hover .coreFrame::before,
+.memberBox:hover .coreFrame::after {
+    width: 100px;
+    background: rgba(16, 185, 129, 0.9);
 }

@@ -207,55 +207,27 @@ export default function EventsClient({ events }) {
                                                     className={styles.eventImage}
                                                     variants={{
                                                         rest: { scale: 1 },
-                                                        hover: { scale: 1.15 }
+                                                        hover: { scale: 1.05 }
                                                     }}
                                                     initial="rest"
                                                 />
                                                 <div className={`${styles.eventStatus} ${isUpcoming ? styles.statusUpcoming : styles.statusPast}`}>
-                                                    <span className={styles.statusDot}></span>
-                                                    {isUpcoming ? t.upcoming : t.past}
-                                                </div>
-                                                <div className={styles.eventDate}>
-                                                    <div className={styles.dateDay}>
-                                                        {(() => {
-                                                            const startDay = eventDate.getDate();
-                                                            if (event.endDate && event.endDate !== event.date) {
-                                                                const endDateObj = new Date(event.endDate);
-                                                                if (endDateObj.getMonth() === eventDate.getMonth() && endDateObj.getFullYear() === eventDate.getFullYear()) {
-                                                                    return `${startDay}-${endDateObj.getDate()}`;
-                                                                }
-                                                            }
-                                                            return startDay;
-                                                        })()}
-                                                    </div>
-                                                    <div className={styles.dateMonth}>
-                                                        {eventDate.toLocaleDateString(language === 'en' ? 'en-US' : language === 'te' ? 'te-IN' : 'hi-IN', { month: 'short' })}
-                                                    </div>
+                                                    {isUpcoming ? t.upcoming : 'COMPLETED'}
                                                 </div>
                                             </div>
                                             <div className={styles.eventContent}>
+                                                <div className={styles.dateRow}>
+                                                    <Calendar size={14} className={styles.dateIcon} />
+                                                    <span>
+                                                        {event.endDate && event.endDate !== event.date
+                                                            ? `${formatDate(event.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')} - ${formatDate(event.endDate, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}`.toUpperCase()
+                                                            : formatDate(event.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN').toUpperCase()}
+                                                    </span>
+                                                </div>
                                                 <h3>{event.title[language] || event.title.en}</h3>
                                                 <p className={styles.eventDescription}>
-                                                    {(event.description[language] || event.description.en).substring(0, 160)}...
+                                                    {(event.description[language] || event.description.en).substring(0, 120)}...
                                                 </p>
-                                                <div className={styles.eventMeta}>
-                                                    <div className={styles.metaRow}>
-                                                        <Calendar size={14} className={styles.metaIcon} />
-                                                        <span>
-                                                            {event.endDate && event.endDate !== event.date
-                                                                ? `${formatDate(event.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')} - ${formatDate(event.endDate, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}`
-                                                                : formatDate(event.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}
-                                                        </span>
-                                                    </div>
-                                                    <div className={styles.metaRow}>
-                                                        <MapPin size={14} className={styles.metaIcon} />
-                                                        <span>{event.location}</span>
-                                                    </div>
-                                                </div>
-                                                <button className={styles.viewBtn}>
-                                                    {t.readMore}
-                                                    <ArrowRight size={16} className={styles.btnArrow} />
-                                                </button>
                                             </div>
                                         </motion.div>
                                     );

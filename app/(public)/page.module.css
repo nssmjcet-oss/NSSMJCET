@@ -1249,7 +1249,7 @@
 }
 
 .flagshipPortraitTitle {
-    font-size: 20px;
+    font-size: 26px;
     font-weight: 900;
     color: #0f172a; /* Sleek black/dark-slate title */
     letter-spacing: -0.5px;
@@ -1259,14 +1259,68 @@
     transition: transform 0.3s ease, background 0.3s ease, -webkit-text-fill-color 0.3s ease;
 }
 
-/* Beautiful hover text animation: Tricolor Brand Shine and slight scale! */
+/* Beautiful hover text animation: Scale slightly and keep letters visible */
 .flagshipPortraitCard:hover .flagshipPortraitTitle {
-    background: linear-gradient(120deg, #ff9933 0%, #000000 50%, #128807 100%);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: textShine 3s linear infinite;
     transform: scale(1.02);
+}
+
+.animatedLetter {
+    display: inline-block;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease;
+    will-change: transform;
+    color: inherit;
+}
+
+.partOne {
+    transition: color 0.3s ease;
+}
+
+.partTwo {
+    transition: color 0.3s ease;
+}
+
+.flagshipPortraitCard:hover .partOne {
+    color: #0066cc !important; /* Beautiful electric blue */
+    -webkit-text-fill-color: #0066cc !important;
+}
+
+.flagshipPortraitCard:hover .partTwo {
+    color: #e52b2b !important; /* Beautiful high-contrast red */
+    -webkit-text-fill-color: #e52b2b !important;
+}
+
+.flagshipPortraitCard:hover .animatedLetter {
+    animation: waveLetter 0.6s ease-in-out;
+    animation-delay: calc(var(--index) * 0.03s);
+}
+
+.animatedLetter.letterX {
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.flagshipPortraitCard:hover .letterX {
+    animation: rotateScaleX 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite alternate;
+    color: var(--card-accent, #ff9933) !important;
+    -webkit-text-fill-color: var(--card-accent, #ff9933) !important;
+    font-weight: 900;
+}
+
+@keyframes waveLetter {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes rotateScaleX {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    100% {
+        transform: rotate(360deg) scale(1.4);
+    }
 }
 
 .flagshipPortraitTagline {

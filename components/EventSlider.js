@@ -164,7 +164,19 @@ function EventCard({ event, language, onViewDetails }) {
                 />
                 <div className={styles.imageOverlay} />
                 <div className={styles.dateBadge}>
-                    <span className={styles.day}>{new Date(event.date).getDate()}</span>
+                    <span className={styles.day}>
+                        {(() => {
+                            const startD = new Date(event.date).getDate();
+                            if (event.endDate && event.endDate !== event.date) {
+                                const endD = new Date(event.endDate);
+                                // If same month, show range like "1-5"
+                                if (endD.getMonth() === new Date(event.date).getMonth()) {
+                                    return `${startD}-${endD.getDate()}`;
+                                }
+                            }
+                            return startD;
+                        })()}
+                    </span>
                     <span className={styles.month}>
                         {new Date(event.date).toLocaleString(language === 'en' ? 'en-US' : language === 'te' ? 'te-IN' : 'hi-IN', { month: 'short' })}
                     </span>

@@ -49,6 +49,42 @@
     transform: rotate(90deg);
 }
 
+.mobileBackBtn {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .closeBtn {
+        display: none !important;
+    }
+
+    .mobileBackBtn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 100;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+        transition: all 0.25s ease;
+    }
+
+    .mobileBackBtn:active {
+        transform: scale(0.95);
+        background: rgba(15, 23, 42, 0.95);
+    }
+}
+
 .contentGrid {
     display: grid;
     grid-template-columns: 1.2fr 1fr;

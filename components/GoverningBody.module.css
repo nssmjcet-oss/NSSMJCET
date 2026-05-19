@@ -46,7 +46,7 @@
 .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    max-width: 960px;
+    max-width: 1100px;
     margin: 0 auto;
     gap: var(--space-8);
     position: relative;
@@ -65,23 +65,23 @@
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
-    padding: var(--space-12) var(--space-8);
+    border-radius: 24px;
+    padding: var(--space-10);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    text-align: center;
+    text-align: left;
+    gap: var(--space-8);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
     z-index: 1;
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
-    min-height: 440px;
     -webkit-tap-highlight-color: transparent;
 }
 
 .memberCard:hover .cardInner {
-    transform: translateY(-12px);
+    transform: translateY(-8px);
     background: #ffffff;
     box-shadow: 0 30px 60px -15px rgba(255, 153, 51, 0.2);
     border-color: rgba(255, 153, 51, 0.3);
@@ -89,13 +89,12 @@
 
 /* Photo */
 .photoWrap {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    margin-bottom: var(--space-6);
+    width: 180px;
+    height: 180px;
+    border-radius: 20px;
     position: relative;
     z-index: 3;
-    padding: 5px;
+    padding: 4px;
     background: linear-gradient(135deg, #FF9933, #138808);
     flex-shrink: 0;
 }
@@ -105,8 +104,8 @@
     height: 100%;
     object-fit: cover;
     object-position: top;
-    border-radius: 50%;
-    border: 4px solid #fff;
+    border-radius: 16px;
+    border: 3px solid #fff;
     -webkit-tap-highlight-color: transparent;
     pointer-events: none;
 }
@@ -115,21 +114,21 @@
     width: 100%;
     height: 100%;
     background: #1e293b;
-    border-radius: 50%;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 4rem;
     font-weight: 700;
     color: #fff;
-    border: 4px solid #fff;
+    border: 3px solid #fff;
 }
 
 /* Glow border on hover */
 .glowBorder {
     position: absolute;
     inset: -1px;
-    border-radius: 20px;
+    border-radius: 24px;
     background: linear-gradient(135deg, rgba(255, 153, 51, 0.5), transparent 60%);
     z-index: 0;
     opacity: 0;
@@ -144,31 +143,33 @@
 .info {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     position: relative;
     z-index: 3;
+    flex: 1;
 }
 
 .name {
-    font-size: var(--text-2xl);
+    font-size: 1.4rem;
     font-weight: 800;
     color: #0f172a;
-    margin-bottom: var(--space-2);
+    margin-bottom: 4px;
     letter-spacing: -0.5px;
+    line-height: 1.2;
 }
 
 .designation {
-    font-size: var(--text-sm);
-    font-weight: 700;
+    font-size: 0.8rem;
+    font-weight: 800;
     color: #FF9933;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     margin: 0 0 1rem;
 }
 
 .linkedinLink {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 10px;
     background: #f1f5f9;
     display: flex;
@@ -242,9 +243,20 @@
         gap: 2rem;
     }
 
+    .cardInner {
+        flex-direction: column;
+        text-align: center;
+        padding: var(--space-8);
+    }
+
     .photoWrap {
-        width: 180px;
-        height: 180px;
+        width: 150px;
+        height: 150px;
+        margin-bottom: var(--space-4);
+    }
+    
+    .info {
+        align-items: center;
     }
 
     .photoPlaceholder {
@@ -269,11 +281,10 @@
 
     .cardInner {
         padding: var(--space-6) var(--space-5);
-        min-height: 340px;
         border-radius: 16px;
     }
 
     .name {
-        font-size: var(--text-xl);
+        font-size: 1.2rem;
     }
 }

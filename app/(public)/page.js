@@ -354,7 +354,36 @@ export default function Home() {
                                                 </span>
                                             )}
                                             <h3 className={styles.flagshipPortraitTitle}>
-                                                {finalTitle}
+                                                {(() => {
+                                                    const lowerTitle = finalTitle.toLowerCase();
+                                                    let xIdx = lowerTitle.indexOf(' x ');
+                                                    if (xIdx === -1) {
+                                                        xIdx = lowerTitle.indexOf('x');
+                                                    }
+                                                    return finalTitle.split('').map((char, charIdx) => {
+                                                        if (char === ' ') {
+                                                            return <span key={charIdx} style={{ display: 'inline-block' }}>&nbsp;</span>;
+                                                        }
+                                                        const isX = (xIdx !== -1 && charIdx === xIdx) || (xIdx === -1 && char.toLowerCase() === 'x');
+                                                        let positionClass = '';
+                                                        if (!isX) {
+                                                            if (xIdx !== -1) {
+                                                                positionClass = charIdx < xIdx ? styles.partOne : styles.partTwo;
+                                                            } else {
+                                                                positionClass = charIdx < finalTitle.length / 2 ? styles.partOne : styles.partTwo;
+                                                            }
+                                                        }
+                                                        return (
+                                                            <span
+                                                                key={charIdx}
+                                                                className={`${styles.animatedLetter} ${isX ? styles.letterX : positionClass}`}
+                                                                style={{ '--index': charIdx }}
+                                                            >
+                                                                {char}
+                                                            </span>
+                                                        );
+                                                    });
+                                                })()}
                                             </h3>
                                             {finalTagline && (
                                                 <p className={styles.flagshipPortraitTagline}>

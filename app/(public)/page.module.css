@@ -1398,6 +1398,9 @@
     .flagshipPortraitBody {
         padding: 16px;
     }
+    .flagshipPortraitTitle {
+        font-size: 21px; /* Perfectly scaled down on mobile phones */
+    }
 }
 
 /* ── Super small phones (≤ 380px) ── */

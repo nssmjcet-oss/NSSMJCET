@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { Announcement } from '@/lib/models';
 
-export const revalidate = 60; // Refresh every minute for fresh content
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {

@@ -332,11 +332,11 @@ function EventFormModal({ event, onClose, onSuccess }) {
         setError(''); // Clear previous errors when starting new upload
         try {
             const uploadPromises = files.map(async (file) => {
-                // Shifted to MongoDB: raise compression resolution to HD (1920x1920) and high quality (0.9)
+                // MongoDB friendly compression: HD resolution but optimized quality (0.75) and size to prevent request payload limits
                 const dataUrl = await compressImageToDataURL(file, {
-                    maxWidth: 1920,
-                    maxHeight: 1920,
-                    quality: 0.9
+                    maxWidth: 1200,
+                    maxHeight: 1200,
+                    quality: 0.75
                 });
                 return dataUrl;
             });

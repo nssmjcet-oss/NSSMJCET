@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { Event, Volunteer, Team, Stat } from '@/lib/models';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {

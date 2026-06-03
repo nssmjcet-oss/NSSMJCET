@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import connectToDatabase from '@/lib/mongodb';
+import mongoose from 'mongoose';
 import { Event } from '@/lib/models';
 import { maybeUploadImage } from '@/lib/storage';
 import { getAuthUser, requireAdmin } from '@/lib/server-auth';

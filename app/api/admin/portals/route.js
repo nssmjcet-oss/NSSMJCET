@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
+import mongoose from 'mongoose';
 import { Portal } from '@/lib/models';
 import { getAuthUser, requireAdmin } from '@/lib/server-auth';
 

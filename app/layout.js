@@ -8,6 +8,12 @@ export const metadata = {
     },
     title: 'NSS MJCET | National Service Scheme – Muffakham Jah College of Engineering & Technology',
     description: 'Official website of NSS MJCET – National Service Scheme Muffakham Jah College of Engineering & Technology. Explore events, volunteer initiatives, social activities and student engagement programs.',
+    applicationName: 'NSS MJCET',
+    appleWebApp: {
+        title: 'NSS MJCET',
+        statusBarStyle: 'default',
+        capable: true,
+    },
     keywords: ['NSS MJCET', 'National Service Scheme MJCET', 'NSS Muffakham Jah College', 'NSS Hyderabad', 'NSS Volunteers'],
     authors: [{ name: 'NSS MJCET' }],
     creator: 'NSS MJCET',

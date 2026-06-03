@@ -18,7 +18,11 @@ export async function GET(request) {
         // Use findOne to avoid CastError with string IDs
         const content = await Content.findOne({ _id: pageId }).lean();
         
-        return NextResponse.json({ content });
+        return NextResponse.json({ content }, {
+            headers: {
+                'Cache-Control': 'no-store, max-age=0, must-revalidate',
+            }
+        });
     } catch (error) {
         console.error('Public Content GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch content' }, { status: 500 });

@@ -54,7 +54,12 @@ export async function GET() {
             events: eventCount,
             serviceHours: settings.serviceHours || 0,
             beneficiaries: settings.peopleBenefited || settings.serviceHours || 0
-        }, { status: 200 });
+        }, {
+            status: 200,
+            headers: {
+                'Cache-Control': 'no-store, max-age=0, must-revalidate',
+            }
+        });
 
     } catch (error) {
         console.error('Stats GET fatal error:', error);

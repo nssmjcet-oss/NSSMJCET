@@ -16,7 +16,12 @@ export async function GET() {
             id: doc._id
         }));
 
-        return NextResponse.json({ events }, { status: 200 });
+        return NextResponse.json({ events }, {
+            status: 200,
+            headers: {
+                'Cache-Control': 'no-store, max-age=0, must-revalidate',
+            }
+        });
     } catch (error) {
         console.error('Events GET error:', error);
         return NextResponse.json(

@@ -146,27 +146,27 @@ export default function Home() {
     const [liveEvent, setLiveEvent] = useState(null);
 
     useEffect(() => {
-        fetch('/api/stats')
+        fetch('/api/stats', { cache: 'no-store' })
             .then(res => res.json())
             .then(data => { if (!data.error) setStats(data); })
             .catch(console.error);
 
-        fetch('/api/content?pageId=hero')
+        fetch('/api/content?pageId=hero', { cache: 'no-store' })
             .then(res => res.json())
             .then(data => { if (data.content) setHeroData(data.content); })
             .catch(console.error);
 
-        fetch('/api/content?pageId=live_event')
+        fetch('/api/content?pageId=live_event', { cache: 'no-store' })
             .then(res => res.json())
             .then(data => { if (data.content) setLiveEvent(data.content); })
             .catch(console.error);
 
-        fetch('/api/flagship')
+        fetch('/api/flagship', { cache: 'no-store' })
             .then(res => res.json())
             .then(data => { if (data.flagships) setFlagships(data.flagships); })
             .catch(console.error);
 
-        fetch('/api/events')
+        fetch('/api/events', { cache: 'no-store' })
             .then(res => res.json())
             .then(data => { if (data.events) setAllEvents(data.events); })
             .catch(console.error);

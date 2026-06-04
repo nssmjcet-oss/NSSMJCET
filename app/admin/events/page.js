@@ -291,7 +291,7 @@ function EventFormModal({ event, onClose, onSuccess }) {
         images: event?.images || [],
         status: event?.status || 'published',
         eventType: event?.eventType || 'upcoming',
-        academicYear: event?.academicYear || '2025-2026',
+        academicYear: event?.academicYear || '2026-2027',
     });
 
     const [loading, setLoading] = useState(false);
@@ -563,12 +563,12 @@ function EventFormModal({ event, onClose, onSuccess }) {
                         </div>
 
                         {/* Dynamic Academic Session Selection */}
-                        <div style={{ display: 'grid', gridTemplateColumns: (!['2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022'].includes(formData.academicYear) || formData.academicYear === '') ? '1fr 1fr' : '1fr', gap: '24px', marginBottom: '24px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: (!['2026-2027', '2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022'].includes(formData.academicYear) || formData.academicYear === '') ? '1fr 1fr' : '1fr', gap: '24px', marginBottom: '24px' }}>
                             <div className={styles.formGroup} style={{ marginBottom: 0 }}>
                                 <label className={styles.label}>Academic Session *</label>
                                 <select
                                     className={styles.select}
-                                    value={['2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022'].includes(formData.academicYear) ? formData.academicYear : 'custom'}
+                                    value={['2026-2027', '2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022'].includes(formData.academicYear) ? formData.academicYear : 'custom'}
                                     onChange={(e) => {
                                         if (e.target.value !== 'custom') {
                                             setFormData({ ...formData, academicYear: e.target.value });
@@ -577,6 +577,7 @@ function EventFormModal({ event, onClose, onSuccess }) {
                                         }
                                     }}
                                 >
+                                    <option value="2026-2027">2026-2027</option>
                                     <option value="2025-2026">2025-2026</option>
                                     <option value="2024-2025">2024-2025</option>
                                     <option value="2023-2024">2023-2024</option>
@@ -586,7 +587,7 @@ function EventFormModal({ event, onClose, onSuccess }) {
                                 </select>
                             </div>
 
-                            {(!['2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022'].includes(formData.academicYear) || formData.academicYear === '') && (
+                            {(!['2026-2027', '2025-2026', '2024-2025', '2023-2024', '2022-2023', '2021-2022'].includes(formData.academicYear) || formData.academicYear === '') && (
                                 <div className={styles.formGroup} style={{ marginBottom: 0 }}>
                                     <label className={styles.label}>Enter Custom Year *</label>
                                     <input

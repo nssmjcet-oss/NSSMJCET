@@ -16,8 +16,7 @@ export const metadata = {
     },
 };
 
-// Revalidate this page every minute
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 async function getEvents() {
     try {

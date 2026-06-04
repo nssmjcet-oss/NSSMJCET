@@ -166,7 +166,7 @@ export default function Home() {
             .then(data => { if (data.flagships) setFlagships(data.flagships); })
             .catch(console.error);
 
-        fetch('/api/events', { cache: 'no-store' })
+        fetch(`/api/events?t=${Date.now()}`, { cache: 'no-store' })
             .then(res => res.json())
             .then(data => { if (data.events) setAllEvents(data.events); })
             .catch(console.error);

@@ -46,11 +46,33 @@ const translations = {
     },
 };
 
+// Fallback: Automatically extract academic year from date if not manually configured
+const getAcademicYear = (dateStr) => {
+    if (!dateStr) return '2025-2026';
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed (June is 5)
+    
+    if (month >= 5) {
+        return `${year}-${year + 1}`;
+    } else {
+        return `${year - 1}-${year}`;
+    }
+};
+
 export default function EventsClient({ events }) {
     const { language } = useLanguage();
     const t = translations[language];
     const [filter, setFilter] = useState('all');
-    const [selectedYear, setSelectedYear] = useState('2025-2026'); // Default to 2025-2026 as requested
+    
+    // Dynamically default selectedYear to the latest session present in the events list
+    const [selectedYear, setSelectedYear] = useState(() => {
+        const years = (events || []).map(e => e.academicYear || getAcademicYear(e.date));
+        const allYears = Array.from(new Set([...years, '2025-2026', '2024-2025'])).filter(Boolean);
+        allYears.sort((a, b) => b.localeCompare(a)); // Descending order: latest session first
+        return allYears[0] || '2025-2026';
+    });
+
     const [selectedEvent, setSelectedEvent] = useState(null);
     const searchParams = useSearchParams();
 
@@ -66,20 +88,6 @@ export default function EventsClient({ events }) {
             }
         }
     }, [searchParams, events]);
-
-    // Fallback: Automatically extract academic year from date if not manually configured
-    const getAcademicYear = (dateStr) => {
-        if (!dateStr) return '2025-2026';
-        const date = new Date(dateStr);
-        const year = date.getFullYear();
-        const month = date.getMonth(); // 0-indexed (June is 5)
-        
-        if (month >= 5) {
-            return `${year}-${year + 1}`;
-        } else {
-            return `${year - 1}-${year}`;
-        }
-    };
 
     // Extract dynamic unique years from active database events, making sure 2025-2026 is visible
     const defaultYears = ['2025-2026', '2024-2025'];

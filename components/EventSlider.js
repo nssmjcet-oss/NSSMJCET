@@ -12,10 +12,10 @@ export default function EventSlider({ onViewDetails }) {
     const [paused, setPaused] = useState(false);
 
     useEffect(() => {
-        fetch('/api/events', { cache: 'no-store' })
+        fetch(`/api/events?t=${Date.now()}`, { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
-                if (data.events && data.events.length > 0) {
+                if (data.events) {
                     setEvents(data.events);
                 }
                 setLoading(false);

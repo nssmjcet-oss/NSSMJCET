@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useLanguage, getText } from '@/contexts/LanguageContext';
 import { formatDate } from '@/utils/formatters';
 import styles from './EventModal.module.css';
-import Image from 'next/image';
 
 export default function EventModal({ event, onClose }) {
 
@@ -56,13 +55,10 @@ export default function EventModal({ event, onClose }) {
                         <div className={styles.imageSection}>
                             <div className={styles.mainImageWrapper}>
                                 <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
-                                    <Image
+                                    <img
                                         src={images[currentImageIndex]}
                                         alt={`${title} image ${currentImageIndex + 1}`}
-                                        fill
-                                        sizes="(max-width: 768px) 100vw, 50vw"
-                                        style={{ objectFit: 'cover' }}
-                                        priority
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                         className={styles.mainImage}
                                     />
                                 </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage, getText } from '@/contexts/LanguageContext';
 import { formatDate } from '@/utils/formatters';
 import styles from './EventModal.module.css';
@@ -10,6 +10,10 @@ export default function EventModal({ event, onClose }) {
 
     const { language } = useLanguage();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    useEffect(() => {
+        setCurrentImageIndex(0);
+    }, [event]);
 
     if (!event) return null;
 

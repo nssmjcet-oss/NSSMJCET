@@ -171,6 +171,7 @@ export default function Navbar() {
                                     <Link
                                         key={item.href}
                                         href={item.href}
+                                        prefetch={true}
                                         className={pathname === item.href ? styles.active : ''}
                                     >
                                         {item.label}
@@ -250,7 +251,7 @@ export default function Navbar() {
                         >
                             {navItems.map((item) => (
                                 <motion.div key={item.href} variants={mobileItemVariants}>
-                                    <Link href={item.href} className={`${styles.mobileMenuItem} ${pathname === item.href ? styles.mobileMenuItemActive : ''}`} onClick={toggleMenu}>
+                                    <Link href={item.href} prefetch={true} className={`${styles.mobileMenuItem} ${pathname === item.href ? styles.mobileMenuItemActive : ''}`} onClick={toggleMenu}>
                                         {item.label}
                                     </Link>
                                 </motion.div>

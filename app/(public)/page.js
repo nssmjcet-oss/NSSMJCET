@@ -254,10 +254,13 @@ export default function Home() {
                         >
                             <div className={styles.spotlightImageContainer}>
                                 {liveEvent.image ? (
-                                    <img
+                                    <Image
                                         src={liveEvent.image}
                                         alt={liveEvent.title?.[language] || liveEvent.title?.en}
+                                        width={800}
+                                        height={600}
                                         className={styles.spotlightImage}
+                                        style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                                     />
                                 ) : (
                                     <div className={styles.spotlightPlaceholder}>
@@ -338,7 +341,7 @@ export default function Home() {
                                     >
                                         <div className={styles.flagshipPortraitImgWrap}>
                                             {camp.image ? (
-                                                <img src={camp.image} alt={finalTitle} className={styles.flagshipPortraitImg} />
+                                                <Image src={camp.image} alt={finalTitle} width={500} height={750} className={styles.flagshipPortraitImg} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
                                             ) : (
                                                 <div className={styles.flagshipPortraitPlaceholder}>
                                                     <span style={{ fontSize: '3rem', opacity: 0.15 }}>📸</span>

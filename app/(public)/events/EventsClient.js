@@ -6,6 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { formatDate } from '@/utils/formatters';
 import styles from './events.module.css';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import EventModal from '@/components/EventModal';
 import { Calendar, MapPin, ArrowRight, Clock } from 'lucide-react';
 
@@ -209,16 +210,23 @@ export default function EventsClient({ events }) {
                                             onClick={() => setSelectedEvent(event)}
                                         >
                                             <div className={styles.imageWrapper}>
-                                                <motion.img
-                                                    src={(event.images && event.images.length > 0) ? event.images[0] : '/placeholder-event.jpg'}
-                                                    alt={event.title[language] || event.title.en}
-                                                    className={styles.eventImage}
+                                                <motion.div
+                                                    style={{ width: '100%', height: '100%', position: 'relative' }}
                                                     variants={{
                                                         rest: { scale: 1 },
                                                         hover: { scale: 1.05 }
                                                     }}
                                                     initial="rest"
-                                                />
+                                                >
+                                                    <Image
+                                                        src={(event.images && event.images.length > 0) ? event.images[0] : '/placeholder-event.jpg'}
+                                                        alt={event.title[language] || event.title.en}
+                                                        className={styles.eventImage}
+                                                        fill
+                                                        sizes="(max-width: 768px) 100vw, 33vw"
+                                                        style={{ objectFit: 'cover' }}
+                                                    />
+                                                </motion.div>
                                                 <div className={`${styles.eventStatus} ${isUpcoming ? styles.statusUpcoming : styles.statusPast}`}>
                                                     {isUpcoming ? t.upcoming : 'COMPLETED'}
                                                 </div>

@@ -67,6 +67,10 @@ export default function EventModal({ event, onClose }) {
                                         style={{ objectFit: 'cover' }}
                                         className={styles.mainImage}
                                         sizes="(max-width: 768px) 100vw, 50vw"
+                                        unoptimized={typeof images[currentImageIndex] === 'string' && images[currentImageIndex].startsWith('data:')}
+                                        onError={(e) => {
+                                            if (e.target) e.target.src = '/placeholder-event.jpg';
+                                        }}
                                     />
                                 </div>
                                 {images.length > 1 && (

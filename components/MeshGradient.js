@@ -1,16 +1,14 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 import styles from './MeshGradient.module.css';
 
-export default function MeshGradient() {
+const MeshGradient = memo(function MeshGradient() {
     const meshRef = useRef(null);
 
     useEffect(() => {
         const handleMouseMove = (e) => {
             if (!meshRef.current) return;
-            // Directly update CSS variables on the container
-            // This is more efficient than forcing a React render or using a continuous RAF loop
             const x = (e.clientX / window.innerWidth) * 100;
             const y = (e.clientY / window.innerHeight) * 100;
 
@@ -35,4 +33,7 @@ export default function MeshGradient() {
             <div className={styles.noise} />
         </div>
     );
-}
+});
+
+export default MeshGradient;
+

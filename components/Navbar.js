@@ -153,7 +153,7 @@ export default function Navbar() {
                 <div className={styles.logoWrapper}>
                     <Link href="/" className={styles.logo}>
                         <Image 
-                            src="/uploads/nss-logo (1).png" 
+                            src="/uploads/nss-logo.png" 
                             alt="NSS Logo" 
                             width={110} 
                             height={110} 

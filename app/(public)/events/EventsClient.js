@@ -225,6 +225,10 @@ export default function EventsClient({ events }) {
                                                         fill
                                                         sizes="(max-width: 768px) 100vw, 33vw"
                                                         style={{ objectFit: 'cover' }}
+                                                        unoptimized={typeof event.images?.[0] === 'string' && event.images[0].startsWith('data:')}
+                                                        onError={(e) => {
+                                                            if (e.target) e.target.src = '/placeholder-event.jpg';
+                                                        }}
                                                     />
                                                 </motion.div>
                                                 <div className={`${styles.eventStatus} ${isUpcoming ? styles.statusUpcoming : styles.statusPast}`}>

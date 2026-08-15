@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './Footer.module.css';
 
@@ -57,7 +58,7 @@ const translations = {
 
 export default function Footer() {
     const { language } = useLanguage();
-    const t = translations[language];
+    const t = translations[language] || translations.en;
 
     return (
         <footer className={styles.footer}>
@@ -66,7 +67,7 @@ export default function Footer() {
                     <div className={styles.footerSection}>
                         <div className={styles.footerLogo}>
                             <div className={styles.logoIconImage}>
-                                <img src="/uploads/nss-logo (1).png" alt="NSS Logo" width={50} height={50} style={{ objectFit: 'contain' }} />
+                                <Image src="/uploads/nss-logo.png" alt="NSS Logo" width={50} height={50} style={{ objectFit: 'contain' }} />
                             </div>
                             <div>
                                 <h3 className={styles.footerTitle}>NSS MJCET</h3>
@@ -82,7 +83,6 @@ export default function Footer() {
                             }
                         </p>
                     </div>
-
 
                     <div className={styles.footerSection}>
                         <h4 className={styles.sectionTitle}>{t.contact}</h4>
@@ -130,7 +130,6 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Google Maps — MJCET Location */}
                     <div className={styles.footerSection}>
                         <h4 className={styles.sectionTitle}>Find Us</h4>
                         <div className={styles.mapContainer}>

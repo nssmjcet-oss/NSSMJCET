@@ -100,9 +100,9 @@ export async function compressImage(file, options = {}) {
  */
 export async function compressImageToDataURL(file, options = {}) {
     const {
-        maxWidth = 600,
-        maxHeight = 600,
-        quality = 0.75,
+        maxWidth = 800,
+        maxHeight = 800,
+        quality = 0.68,
         type = 'image/jpeg'
     } = options;
 
@@ -118,7 +118,7 @@ export async function compressImageToDataURL(file, options = {}) {
             const convertedBlob = await heic2any({
                 blob: file,
                 toType: 'image/jpeg',
-                quality: 0.8
+                quality: 0.7
             });
 
             const blob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
@@ -159,7 +159,7 @@ export async function compressImageToDataURL(file, options = {}) {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Returns data URL directly — no upload required
+                // Returns compressed data URL directly
                 resolve(canvas.toDataURL(type, quality));
             };
             img.onerror = (err) => reject(err);
@@ -167,3 +167,4 @@ export async function compressImageToDataURL(file, options = {}) {
         reader.onerror = (err) => reject(err);
     });
 }
+

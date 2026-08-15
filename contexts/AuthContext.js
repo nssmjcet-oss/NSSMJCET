@@ -7,15 +7,18 @@ import { doc, getDoc } from 'firebase/firestore';
 
 const AuthContext = createContext({});
 
+const isDev = process.env.NODE_ENV !== 'production';
+const devLog = (...args) => { if (isDev) console.log(...args); };
+
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [role, setRole] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        console.log('[AuthContext] Setting up onAuthStateChanged listener');
+        devLog('[AuthContext] Setting up onAuthStateChanged listener');
         const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-            console.log('[AuthContext] Auth State Updated:', authUser ? 'User Logged In' : 'User Logged Out');
+            devLog('[AuthContext] Auth State Updated:', authUser ? 'User Logged In' : 'User Logged Out');
 
             if (authUser) {
                 let userRole = null;

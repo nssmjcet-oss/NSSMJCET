@@ -39,11 +39,15 @@ const translations = {
     },
 };
 
-const priorityStyles = {
-    urgent: { color: '#ef4444', shadow: '0 0 20px rgba(239, 68, 68, 0.3)' },
-    high: { color: '#f97316', shadow: '0 0 20px rgba(249, 115, 22, 0.3)' },
-    medium: { color: '#0ea5e9', shadow: '0 0 20px rgba(14, 165, 233, 0.3)' },
-    low: { color: '#94a3b8', shadow: '0 0 20px rgba(148, 163, 184, 0.3)' },
+const categoryConfig = {
+    completed: { label: 'COMPLETED EVENT', color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.12)' },
+    upcoming: { label: 'UPCOMING EVENT', color: '#10b981', bg: 'rgba(16, 185, 129, 0.12)' },
+    notice: { label: 'IMPORTANT NOTICE', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' },
+    urgent: { label: 'IMPORTANT NOTICE', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' },
+    high: { label: 'IMPORTANT NOTICE', color: '#f97316', bg: 'rgba(249, 115, 22, 0.12)' },
+    general: { label: 'ANNOUNCEMENT', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
+    medium: { label: 'ANNOUNCEMENT', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
+    low: { label: 'ANNOUNCEMENT', color: '#64748b', bg: 'rgba(100, 116, 139, 0.12)' },
 };
 
 export default function AnnouncementsPage() {
@@ -58,12 +62,8 @@ export default function AnnouncementsPage() {
                 setLoading(true);
                 const res = await fetch('/api/announcements');
                 const data = await res.json();
-                const now = new Date();
-                const active = (data.announcements || []).filter(a => {
-                    if (!a.isActive) return false;
-                    if (!a.expiryDate) return true;
-                    return new Date(a.expiryDate) >= now;
-                });
+                // Filter active items; keep all announcements (including completed events)
+                const active = (data.announcements || []).filter(a => a.isActive !== false);
                 setAnnouncements(active);
             } catch (err) {
                 console.error('Failed to fetch announcements:', err);
@@ -113,48 +113,54 @@ export default function AnnouncementsPage() {
                         initial="hidden"
                         animate="visible"
                     >
-                        {announcements.map((announcement) => (
-                            <motion.div
-                                key={announcement.id}
-                                className={styles.announcementBox}
-                                variants={itemVariants}
-                                style={{
-                                    borderLeft: `4px solid ${(priorityStyles[announcement.priority] || priorityStyles.medium).color}`,
-                                    boxShadow: announcement.priority === 'urgent' ? priorityStyles.urgent.shadow : 'none'
-                                }}
-                                whileHover={{ x: 10, boxShadow: (priorityStyles[announcement.priority] || priorityStyles.medium).shadow }}
-                            >
-                                <div className={styles.announcementHeader}>
-                                    <h3>{announcement.title?.[language] || announcement.title?.en || 'Untitled'}</h3>
-                                    <div className={styles.badges}>
-                                        <span
-                                            className={styles.priorityBadge}
-                                            style={{
-                                                backgroundColor: `${(priorityStyles[announcement.priority] || priorityStyles.medium).color}22`,
-                                                color: (priorityStyles[announcement.priority] || priorityStyles.medium).color,
-                                                borderColor: `${(priorityStyles[announcement.priority] || priorityStyles.medium).color}44`
-                                            }}
-                                        >
-                                            {t[announcement.priority] || announcement.priority}
-                                        </span>
-                                        <span className={styles.timeBadge}>
-                                            {getRelativeTime(announcement.createdAt)}
-                                        </span>
+                        {announcements.map((announcement) => {
+                            const catKey = announcement.category || announcement.priority || 'completed';
+                            const cat = categoryConfig[catKey] || categoryConfig.completed;
+
+                            return (
+                                <motion.div
+                                    key={announcement.id}
+                                    className={styles.announcementBox}
+                                    variants={itemVariants}
+                                    style={{
+                                        borderLeft: `4px solid ${cat.color}`,
+                                    }}
+                                    whileHover={{ x: 6 }}
+                                >
+                                    <div className={styles.announcementHeader}>
+                                        <h3>{announcement.title?.[language] || announcement.title?.en || 'Untitled'}</h3>
+                                        <div className={styles.badges}>
+                                            <span
+                                                className={styles.priorityBadge}
+                                                style={{
+                                                    backgroundColor: cat.bg,
+                                                    color: cat.color,
+                                                    borderColor: `${cat.color}44`,
+                                                    fontWeight: '700',
+                                                    letterSpacing: '0.5px'
+                                                }}
+                                            >
+                                                {cat.label}
+                                            </span>
+                                            <span className={styles.timeBadge}>
+                                                {getRelativeTime(announcement.createdAt)}
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
                                 {announcement.imageUrl && (
                                     <div className={styles.announcementImage}>
                                         <img src={announcement.imageUrl} alt={announcement.title?.[language] || announcement.title?.en} />
                                     </div>
                                 )}
-                                <div
-                                    className={styles.announcementContent}
-                                    dangerouslySetInnerHTML={{
-                                        __html: ((announcement.content?.[language] || announcement.content?.en) || '').replace(/\n/g, '<br />')
-                                    }}
-                                />
-                            </motion.div>
-                        ))}
+                                    <div
+                                        className={styles.announcementContent}
+                                        dangerouslySetInnerHTML={{
+                                            __html: ((announcement.content?.[language] || announcement.content?.en) || '').replace(/\n/g, '<br />')
+                                        }}
+                                    />
+                                </motion.div>
+                            );
+                        })}
                     </motion.div>
                 )}
             </div>

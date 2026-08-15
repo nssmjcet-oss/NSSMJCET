@@ -153,6 +153,15 @@ function EventCard({ event, language, onViewDetails }) {
             initial="rest"
             whileHover="hover"
             whileTap="tap"
+            role="button"
+            tabIndex={0}
+            aria-label={`View details for ${title}`}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onViewDetails();
+                }
+            }}
         >
             <div className={styles.imageWrapper}>
                 <motion.img
@@ -161,6 +170,10 @@ function EventCard({ event, language, onViewDetails }) {
                     className={styles.image}
                     loading="lazy"
                     variants={imageVariants}
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/placeholder-event.jpg';
+                    }}
                 />
                 <div className={styles.imageOverlay} />
                 <div className={styles.dateBadge}>

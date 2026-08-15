@@ -254,7 +254,7 @@ export default function AboutPage() {
                             >
                                 <div className={styles.logoBacklight} />
                                 <Image
-                                    src="/uploads/nss-logo (1).png"
+                                    src="/uploads/nss-logo.png"
                                     alt="NSS Logo"
                                     width={200}
                                     height={200}

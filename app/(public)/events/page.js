@@ -43,9 +43,50 @@ async function getEvents() {
 
 export default async function EventsPage() {
     const events = await getEvents();
+    
+    const eventSchema = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": events.map((ev, idx) => ({
+            "@type": "ListItem",
+            "position": idx + 1,
+            "item": {
+                "@type": "Event",
+                "name": typeof ev.title === 'object' ? (ev.title.en || Object.values(ev.title)[0]) : (ev.title || 'NSS Event'),
+                "startDate": ev.date,
+                "endDate": ev.endDate || ev.date,
+                "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                "eventStatus": "https://schema.org/EventScheduled",
+                "location": {
+                    "@type": "Place",
+                    "name": ev.location || "Muffakham Jah College of Engineering & Technology",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": "Road No. 3, Banjara Hills",
+                        "addressLocality": "Hyderabad",
+                        "postalCode": "500034",
+                        "addressCountry": "IN"
+                    }
+                },
+                "organizer": {
+                    "@type": "Organization",
+                    "name": "NSS MJCET",
+                    "url": "https://www.nssmjcet.in"
+                }
+            }
+        }))
+    };
+
     return (
-        <Suspense fallback={<div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', opacity: 0.5 }}>Loading events...</div>}>
-            <EventsClient events={events} />
-        </Suspense>
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchema) }}
+            />
+            <Suspense fallback={<div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', opacity: 0.5 }}>Loading events...</div>}>
+                <EventsClient events={events} />
+            </Suspense>
+        </>
     );
 }
+

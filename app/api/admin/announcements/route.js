@@ -43,12 +43,13 @@ export async function POST(request) {
 
         await connectToDatabase();
         const body = await request.json();
-        const { title, content, priority, expiryDate, isActive, createdBy, imageUrl } = body;
+        const { title, content, category, priority, expiryDate, isActive, createdBy, imageUrl } = body;
 
         const announcementData = {
             title,
             content,
-            priority: priority || 'medium',
+            category: category || priority || 'completed',
+            priority: priority || category || 'completed',
             expiryDate: expiryDate || null,
             isActive: isActive !== undefined ? isActive : true,
             createdBy: createdBy || 'admin',

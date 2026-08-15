@@ -179,7 +179,7 @@ export default function AnnouncementsPage() {
                     te: item.content?.te || '',
                     hi: item.content?.hi || ''
                 },
-                priority: item.priority,
+                category: item.category || (item.priority === 'urgent' || item.priority === 'high' ? 'notice' : 'completed'),
                 expiryDate: item.expiryDate ? new Date(item.expiryDate).toISOString().split('T')[0] : '',
                 isActive: item.isActive,
                 imageUrl: item.imageUrl || ''
@@ -189,7 +189,7 @@ export default function AnnouncementsPage() {
             setFormData({
                 title: { en: '', te: '', hi: '' },
                 content: { en: '', te: '', hi: '' },
-                priority: 'medium',
+                category: 'completed',
                 expiryDate: '',
                 isActive: true,
                 imageUrl: ''
@@ -203,12 +203,21 @@ export default function AnnouncementsPage() {
         setEditingItem(null);
     };
 
-    const getPriorityBadgeClass = (priority) => {
-        switch (priority) {
-            case 'urgent': return styles.badgeError;
-            case 'high': return styles.badgeWarning;
-            case 'medium': return styles.badgeInfo;
-            default: return styles.badgeSuccess;
+    const getCategoryBadgeClass = (category) => {
+        switch (category) {
+            case 'notice': case 'urgent': case 'high': return styles.badgeWarning;
+            case 'completed': return styles.badgeInfo;
+            case 'upcoming': return styles.badgeSuccess;
+            default: return styles.badgeSecondary || styles.badgeInfo;
+        }
+    };
+
+    const getCategoryLabel = (category) => {
+        switch (category) {
+            case 'completed': return 'Completed Event';
+            case 'upcoming': return 'Upcoming Event';
+            case 'notice': case 'urgent': case 'high': return 'Important Notice';
+            case 'general': case 'medium': case 'low': default: return 'General Update';
         }
     };
 
@@ -230,7 +239,7 @@ export default function AnnouncementsPage() {
                             <tr>
                                 <th className={styles.th}>Title (EN)</th>
                                 <th className={styles.th}>Title (TE)</th>
-                                <th className={styles.th}>Priority</th>
+                                <th className={styles.th}>Category</th>
                                 <th className={styles.th}>Expiry</th>
                                 <th className={styles.th}>Status</th>
                                 <th className={styles.th}>Actions</th>
@@ -242,41 +251,44 @@ export default function AnnouncementsPage() {
                                     <td colSpan="6" className={styles.emptyState}>No announcements found</td>
                                 </tr>
                             ) : (
-                                announcements.map((item) => (
-                                    <tr key={item.id} className={styles.tr}>
-                                        <td className={styles.td}>{item.title.en}</td>
-                                        <td className={styles.td}>{item.title.te}</td>
-                                        <td className={styles.td}>
-                                            <span className={`${styles.badge} ${getPriorityBadgeClass(item.priority)}`}>
-                                                {item.priority}
-                                            </span>
-                                        </td>
-                                        <td className={styles.td}>
-                                            {item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : '-'}
-                                        </td>
-                                        <td className={styles.td}>
-                                            <span className={`${styles.badge} ${item.isActive ? styles.badgeSuccess : styles.badgeError}`}>
-                                                {item.isActive ? 'Active' : 'Inactive'}
-                                            </span>
-                                        </td>
-                                        <td className={styles.td}>
-                                            <div className={styles.btnGroup}>
-                                                <button
-                                                    className={`${styles.btn} ${styles.btnSm} ${styles.btnSecondary}`}
-                                                    onClick={() => openModal(item)}
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    className={`${styles.btn} ${styles.btnSm} ${styles.btnDanger}`}
-                                                    onClick={() => handleDelete(item.id)}
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
+                                announcements.map((item) => {
+                                    const cat = item.category || item.priority || 'completed';
+                                    return (
+                                        <tr key={item.id} className={styles.tr}>
+                                            <td className={styles.td}>{item.title.en}</td>
+                                            <td className={styles.td}>{item.title.te}</td>
+                                            <td className={styles.td}>
+                                                <span className={`${styles.badge} ${getCategoryBadgeClass(cat)}`}>
+                                                    {getCategoryLabel(cat)}
+                                                </span>
+                                            </td>
+                                            <td className={styles.td}>
+                                                {item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : '-'}
+                                            </td>
+                                            <td className={styles.td}>
+                                                <span className={`${styles.badge} ${item.isActive ? styles.badgeSuccess : styles.badgeError}`}>
+                                                    {item.isActive ? 'Active' : 'Inactive'}
+                                                </span>
+                                            </td>
+                                            <td className={styles.td}>
+                                                <div className={styles.btnGroup}>
+                                                    <button
+                                                        className={`${styles.btn} ${styles.btnSm} ${styles.btnSecondary}`}
+                                                        onClick={() => openModal(item)}
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        className={`${styles.btn} ${styles.btnSm} ${styles.btnDanger}`}
+                                                        onClick={() => handleDelete(item.id)}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             )}
                         </tbody>
                     </table>
@@ -354,16 +366,16 @@ export default function AnnouncementsPage() {
                                         />
                                     </div>
                                     <div className={styles.formGroup}>
-                                        <label className={styles.label}>Priority</label>
+                                        <label className={styles.label}>Category / Tag</label>
                                         <select
                                             className={styles.select}
-                                            value={formData.priority}
-                                            onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+                                            value={formData.category}
+                                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                         >
-                                            <option value="low">Low</option>
-                                            <option value="medium">Medium</option>
-                                            <option value="high">High</option>
-                                            <option value="urgent">Urgent</option>
+                                            <option value="completed">Completed Event</option>
+                                            <option value="upcoming">Upcoming Event</option>
+                                            <option value="notice">Important Notice</option>
+                                            <option value="general">General Update</option>
                                         </select>
                                     </div>
                                     <div className={styles.formGroup}>

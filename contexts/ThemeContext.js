@@ -24,7 +24,8 @@ export function ThemeProvider({ children }) {
 export function useTheme() {
     const context = useContext(ThemeContext);
     if (context === undefined) {
-        throw new Error('useTheme must be used within a ThemeProvider');
+        return { theme: 'light', toggleTheme: () => {} };
     }
     return context;
 }
+

@@ -99,20 +99,23 @@ export default function AnnouncementsSection() {
                         </motion.div>
                     ) : (
                         <div className={styles.grid}>
-                            {announcements.map((announcement, index) => (
-                                <motion.div
-                                    key={announcement._id}
-                                    className={styles.card}
-                                    variants={dreamyReveal}
-                                >
-                                    <div className={styles.cardHeader}>
-                                        <span className={`${styles.priority} ${styles[announcement.priority]}`}>
-                                            {announcement.priority}
-                                        </span>
-                                        <span className={styles.date}>
-                                            {robustFormatDate(announcement.createdAt)}
-                                        </span>
-                                    </div>
+                            {announcements.map((announcement, index) => {
+                                const catKey = announcement.category || announcement.priority || 'completed';
+                                const catLabel = (catKey === 'completed' || catKey === 'past') ? 'COMPLETED' : (catKey === 'notice' || catKey === 'urgent' || catKey === 'high') ? 'NOTICE' : 'UPDATE';
+                                return (
+                                    <motion.div
+                                        key={announcement._id}
+                                        className={styles.card}
+                                        variants={dreamyReveal}
+                                    >
+                                        <div className={styles.cardHeader}>
+                                            <span className={`${styles.priority} ${styles[catKey] || styles.completed}`}>
+                                                {catLabel}
+                                            </span>
+                                            <span className={styles.date}>
+                                                {robustFormatDate(announcement.createdAt)}
+                                            </span>
+                                        </div>
                                     <h3 className={styles.cardTitle}>{getText(announcement.title, language)}</h3>
                                     <p className={styles.cardContent}>
                                         {getText(announcement.content, language).length > 100
@@ -123,8 +126,9 @@ export default function AnnouncementsSection() {
                                         Read More
                                     </Link>
                                 </motion.div>
-                            ))}
-                        </div>
+                            );
+                        })}
+                    </div>
                     )}
                 </motion.div>
             </div>

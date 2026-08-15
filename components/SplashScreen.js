@@ -50,7 +50,7 @@ export default function SplashScreen({ onComplete }) {
                             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                         >
                             <Image
-                                src="/uploads/nss-logo (1).png"
+                                src="/uploads/nss-logo.png"
                                 alt="NSS Logo"
                                 width={180}
                                 height={180}

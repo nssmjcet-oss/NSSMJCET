@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageToggle from './LanguageToggle';
@@ -59,6 +59,7 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const { language } = useLanguage();
     const pathname = usePathname();
+    const router = useRouter();
     const t = translations[language] || translations['en'] || translations.en;
 
     // Magnetic Button Coordinates
@@ -72,6 +73,18 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Prefetch all public routes immediately on mount for zero-latency tab switches
+    useEffect(() => {
+        const routes = ['/', '/about', '/unit', '/events', '/team', '/announcements', '/contact', '/volunteer'];
+        routes.forEach(route => {
+            try {
+                router.prefetch(route);
+            } catch (e) {
+                // ignore prefetch errors
+            }
+        });
+    }, [router]);
+
     useEffect(() => {
         if (isMenuOpen) {
             document.body.style.overflow = 'hidden';
@@ -83,7 +96,18 @@ export default function Navbar() {
         };
     }, [isMenuOpen]);
 
-    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const closeMenu = () => {
+        document.body.style.overflow = '';
+        setIsMenuOpen(false);
+    };
+
+    const toggleMenu = () => {
+        if (isMenuOpen) {
+            closeMenu();
+        } else {
+            setIsMenuOpen(true);
+        }
+    };
 
     const navItems = [
         { label: t.home, href: '/' },
@@ -251,7 +275,7 @@ export default function Navbar() {
                         >
                             {navItems.map((item) => (
                                 <motion.div key={item.href} variants={mobileItemVariants}>
-                                    <Link href={item.href} prefetch={true} className={`${styles.mobileMenuItem} ${pathname === item.href ? styles.mobileMenuItemActive : ''}`} onClick={toggleMenu}>
+                                    <Link href={item.href} prefetch={true} className={`${styles.mobileMenuItem} ${pathname === item.href ? styles.mobileMenuItemActive : ''}`} onClick={closeMenu}>
                                         {item.label}
                                     </Link>
                                 </motion.div>
@@ -260,7 +284,7 @@ export default function Navbar() {
                             <motion.div variants={mobileItemVariants} className={styles.mobileDivider}></motion.div>
                             
                             <motion.div variants={mobileItemVariants}>
-                                <Link href="/volunteer" className={`${styles.mobileMenuItem} ${styles.mobileMenuItemCTA}`} onClick={toggleMenu}>
+                                <Link href="/volunteer" className={`${styles.mobileMenuItem} ${styles.mobileMenuItemCTA}`} onClick={closeMenu}>
                                     {t.volunteer}
                                 </Link>
                             </motion.div>

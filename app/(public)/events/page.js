@@ -16,7 +16,8 @@ export const metadata = {
     },
 };
 
-export const dynamic = 'force-dynamic';
+// Revalidate events page every 10 seconds for instant Edge CDN delivery
+export const revalidate = 10;
 
 async function getEvents() {
     try {

@@ -15,8 +15,8 @@ export const metadata = {
     },
 };
 
-// Revalidate this page every minute
-export const revalidate = 60;
+// Revalidate team page every 10 seconds for instant Edge CDN delivery
+export const revalidate = 10;
 
 async function getTeamMembers() {
     try {

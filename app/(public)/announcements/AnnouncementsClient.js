@@ -10,151 +10,99 @@ const translations = {
         title: 'Announcements',
         subtitle: 'Latest Updates and Notices',
         noAnnouncements: 'No announcements at this time',
-        urgent: 'Urgent',
-        high: 'High Priority',
-        medium: 'Medium',
-        low: 'Low',
     },
     te: {
         title: 'ప్రకటనలు',
         subtitle: 'తాజా నవీకరణలు మరియు నోటీసులు',
         noAnnouncements: 'ఈ సమయంలో ప్రకటనలు లేవు',
-        urgent: 'అత్యవసరం',
-        high: 'అధిక ప్రాధాన్యత',
-        medium: 'మధ్యస్థ',
-        low: 'తక్కువ',
     },
     hi: {
         title: 'घोषणाएँ',
         subtitle: 'नवीनतम अपडेट और सूचनाएं',
         noAnnouncements: 'इस समय कोई घोषणा नहीं है',
-        urgent: 'तत्काल',
-        high: 'उच्च प्राथमिकता',
-        medium: 'मध्यम',
-        low: 'निम्न',
     },
 };
 
-const priorityStyles = {
-    urgent: {
-        color: '#ef4444',
-        shadow: '0 0 20px rgba(239, 68, 68, 0.3)'
-    },
-    high: {
-        color: '#f97316',
-        shadow: '0 0 20px rgba(249, 115, 22, 0.3)'
-    },
-    medium: {
-        color: '#0ea5e9',
-        shadow: '0 0 20px rgba(14, 165, 233, 0.3)'
-    },
-    low: {
-        color: '#94a3b8',
-        shadow: '0 0 20px rgba(148, 163, 184, 0.3)'
-    },
+const categoryConfig = {
+    completed: { label: 'COMPLETED EVENT', color: '#0ea5e9', bg: 'rgba(14, 165, 233, 0.12)' },
+    upcoming: { label: 'UPCOMING EVENT', color: '#10b981', bg: 'rgba(16, 185, 129, 0.12)' },
+    notice: { label: 'IMPORTANT NOTICE', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' },
+    urgent: { label: 'IMPORTANT NOTICE', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' },
+    high: { label: 'IMPORTANT NOTICE', color: '#f97316', bg: 'rgba(249, 115, 22, 0.12)' },
+    general: { label: 'ANNOUNCEMENT', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
+    medium: { label: 'ANNOUNCEMENT', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.12)' },
+    low: { label: 'ANNOUNCEMENT', color: '#64748b', bg: 'rgba(100, 116, 139, 0.12)' },
 };
 
-export default function AnnouncementsClient({ announcements }) {
+export default function AnnouncementsClient({ initialAnnouncements = [] }) {
     const { language } = useLanguage();
-    const t = translations[language];
-
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, x: -20 },
-        visible: { opacity: 1, x: 0 }
-    };
+    const t = translations[language] || translations.en;
 
     return (
         <div className={styles.announcementsPage}>
             <section className={styles.hero}>
                 <div className="container">
-                    <motion.h1
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                    >
+                    <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
                         {t.title}
                     </motion.h1>
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                    >
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1, duration: 0.3 }}>
                         {t.subtitle}
                     </motion.p>
                 </div>
             </section>
 
             <div className="container">
-                {announcements.length === 0 ? (
-                    <motion.div
-                        className={styles.noAnnouncements}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                    >
+                {initialAnnouncements.length === 0 ? (
+                    <div className={styles.noAnnouncements}>
                         <p>{t.noAnnouncements}</p>
-                    </motion.div>
+                    </div>
                 ) : (
-                    <motion.div
-                        className={styles.announcementsList}
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        {announcements.map((announcement) => (
-                            <motion.div
-                                key={announcement._id}
-                                className={styles.announcementCard}
-                                variants={itemVariants}
-                                style={{
-                                    borderLeft: `4px solid ${priorityStyles[announcement.priority].color}`,
-                                    boxShadow: announcement.priority === 'urgent' ? priorityStyles.urgent.shadow : 'none'
-                                }}
-                                whileHover={{
-                                    x: 10,
-                                    boxShadow: priorityStyles[announcement.priority].shadow
-                                }}
-                            >
-                                <div className={styles.announcementHeader}>
-                                    <h3>{announcement.title[language] || announcement.title.en}</h3>
-                                    <div className={styles.badges}>
-                                        <span
-                                            className={styles.priorityBadge}
-                                            style={{
-                                                backgroundColor: `${priorityStyles[announcement.priority].color}22`,
-                                                color: priorityStyles[announcement.priority].color,
-                                                borderColor: `${priorityStyles[announcement.priority].color}44`
-                                            }}
-                                        >
-                                            {t[announcement.priority]}
-                                        </span>
-                                        <span className={styles.timeBadge}>
-                                            {getRelativeTime(announcement.createdAt)}
-                                        </span>
-                                    </div>
-                                </div>
-                                {announcement.imageUrl && (
-                                    <div className={styles.announcementImage}>
-                                        <img src={announcement.imageUrl} alt={announcement.title[language] || announcement.title.en} />
-                                    </div>
-                                )}
+                    <div className={styles.announcementsList}>
+                        {initialAnnouncements.map((announcement) => {
+                            const catKey = announcement.category || announcement.priority || 'completed';
+                            const cat = categoryConfig[catKey] || categoryConfig.completed;
+
+                            return (
                                 <div
-                                    className={styles.announcementContent}
-                                    dangerouslySetInnerHTML={{
-                                        __html: (announcement.content[language] || announcement.content.en).replace(/\n/g, '<br />')
-                                    }}
-                                />
-                            </motion.div>
-                        ))}
-                    </motion.div>
+                                    key={announcement.id || announcement._id}
+                                    className={styles.announcementBox}
+                                    style={{ borderLeft: `4px solid ${cat.color}` }}
+                                >
+                                    <div className={styles.announcementHeader}>
+                                        <h3>{announcement.title?.[language] || announcement.title?.en || 'Untitled'}</h3>
+                                        <div className={styles.badges}>
+                                            <span
+                                                className={styles.priorityBadge}
+                                                style={{
+                                                    backgroundColor: cat.bg,
+                                                    color: cat.color,
+                                                    borderColor: `${cat.color}44`,
+                                                    fontWeight: '700',
+                                                    letterSpacing: '0.5px'
+                                                }}
+                                            >
+                                                {cat.label}
+                                            </span>
+                                            <span className={styles.timeBadge}>
+                                                {getRelativeTime(announcement.createdAt)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {announcement.imageUrl && (
+                                        <div className={styles.announcementImage}>
+                                            <img src={announcement.imageUrl} alt={announcement.title?.[language] || announcement.title?.en} />
+                                        </div>
+                                    )}
+                                    <div
+                                        className={styles.announcementContent}
+                                        dangerouslySetInnerHTML={{
+                                            __html: ((announcement.content?.[language] || announcement.content?.en) || '').replace(/\n/g, '<br />')
+                                        }}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
                 )}
             </div>
         </div>

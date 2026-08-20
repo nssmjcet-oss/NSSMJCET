@@ -87,7 +87,7 @@ export default function LoginPage() {
                     <div className={styles.loginCard}>
                         <div className={styles.loginHeader}>
                             <div className={styles.logoIconImage}>
-                                <img src="/uploads/nss-logo (1).png" alt="NSS Logo" width={80} height={80} style={{ objectFit: 'contain', margin: '0 auto', display: 'block' }} />
+                                <img src="/uploads/nss-logo.png" alt="NSS Logo" width={80} height={80} style={{ objectFit: 'contain', margin: '0 auto', display: 'block' }} />
                             </div>
                             <h1>{t.title}</h1>
                             <p>{t.subtitle}</p>

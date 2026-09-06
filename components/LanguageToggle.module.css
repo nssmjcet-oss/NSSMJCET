@@ -1,29 +1,29 @@
 .toggle {
     display: flex;
     align-items: center;
-    background-color: var(--color-gray-100);
+    background-color: #f3f4f6;
     border-radius: var(--radius-full);
-    padding: var(--space-1);
-    border: none;
+    padding: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
     cursor: pointer;
     transition: all var(--transition-base);
 }
 
 .toggle:hover {
-    background-color: var(--color-gray-200);
+    background-color: #e5e7eb;
 }
 
 .option {
-    padding: var(--space-2) var(--space-3);
+    padding: 6px 12px;
     border-radius: var(--radius-full);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--color-gray-600);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #4b5563;
     transition: all var(--transition-base);
 }
 
 .option.active {
-    background-color: var(--color-primary);
-    color: var(--color-white);
-    box-shadow: var(--shadow-sm);
+    background-color: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }

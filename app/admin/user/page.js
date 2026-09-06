@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './users.module.css';
 import { adminFetch } from '@/utils/api-client';
+import { Eye, EyeOff } from 'lucide-react';
 
 const translations = {
     en: {
@@ -397,7 +398,7 @@ function UserFormModal({ user, onClose, onSuccess }) {
                                         cursor: 'pointer'
                                     }}
                                 >
-                                    {showPassword ? '👁️' : '👁️‍🗨️'}
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
                         </div>

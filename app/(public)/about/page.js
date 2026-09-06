@@ -6,6 +6,8 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { useRef, useState, useEffect } from 'react';
 
+import { fetchWithCache } from '@/utils/client-cache';
+
 const translations = {
 // ... (rest same)
     en: {
@@ -164,10 +166,9 @@ export default function AboutPage() {
     const containerRef = useRef(null);
 
     useEffect(() => {
-        fetch('/api/content?pageId=about')
-            .then(res => res.json())
+        fetchWithCache('/api/content?pageId=about')
             .then(data => {
-                if (data.content) setDynamicContent(data.content);
+                if (data?.content) setDynamicContent(data.content);
             })
             .catch(err => console.error('About fetch error:', err));
     }, []);

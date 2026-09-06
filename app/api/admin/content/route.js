@@ -76,21 +76,47 @@ export async function PUT(request) {
             return NextResponse.json({ message: 'Settings updated' }, { status: 200 });
         }
 
-        const { pageId, title, content, sections, subtitle, btnText, btnLink, image, isActive } = body;
+        const { pageId, title, content, sections, subtitle, btnText, btnLink, image, isActive, volunteers, events, serviceHours } = body;
         if (!pageId) {
             return NextResponse.json({ error: 'Page ID is required' }, { status: 400 });
         }
 
         // Using findOneAndUpdate with _id: pageId to avoid CastError for custom string IDs like 'about'
+        const updateData = {
+            _id: pageId,
+            title,
+            content,
+            sections,
+            subtitle,
+            btnText,
+            btnLink,
+            image,
+            isActive,
+            ...(volunteers !== undefined && { volunteers: Number(volunteers) }),
+            ...(events !== undefined && { events: Number(events) }),
+            ...(serviceHours !== undefined && { serviceHours: Number(serviceHours) }),
+            updatedAt: new Date()
+        };
+
         const updated = await Content.findOneAndUpdate(
             { _id: pageId },
-            { _id: pageId, title, content, sections, subtitle, btnText, btnLink, image, isActive, updatedAt: new Date() },
+            { $set: updateData },
             { upsert: true, new: true, setDefaultsOnInsert: true }
         ).lean();
+
+        // If updating hero or unit, also sync global Stats
+        if (pageId === 'hero' && (volunteers !== undefined || events !== undefined || serviceHours !== undefined)) {
+            const statUpdate = { updatedAt: new Date() };
+            if (volunteers !== undefined) statUpdate.volunteers = Number(volunteers);
+            if (events !== undefined) statUpdate.events = Number(events);
+            if (serviceHours !== undefined) statUpdate.serviceHours = Number(serviceHours);
+            await Stat.findOneAndUpdate({}, { $set: statUpdate }, { upsert: true });
+        }
  
         revalidatePath('/');
         revalidatePath('/about');
         revalidatePath('/unit');
+        revalidatePath('/volunteer');
  
         return NextResponse.json({ 
             message: 'Content updated', 

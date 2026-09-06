@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './contact.module.css';
 import { motion } from 'framer-motion';
+import { MapPin, Phone, Mail } from 'lucide-react';
 
 const translations = {
     en: {
@@ -153,7 +154,7 @@ export default function ContactPage() {
 
                         <div className={styles.infoList}>
                             <div className={styles.infoItem}>
-                                <div className={styles.infoIcon}>📍</div>
+                                <div className={styles.infoIcon}><MapPin size={20} /></div>
                                 <div>
                                     <h4>{t.address}</h4>
                                     <p>Muffakham Jah College of Engineering & Technology</p>
@@ -163,7 +164,7 @@ export default function ContactPage() {
                             </div>
 
                             <div className={styles.infoItem}>
-                                <div className={styles.infoIcon}>📞</div>
+                                <div className={styles.infoIcon}><Phone size={20} /></div>
                                 <div>
                                     <h4>{t.phone}</h4>
                                     <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
@@ -175,7 +176,7 @@ export default function ContactPage() {
                             </div>
 
                             <div className={styles.infoItem}>
-                                <div className={styles.infoIcon}>📧</div>
+                                <div className={styles.infoIcon}><Mail size={20} /></div>
                                 <div>
                                     <h4>{t.emailLabel}</h4>
                                     <p>nssmjcet@mjcollege.ac.in</p>

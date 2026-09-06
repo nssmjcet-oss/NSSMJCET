@@ -9,24 +9,29 @@ export default function SplashScreen({ onComplete }) {
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const hasSeenSplash = sessionStorage.getItem('nss_splash_shown');
-            if (hasSeenSplash === 'true') {
-                setVisible(false);
+        // Only show once per session so navigating between pages feels instant
+        try {
+            const hasSeen = sessionStorage.getItem('nss_splash_shown');
+            if (hasSeen) {
                 if (onComplete) onComplete();
-            } else {
-                setVisible(true);
-                sessionStorage.setItem('nss_splash_shown', 'true');
-                const timer = setTimeout(() => {
-                    setVisible(false);
-                    setTimeout(() => {
-                        if (onComplete) onComplete();
-                    }, 800); // wait for exit animation
-                }, 3200);
-
-                return () => clearTimeout(timer);
+                return;
             }
+            sessionStorage.setItem('nss_splash_shown', 'true');
+            setVisible(true);
+        } catch (e) {
+            // If storage disabled, show once and skip
+            if (onComplete) onComplete();
+            return;
         }
+
+        const timer = setTimeout(() => {
+            setVisible(false);
+            setTimeout(() => {
+                if (onComplete) onComplete();
+            }, 500); // exit animation
+        }, 1600); // Crisp 1.6s intro for first-time visitors
+
+        return () => clearTimeout(timer);
     }, [onComplete]);
 
     return (

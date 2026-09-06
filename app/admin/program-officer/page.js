@@ -6,6 +6,8 @@ import styles from '../admin-content.module.css';
 import { compressImageToDataURL } from '@/utils/image-compression';
 import { translateText } from '@/utils/translation';
 import { adminFetch } from '@/utils/api-client';
+import ImageCropperModal from '@/components/ImageCropperModal';
+import { Crop } from 'lucide-react';
 
 export default function ProgramOfficerAdminPage() {
     const { user } = useAuth();
@@ -73,21 +75,31 @@ export default function ProgramOfficerAdminPage() {
         }
     };
 
-    const handleImageUpload = async (e) => {
+    const [cropper, setCropper] = useState({
+        isOpen: false,
+        imageSrc: '',
+        aspectRatio: 3 / 4,
+        title: 'Crop Programme Officer Photo (3:4 Portrait)'
+    });
+
+    const handleImageSelect = (e) => {
         const file = e.target.files[0];
         if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            setCropper({
+                isOpen: true,
+                imageSrc: reader.result,
+                aspectRatio: 3 / 4,
+                title: 'Crop Programme Officer Photo (3:4 Portrait)'
+            });
+        };
+        reader.readAsDataURL(file);
+        e.target.value = '';
+    };
 
-        setUploading(true);
-        try {
-            // Compress & convert to Base64 — no Firebase Storage upload needed
-            const dataURL = await compressImageToDataURL(file, { maxWidth: 800, maxHeight: 800, quality: 0.6 });
-            setFormData(prev => ({ ...prev, photo: dataURL }));
-        } catch (error) {
-            console.error('Error processing image:', error);
-            alert('Failed to process image.');
-        } finally {
-            setUploading(false);
-        }
+    const handleCropComplete = (croppedDataUrl) => {
+        setFormData(prev => ({ ...prev, photo: croppedDataUrl }));
     };
 
     const handleSubmit = async (e) => {
@@ -141,17 +153,27 @@ export default function ProgramOfficerAdminPage() {
             <form onSubmit={handleSubmit} className={styles.card}>
                 {/* Photo Upload */}
                 <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                    <label className={styles.label}>Profile Photo</label>
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <label className={styles.label}>Profile Photo (3:4 Portrait)</label>
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
                         {formData.photo && (
-                            <img src={formData.photo} alt="Preview" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover' }} />
+                            <img src={formData.photo} alt="Preview" style={{ width: '75px', height: '100px', borderRadius: '12px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.2)' }} />
                         )}
                         <input
                             type="file"
                             accept="image/*"
-                            onChange={handleImageUpload}
+                            onChange={handleImageSelect}
                             disabled={uploading}
                         />
+                        {formData.photo && (
+                            <button
+                                type="button"
+                                onClick={() => setCropper({ isOpen: true, imageSrc: formData.photo, aspectRatio: 3 / 4, title: 'Crop Programme Officer Photo (3:4 Portrait)' })}
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'rgba(255,153,51,0.2)', color: '#FF9933', border: '1px solid rgba(255,153,51,0.3)', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}
+                            >
+                                <Crop size={14} />
+                                <span>Crop / Adjust</span>
+                            </button>
+                        )}
                         {uploading && <span>Uploading...</span>}
                     </div>
                 </div>
@@ -320,6 +342,15 @@ export default function ProgramOfficerAdminPage() {
                     </button>
                 </div>
             </form>
+
+            <ImageCropperModal
+                isOpen={cropper.isOpen}
+                imageSrc={cropper.imageSrc}
+                aspectRatio={cropper.aspectRatio}
+                title={cropper.title}
+                onCropComplete={handleCropComplete}
+                onClose={() => setCropper(prev => ({ ...prev, isOpen: false }))}
+            />
         </div>
     );
 }

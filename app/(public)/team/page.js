@@ -30,7 +30,7 @@ async function getTeamData() {
         const distinctYears = await Team.distinct('academicYear');
         const sessionDocs = await TeamSession.find({}, { academicYear: 1, teamYear: 1 }).lean();
         const allYears = Array.from(new Set([...distinctYears, '2025-2026', ...sessionDocs.map(s => s.academicYear)])).filter(Boolean);
-        allYears.sort((a, b) => b.localeCompare(a));
+        allYears.sort((a, b) => a.localeCompare(b));
 
         // 3. Fetch ONLY current year members with projection
         const teamData = await Team.find(

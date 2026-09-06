@@ -1,18 +1,26 @@
 .home {
     min-height: 100vh;
-    background: url('/uploads/nss-bg.jpg') no-repeat center center;
-    background-size: cover;
-    background-attachment: fixed;
     overflow-x: hidden;
     position: relative;
 }
 
-/* Very subtle tint — keeps nss-bg.jpg fully visible */
+/* The rest of the page (below hero) uses the NSS bg */
+.home::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url('/uploads/nss-bg.jpg') no-repeat center center;
+    background-size: cover;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Very subtle tint on page body sections */
 .home::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
     z-index: 0;
     pointer-events: none;
 }
@@ -24,90 +32,357 @@
     display: none;
 }
 
-.progressBar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #FF9933, #FFFFFF, #138808);
-    transform-origin: 0%;
-    z-index: 9999;
-}
 
-/* Hero Section - World Class */
+
+/* =============================================
+   HERO SECTION — Original NSS MJCET Signature Design
+   ============================================= */
 .hero {
-    min-height: 90vh;
+    position: relative;
+    min-height: 92vh;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: var(--space-48) 0 var(--space-20);
-    position: relative;
+    padding: clamp(90px, 12vw, 130px) 0 clamp(40px, 6vw, 70px);
+    overflow: hidden;
     z-index: 1;
 }
 
-.heroContent {
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
+/* Subtle atmosphere backdrop — NO black screen */
+.heroBackdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
 }
 
-.heroTagline {
-    font-size: var(--text-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.5em;
-    font-weight: 900;
-    margin-bottom: var(--space-6);
-    background: var(--marvel-accent-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: block;
+.heroGlowSaffron {
+    position: absolute;
+    top: -10%;
+    left: -5%;
+    width: 48vw;
+    height: 48vw;
+    max-width: 650px;
+    max-height: 650px;
+    background: radial-gradient(circle, rgba(255, 153, 51, 0.12) 0%, rgba(255, 153, 51, 0) 70%);
+    border-radius: 50%;
+    filter: blur(40px);
 }
 
-.heroTitle {
-    font-size: clamp(3.5rem, 12vw, 7.5rem);
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: var(--space-10);
-    background: var(--marvel-title-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -0.05em;
-    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
-    /* Reduced shadow */
-    will-change: transform;
-    padding: 0.15em 0;
+.heroGlowGreen {
+    position: absolute;
+    bottom: -15%;
+    right: -5%;
+    width: 45vw;
+    height: 45vw;
+    max-width: 600px;
+    max-height: 600px;
+    background: radial-gradient(circle, rgba(19, 136, 8, 0.09) 0%, rgba(19, 136, 8, 0) 70%);
+    border-radius: 50%;
+    filter: blur(40px);
 }
 
-.home[data-language="te"] .heroTitle {
-    font-size: clamp(3rem, 10vw, 6rem);
-    line-height: 1.4;
+/* Wider Hero Container to allow full team photo presentation */
+.heroContainer {
+    max-width: 1440px !important;
+    width: 100%;
 }
 
-.heroDescription {
-    font-size: var(--text-xl);
-    line-height: 1.8;
-    margin-bottom: var(--space-12);
-    color: #000000;
-    max-width: 750px;
-    margin-left: auto;
-    margin-right: auto;
-    font-weight: 800;
-}
-
-.home[data-language="te"] .heroDescription {
-    line-height: 2;
-}
-
-.heroActions {
-    display: flex;
-    gap: var(--space-6);
-    justify-content: center;
+/* Two-column hero grid: gives ample space for the wide group photo */
+.heroGrid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.25fr;
+    gap: clamp(1.5rem, 3.5vw, 3.5rem);
     align-items: center;
-    transform: translateZ(0);
-    /* Hardware acceleration */
+}
+
+/* --- Left Column: Typography & CTAs --- */
+.heroTextCol {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+/* College Pill Badge */
+.heroBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 153, 51, 0.35);
+    border-radius: 9999px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    margin-bottom: 1.25rem;
+}
+
+.heroBadgeDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #FF9933;
+    box-shadow: 0 0 8px #FF9933;
+}
+
+.heroBadgeText {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #1e293b;
+    text-transform: uppercase;
+}
+
+/* Main Heading */
+.heroHeading {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.25rem;
+    line-height: 1;
+}
+
+.heroHeadingSub {
+    font-size: clamp(0.95rem, 1.8vw, 1.3rem);
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #2563eb; /* NSS Royal Blue */
+    margin-bottom: 0.4rem;
+}
+
+.heroHeadingMain {
+    font-size: clamp(3rem, 6.5vw, 5.2rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+    line-height: 1.05;
+}
+
+/* Official Motto Callout Banner — Clean & Refined (No Glow) */
+.heroMottoBanner {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-left: 4px solid #FF9933;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    margin-bottom: 1.25rem;
+}
+
+.heroMottoQuote {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #FF9933;
+    line-height: 1;
+}
+
+.heroMottoText {
+    font-size: clamp(0.85rem, 1.2vw, 1.02rem);
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #1e293b;
+}
+
+/* Description paragraph */
+.heroDescText {
+    font-size: clamp(0.98rem, 1.5vw, 1.12rem);
+    color: #475569;
+    line-height: 1.7;
+    margin-bottom: 1.8rem;
+    max-width: 540px;
+    font-weight: 500;
+}
+
+/* Action Buttons */
+.heroActionButtons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 2.2rem;
+}
+
+/* Trust / Key Stats Strip */
+.heroTrustStrip {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.heroTrustItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.heroTrustItem strong {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.1;
+}
+
+.heroTrustItem span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.heroTrustDivider {
+    width: 1px;
+    height: 28px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* --- Right Column: Team Visual Showcase Card --- */
+.heroCardCol {
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.heroCardFrame {
+    position: relative;
+    width: 100%;
+    max-width: 780px;
+    border-radius: 28px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 
+        0 28px 60px -15px rgba(15, 23, 42, 0.14),
+        0 10px 28px -5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.heroCardFrame:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+        0 34px 70px -15px rgba(15, 23, 42, 0.18),
+        0 14px 32px -5px rgba(0, 0, 0, 0.07);
+}
+
+.heroCardImgWrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    max-height: 560px;
+    border-radius: 22px;
+    overflow: hidden;
+}
+
+.heroCardImg {
+    border-radius: 20px;
+    transition: transform 0.5s ease;
+}
+
+.heroCardFrame:hover .heroCardImg {
+    transform: scale(1.02);
+}
+
+.heroCardImgGlow {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+}
+
+/* Floating Official Emblem Badge */
+.heroEmblemFloat {
+    position: absolute;
+    top: -18px;
+    right: -14px;
+    width: 78px;
+    height: 78px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border: 3px solid #ffffff;
+    z-index: 3;
+    animation: floatBadge 4s ease-in-out infinite alternate;
+}
+
+@keyframes floatBadge {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-6px); }
+}
+
+/* Floating Caption Pill */
+.heroCardCaption {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    right: 24px;
+    padding: 10px 18px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 9999px;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.heroCaptionDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 10px #22c55e;
+}
+
+/* Responsive adjustment for Mobile & Tablet */
+@media (max-width: 968px) {
+    .heroGrid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 3rem;
+    }
+
+    .heroTextCol {
+        align-items: center;
+        text-align: center;
+    }
+
+    .heroDescText {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .heroActionButtons {
+        justify-content: center;
+    }
+
+    .heroTrustStrip {
+        justify-content: center;
+    }
+
+    .heroCardCol {
+        order: -1;
+    }
+
+    .heroCardFrame {
+        max-width: 440px;
+    }
 }
 
 /* Stats Section */
@@ -1362,6 +1637,20 @@
     color: #ffffff !important;
     transform: translateY(-1px);
     box-shadow: 0 8px 20px color-mix(in srgb, var(--btn-accent, #000) 15%, transparent);
+}
+
+@media (max-width: 992px) {
+    .heroGrid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+    .heroCardCol {
+        width: 100%;
+    }
+    .heroTextCol {
+        align-items: center;
+        text-align: center;
+    }
 }
 
 @media (max-width: 900px) {

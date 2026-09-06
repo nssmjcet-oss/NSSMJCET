@@ -1,0 +1,83 @@
+.munContainer {
+    position: relative;
+    width: 100%;
+    min-height: 460px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 40%, rgba(255, 153, 51, 0.12), transparent 70%);
+}
+
+.lettersRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0;
+    user-select: none;
+}
+
+.letterSpan {
+    display: inline-block;
+    font-size: clamp(3.5rem, 11vw, 8.5rem);
+    font-weight: 950;
+    line-height: 1;
+    font-family: inherit;
+    letter-spacing: -0.02em;
+    transform-origin: center center;
+    will-change: transform, color;
+    filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.08));
+}
+
+.letterXSpecial {
+    display: inline-block;
+    font-size: clamp(3.8rem, 12vw, 9.5rem);
+    font-weight: 950;
+    line-height: 1;
+    font-family: inherit;
+    letter-spacing: -0.02em;
+    transform-origin: center center;
+    will-change: transform, color;
+    filter: drop-shadow(0 6px 24px rgba(255, 153, 51, 0.4));
+}
+
+.badgePill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    border-radius: 9999px;
+    background: rgba(255, 153, 51, 0.14);
+    border: 1px solid rgba(255, 153, 51, 0.35);
+    color: #FF9933;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    margin-top: 18px;
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    font-weight: 700;
+    color: #334155;
+    text-align: center;
+    max-width: 680px;
+    line-height: 1.5;
+}
+
+.scrollHint {
+    margin-top: 24px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}

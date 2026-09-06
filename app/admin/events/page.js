@@ -6,10 +6,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import styles from '../admin-content.module.css';
 import { Icons } from '@/components/Icons';
 import { adminFetch } from '@/utils/api-client';
-import { Plus, Calendar, MapPin, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Calendar, MapPin, Edit2, Trash2, Crop } from 'lucide-react';
 import { formatDate } from '@/utils/formatters';
 import { translateText } from '@/utils/translation';
 import { compressImageToDataURL } from '@/utils/image-compression';
+import ImageCropperModal from '@/components/ImageCropperModal';
 
 const translations = {
     en: {
@@ -179,8 +180,13 @@ export default function EventsPage() {
                                     <span className={`${styles.badge} ${event.status === 'published' ? styles.badgeSuccess : styles.badgeWarning}`}>
                                         {event.status === 'published' ? t.published : t.draft}
                                     </span>
-                                    <span className={`${styles.badge} ${event.eventType === 'past' ? styles.badgeError : styles.badgeInfo}`}>
-                                        {event.eventType === 'past' ? 'Past' : 'Upcoming'}
+                                    <span className={`${styles.badge} ${
+                                        event.eventType === 'ongoing' ? styles.badgeWarning :
+                                        (event.eventType === 'completed' || event.eventType === 'past') ? styles.badgeError :
+                                        event.eventType === 'archived' ? styles.badgeSecondary :
+                                        styles.badgeInfo
+                                    }`}>
+                                        {(event.eventType || 'upcoming').toUpperCase()}
                                     </span>
                                 </div>
 
@@ -292,12 +298,55 @@ function EventFormModal({ event, onClose, onSuccess }) {
         status: event?.status || 'published',
         eventType: event?.eventType || 'upcoming',
         academicYear: event?.academicYear || '2026-2027',
+        highlights: event?.highlights || '',
+        winners: event?.winners || '',
+        report: event?.report || '',
     });
 
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [translating, setTranslating] = useState(false);
     const [error, setError] = useState('');
+
+    const [cropper, setCropper] = useState({
+        isOpen: false,
+        imageSrc: '',
+        targetIndex: null,
+        aspectRatio: 16 / 9,
+        title: 'Crop Event Banner (16:9 Landscape)'
+    });
+
+    const handleSingleImageSelectAndCrop = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            setCropper({
+                isOpen: true,
+                imageSrc: reader.result,
+                targetIndex: null,
+                aspectRatio: formData.images.length === 0 ? 16 / 9 : 0,
+                title: formData.images.length === 0 ? 'Crop Event Cover Banner (16:9)' : 'Crop Image'
+            });
+        };
+        reader.readAsDataURL(file);
+        e.target.value = '';
+    };
+
+    const handleCropComplete = (croppedDataUrl) => {
+        if (cropper.targetIndex !== null && cropper.targetIndex !== undefined) {
+            setFormData(prev => {
+                const next = [...prev.images];
+                next[cropper.targetIndex] = croppedDataUrl;
+                return { ...prev, images: next };
+            });
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                images: [...prev.images, croppedDataUrl]
+            }));
+        }
+    };
 
     const handleAutoTranslate = async (field, value) => {
         if (!value || value.trim().length < 5) return;
@@ -535,28 +584,57 @@ function EventFormModal({ event, onClose, onSuccess }) {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label className={styles.label}>Visual Assets * (First image is Cover)</label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                className={styles.input}
-                                onChange={handleImageUpload}
-                            />
-                            {uploading && <p style={{ marginTop: '12px', fontSize: '12px', color: '#60a5fa', fontWeight: 'bold' }}>Optimizing assets for professional display...</p>}
+                            <label className={styles.label}>Visual Assets * (First image is Cover Banner)</label>
+                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '8px' }}>
+                                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,153,51,0.2)', color: '#FF9933', border: '1px solid rgba(255,153,51,0.3)', borderRadius: '8px', padding: '7px 14px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
+                                    <Crop size={14} />
+                                    <span>Upload & Crop Image (16:9 Banner)</span>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleSingleImageSelectAndCrop}
+                                        style={{ display: 'none' }}
+                                    />
+                                </label>
+                                <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>or bulk upload:</span>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    className={styles.input}
+                                    onChange={handleImageUpload}
+                                    style={{ maxWidth: '240px' }}
+                                />
+                            </div>
+                            {uploading && <p style={{ marginTop: '8px', fontSize: '12px', color: '#60a5fa', fontWeight: 'bold' }}>Optimizing assets for professional display...</p>}
                             
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px', marginTop: '16px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '12px', marginTop: '14px' }}>
                                 {formData.images.map((img, index) => (
-                                    <div key={index} style={{ position: 'relative', height: '100px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                    <div key={index} style={{ position: 'relative', height: '90px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)' }}>
                                         <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         <button
                                             type="button"
-                                            style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(239, 68, 68, 0.9)', color: 'white', border: 'none', borderRadius: '6px', width: '20px', height: '20px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            title="Crop this image"
+                                            style={{ position: 'absolute', top: '4px', left: '4px', background: 'rgba(255, 153, 51, 0.95)', color: 'white', border: 'none', borderRadius: '6px', width: '22px', height: '22px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
+                                            onClick={() => setCropper({
+                                                isOpen: true,
+                                                imageSrc: img,
+                                                targetIndex: index,
+                                                aspectRatio: index === 0 ? 16 / 9 : 0,
+                                                title: index === 0 ? 'Crop Event Cover Banner (16:9 Landscape)' : 'Crop Image'
+                                            })}
+                                        >
+                                            <Crop size={12} />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            title="Remove image"
+                                            style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(239, 68, 68, 0.95)', color: 'white', border: 'none', borderRadius: '6px', width: '22px', height: '22px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
                                             onClick={() => removeImage(index)}
                                         >
                                             &times;
                                         </button>
-                                        {index === 0 && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(59, 130, 246, 0.8)', color: 'white', fontSize: '9px', fontWeight: 'bold', textAlign: 'center', padding: '2px 0' }}>COVER</div>}
+                                        {index === 0 && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(59, 130, 246, 0.9)', color: 'white', fontSize: '9px', fontWeight: 'bold', textAlign: 'center', padding: '2px 0' }}>COVER (16:9)</div>}
                                     </div>
                                 ))}
                             </div>
@@ -604,14 +682,16 @@ function EventFormModal({ event, onClose, onSuccess }) {
 
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Classification *</label>
+                                <label className={styles.label}>Event Lifecycle Status *</label>
                                 <select
                                     className={styles.select}
                                     value={formData.eventType}
                                     onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
                                 >
-                                    <option value="upcoming">Upcoming Event</option>
-                                    <option value="past">Past Record</option>
+                                    <option value="upcoming">UPCOMING (Scheduled Event)</option>
+                                    <option value="ongoing">ONGOING (Active Right Now)</option>
+                                    <option value="completed">COMPLETED (Concluded Event)</option>
+                                    <option value="archived">ARCHIVED (Past Record)</option>
                                 </select>
                             </div>
 
@@ -627,6 +707,55 @@ function EventFormModal({ event, onClose, onSuccess }) {
                                 </select>
                             </div>
                         </div>
+
+                        {/* Post-Event Section (Highlights, Winners, Report) */}
+                        <div style={{
+                            marginTop: '16px',
+                            padding: '20px',
+                            background: 'rgba(255, 153, 51, 0.05)',
+                            border: '1px solid rgba(255, 153, 51, 0.2)',
+                            borderRadius: '16px'
+                        }}>
+                            <h4 style={{ color: '#FF9933', fontSize: '15px', fontWeight: '800', marginBottom: '12px' }}>
+                                Post-Event Outcomes & Highlights {formData.eventType === 'completed' ? '(Active)' : '(Optional)'}
+                            </h4>
+                            <p style={{ color: 'var(--marvel-text-dim)', fontSize: '12px', marginBottom: '16px' }}>
+                                When the event is completed, enter highlights, winners, and reports here. The website will automatically format and display them for attendees and visitors.
+                            </p>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.label}>Event Highlights & Outcomes</label>
+                                <textarea
+                                    className={styles.textarea}
+                                    rows="3"
+                                    value={formData.highlights}
+                                    onChange={(e) => setFormData({ ...formData, highlights: e.target.value })}
+                                    placeholder="e.g. Over 250 blood units collected. 15 medical staff volunteers engaged. Inaugurated by Principal."
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.label}>Winners / Special Recognition</label>
+                                <textarea
+                                    className={styles.textarea}
+                                    rows="3"
+                                    value={formData.winners}
+                                    onChange={(e) => setFormData({ ...formData, winners: e.target.value })}
+                                    placeholder="e.g. 1st Place: Best Delegate - John Doe (CSE) | 2nd Place: High Commendation - Jane Smith (ECE)"
+                                />
+                            </div>
+
+                            <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+                                <label className={styles.label}>Official Summary / Report</label>
+                                <textarea
+                                    className={styles.textarea}
+                                    rows="3"
+                                    value={formData.report}
+                                    onChange={(e) => setFormData({ ...formData, report: e.target.value })}
+                                    placeholder="Full conclusion summary, remarks, and social impact achieved."
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <div className={styles.modalFooter}>
@@ -639,6 +768,15 @@ function EventFormModal({ event, onClose, onSuccess }) {
                     </div>
                 </form>
             </div>
+
+            <ImageCropperModal
+                isOpen={cropper.isOpen}
+                imageSrc={cropper.imageSrc}
+                aspectRatio={cropper.aspectRatio}
+                title={cropper.title}
+                onCropComplete={handleCropComplete}
+                onClose={() => setCropper(prev => ({ ...prev, isOpen: false }))}
+            />
         </div>
     );
 }

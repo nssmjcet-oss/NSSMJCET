@@ -1,231 +1,1010 @@
-.volunteerPage {
-    padding: var(--space-40) 0 var(--space-24);
+/* ==========================================================================
+   NSS MJCET — JOIN US / VOLUNTEER EXPERIENCE PORTAL
+   Master Editorial Stylesheet
+   ========================================================================== */
+
+.portalWrapper {
     min-height: 100vh;
-    overflow-x: hidden;
-    background: var(--marvel-bg);
-    color: var(--marvel-text);
-}
-
-.header {
-    text-align: center;
-    margin-bottom: var(--space-16);
+    background: transparent;
+    color: #0f172a;
     position: relative;
-    z-index: 1;
+    overflow-x: hidden;
+    padding-bottom: 100px;
 }
 
-.header h1 {
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
+.recruitmentStatusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    background: rgba(19, 136, 8, 0.08);
+    border: 1px solid rgba(19, 136, 8, 0.25);
+    border-radius: 9999px;
+    font-size: 11px;
     font-weight: 800;
-    margin-bottom: var(--space-4);
-    background: var(--marvel-title-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -2px;
+    letter-spacing: 0.08em;
+    color: #138808;
+    text-transform: uppercase;
 }
 
-.header p {
-    font-size: var(--text-xl);
-    color: var(--color-primary-light);
-    font-weight: 600;
+.statusDotLive {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #138808;
+    box-shadow: 0 0 8px #138808;
+}
+
+/* ==========================================================================
+   1. HERO SECTION
+   ========================================================================== */
+.heroSection {
+    padding: clamp(125px, 14vw, 155px) 0 60px;
+    position: relative;
+    z-index: 2;
+}
+
+.heroGrid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: clamp(2rem, 4vw, 3.8rem);
+    align-items: center;
+}
+
+.heroTextCol {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.heroTopBadges {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.officialPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: rgba(255, 153, 51, 0.1);
+    border: 1px solid rgba(255, 153, 51, 0.3);
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #b45309;
     text-transform: uppercase;
-    letter-spacing: 4px;
+    margin-bottom: 0;
+}
+
+.heroMotto {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: clamp(2.8rem, 5.8vw, 4.6rem);
+    font-weight: 900;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    margin: 0 0 16px 0;
+}
+
+.heroMottoLine1 {
+    color: #0f172a;
+    white-space: nowrap;
+}
+
+.heroMottoLine2 {
+    color: #FF9933;
+    white-space: nowrap;
+}
+
+.heroHeadline {
+    font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+    font-weight: 800;
+    color: #2563eb;
+    margin: 0 0 18px 0;
+    letter-spacing: -0.01em;
+}
+
+.heroLead {
+    font-size: clamp(1rem, 1.6vw, 1.18rem);
+    color: #475569;
+    line-height: 1.7;
+    margin: 0 0 32px 0;
+    max-width: 560px;
+    font-weight: 500;
+}
+
+.heroActions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+}
+
+.threadStartBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.threadDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #FF9933;
+    box-shadow: 0 0 10px #FF9933;
+}
+
+/* Hero Right Column: Showcase Card */
+.heroVisualCol {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+}
+
+.heroPhotoFrame {
+    position: relative;
+    width: 100%;
+    max-width: 740px;
+    border-radius: 28px;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 
+        0 24px 60px -15px rgba(15, 23, 42, 0.12),
+        0 8px 24px -5px rgba(0, 0, 0, 0.04);
+}
+
+.heroPhotoWrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    max-height: 520px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.heroPhotoBadge {
+    position: absolute;
+    bottom: -18px;
+    left: 24px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 10px 18px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.heroPhotoBadge strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.heroPhotoBadge small {
+    display: block;
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   2. VERIFIED IMPACT METRICS STRIP
+   ========================================================================== */
+.impactStripSection {
+    margin: 30px auto 70px;
+    position: relative;
+    z-index: 2;
+}
+
+.impactGrid {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 28px 36px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.04);
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.impactItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.impactNumber {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.impactLabel {
+    font-size: 13px;
+    font-weight: 800;
+    color: #FF9933;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 2px;
+}
+
+.impactSub {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.impactDivider {
+    width: 1px;
+    height: 48px;
+    background: rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================================
+   COMMON SECTION HEADERS
+   ========================================================================== */
+.sectionHeader {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 50px;
+}
+
+.sectionEyebrow {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #FF9933;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.sectionHeading {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px 0;
+}
+
+.sectionSub {
+    font-size: clamp(0.98rem, 1.5vw, 1.12rem);
+    color: #64748b;
+    line-height: 1.65;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   3. "WHY NSS?" SECTION
+   ========================================================================== */
+.whySection {
+    padding: 70px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.whyGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+.whyCard {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.whyCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
+    border-color: rgba(255, 153, 51, 0.3);
+}
+
+.whyIndex {
+    font-size: 13px;
+    font-weight: 900;
+    color: #cbd5e1;
+    margin-bottom: 16px;
+    letter-spacing: 0.1em;
+}
+
+.whyTitle {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.01em;
+}
+
+.whySubtitle {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #FF9933;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 12px 0;
+}
+
+.whyDesc {
+    font-size: 0.92rem;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ==========================================================================
+   4. THE SERVICE JOURNEY (5 STAGES WITH SERVICE THREAD)
+   ========================================================================== */
+.journeySection {
+    padding: 80px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.journeyTimeline {
+    position: relative;
+    max-width: 840px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Continuous Spine */
+.threadSpine {
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    left: 48px;
+    width: 3px;
+    background: #e2e8f0;
+    border-radius: 2px;
+}
+
+.threadFill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #FF9933 0%, #2563eb 50%, #138808 100%);
+    transform-origin: top;
+    border-radius: 2px;
+}
+
+.journeyRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    margin-bottom: 44px;
+    position: relative;
+}
+
+.journeyRow:last-child {
+    margin-bottom: 0;
+}
+
+.journeyStepBadge {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid #FF9933;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 900;
+    color: #0f172a;
+    box-shadow: 0 4px 14px rgba(255, 153, 51, 0.25);
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.journeyRow:nth-child(3) .journeyStepBadge {
+    border-color: #2563eb;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+}
+
+.journeyRow:nth-child(5) .journeyStepBadge,
+.journeyRow:nth-child(6) .journeyStepBadge {
+    border-color: #138808;
+    box-shadow: 0 4px 14px rgba(19, 136, 8, 0.25);
+}
+
+.journeyContent {
+    flex: 1;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    border-radius: 20px;
+    padding: 24px 28px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+}
+
+.journeyTag {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #FF9933;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.journeyStageTitle {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 2px 0;
+}
+
+.journeyStageSub {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin: 0 0 8px 0;
+}
+
+.journeyStageDesc {
+    font-size: 0.94rem;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ==========================================================================
+   5. "SERVICE IN MOTION" (DOCUMENTARY PHOTOGRAPHY SPREAD)
+   ========================================================================== */
+.documentarySection {
+    padding: 70px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.photoMosaicGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 220px);
+    gap: 20px;
+}
+
+.mosaicItemLarge {
+    grid-column: span 2;
+    grid-row: span 2;
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+
+.mosaicItem {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+.mosaicCaption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0) 100%);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
+.mosaicCaption strong {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.mosaicCaption span {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ==========================================================================
+   6. FLAGSHIP INITIATIVES PREVIEW
+   ========================================================================== */
+.flagshipCalloutSection {
+    padding: 40px 0 80px;
+    position: relative;
+    z-index: 2;
+}
+
+.flagshipBox {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 28px;
+    padding: 48px;
+    display: grid;
+    grid-template-columns: 1.3fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.04);
+}
+
+.flagshipPill {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #FF9933;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.flagshipHeading {
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 12px 0;
+}
+
+.flagshipDesc {
+    font-size: 1rem;
+    color: #475569;
+    line-height: 1.65;
+    margin: 0 0 20px 0;
+}
+
+.flagshipFeatures {
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.flagshipBadgeArt {
+    display: flex;
+    justify-content: center;
+}
+
+.flagshipArtInner {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: #ffffff;
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+    width: 100%;
+    max-width: 320px;
+}
+
+.flagshipArtInner h3 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.02em;
+}
+
+.flagshipArtInner p {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #93c5fd;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 18px 0;
+}
+
+.flagshipYear {
+    display: inline-block;
+    padding: 4px 14px;
+    background: #FF9933;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    border-radius: 9999px;
+    letter-spacing: 0.1em;
+}
+
+/* ==========================================================================
+   8. REAL STORIES FROM NSS VOLUNTEERS
+   ========================================================================== */
+.storiesSection {
+    padding: 70px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.storiesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.storyCard {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+}
+
+.storyWingBadge {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #138808;
+    background: rgba(19, 136, 8, 0.08);
+    padding: 4px 10px;
+    border-radius: 9999px;
+    align-self: flex-start;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.storyQuote {
+    font-size: 0.96rem;
+    color: #334155;
+    line-height: 1.65;
+    font-style: italic;
+    margin: 0 0 20px 0;
+    flex: 1;
+}
+
+.storyAuthor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.storyAvatarWrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #f8fafc;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.storyAuthorName {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+}
+
+.storyAuthorRole {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   9. FINAL EMOTIONAL CALLOUT SECTION
+   ========================================================================== */
+.finalCalloutSection {
+    padding: 60px 0 40px;
+    position: relative;
+    z-index: 2;
+}
+
+.finalCalloutCard {
+    background: linear-gradient(135deg, #ffffff 0%, #fef3c7 100%);
+    border: 2px solid #FF9933;
+    border-radius: 28px;
+    padding: 48px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(255, 153, 51, 0.15);
     max-width: 800px;
     margin: 0 auto;
 }
 
-.formContainer {
-    max-width: 1400px;
-    margin: 0 auto;
-    background: rgba(255, 255, 255, 0.85);
-    /* Lighter, more glassmorphic */
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    padding: var(--space-16);
-    border-radius: 48px;
+.finalMottoBadge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    color: #FF9933;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.finalHeading {
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.02em;
+}
+
+.finalSubtitle {
+    font-size: 1.1rem;
+    color: #475569;
+    max-width: 540px;
+    margin: 0 auto 28px;
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   10. HIGH-USABILITY VOLUNTEER REGISTRATION FORM
+   ========================================================================== */
+.formSection {
+    padding: 60px 0 100px;
     position: relative;
     z-index: 2;
-    transition: all var(--transition-slow);
-    box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.1);
 }
 
-.formContainer:hover {
-    background: rgba(255, 255, 255, 0.95);
-    border-color: var(--color-primary-light);
-    box-shadow: var(--marvel-glow-blue);
+.formContainerCard {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 28px;
+    padding: clamp(28px, 5vw, 56px);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.06);
+    max-width: 820px;
+    margin: 0 auto;
 }
 
-/* Override global Marvelous labels for this specific page to match blue uppercase style */
-.volunteerPage :global(.marvelous-label) {
-    color: #2563eb !important;
-    /* Premium Blue */
-    font-size: 0.75rem !important;
-    font-weight: 800 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1.5px !important;
-    margin-bottom: 12px !important;
+.formHeader {
+    margin-bottom: 36px;
+    text-align: center;
 }
 
-/* Glassmorphic inputs */
-.volunteerPage :global(.marvelous-input) {
-    background: rgba(255, 255, 255, 0.5) !important;
-    border: 1px solid rgba(0, 0, 0, 0.05) !important;
-    color: #1e293b !important;
-    /* Slate 800 */
-    backdrop-filter: blur(5px);
-    border-radius: 16px !important;
-    padding: 18px 24px !important;
-}
-
-.volunteerPage :global(.marvelous-input:focus) {
-    background: rgba(255, 255, 255, 0.8) !important;
-    border-color: #2563eb !important;
-    box-shadow: 0 0 20px rgba(37, 99, 235, 0.15) !important;
-}
-
-/* Fix select dropdown appearance - prevent tiling */
-.volunteerPage :global(.marvelous-select) {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232563eb'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
-    background-repeat: no-repeat !important;
-    background-position: right 1rem center !important;
-    background-size: 1.25rem !important;
-    padding-right: 3rem !important;
-}
-
-/* Ensure select options are visible in light mode */
-.volunteerPage :global(.marvelous-select) option {
-    color: #0f172a !important;
-    background: white !important;
-}
-
-/* Fix placeholder text visibility */
-.volunteerPage :global(.marvelous-input::placeholder) {
-    color: #94a3b8 !important;
-    opacity: 0.8 !important;
-}
-
-/* Back to Home Button */
-.backButton {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-6);
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: var(--radius-xl);
-    color: #2563eb;
+.formPreTitle {
+    font-size: 11px;
     font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #2563eb;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 0.7rem;
-    text-decoration: none;
-    transition: all var(--transition-base);
-    margin-bottom: var(--space-4);
-    position: relative;
-    z-index: 10;
+    display: block;
+    margin-bottom: 8px;
 }
 
-.backButton:hover {
-    background: #2563eb;
-    color: white;
-    transform: translateX(-4px);
-    box-shadow: var(--marvel-glow-blue);
+.formTitle {
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 8px 0;
 }
 
-.form {
-    margin-top: var(--space-6);
+.formDesc {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0 auto;
+    max-width: 580px;
+    line-height: 1.6;
+}
+
+.alertBox {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    margin-bottom: 28px;
+}
+
+.alertSuccess {
+    background: rgba(19, 136, 8, 0.1);
+    border: 1px solid rgba(19, 136, 8, 0.3);
+    color: #138808;
+}
+
+.alertError {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #dc2626;
+}
+
+.actualForm {
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
-    /* Slightly tighter spacing */
+    gap: 20px;
 }
 
-.interestsGrid {
+.formGridRow {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: var(--space-4);
-    margin-top: var(--space-4);
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
-.checkboxLabel {
+.formGroup {
     display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.fieldLabel {
+    font-size: 12px;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.reqMark {
+    color: #dc2626;
+}
+
+.textInput,
+.selectInput,
+.textareaInput {
+    padding: 13px 18px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 14.5px;
+    color: #0f172a;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.textInput:focus,
+.selectInput:focus,
+.textareaInput:focus {
+    outline: none;
+    border-color: #FF9933;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 153, 51, 0.15);
+}
+
+.interestSection {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+.chipsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.chipBtn {
+    display: inline-flex;
     align-items: center;
-    gap: var(--space-4);
-    padding: 16px 20px;
-    /* More compact padding like screenshot */
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(0, 0, 0, 0.03);
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.checkboxLabel:hover {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: #2563eb;
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
-}
-
-.checkboxLabel input[type="checkbox"] {
-    width: 22px;
-    height: 22px;
-    accent-color: #2563eb;
-    cursor: pointer;
-}
-
-.checkboxLabel span {
-    font-size: 1.1rem;
-    color: #334155;
-    /* Slate 700 */
+    gap: 6px;
+    padding: 8px 16px;
+    background: #f1f5f9;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 9999px;
+    font-size: 13px;
     font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.checkboxLabel:hover span {
+.chipBtn:hover {
+    background: #e2e8f0;
     color: #0f172a;
 }
 
-@media (max-width: 768px) {
-    .volunteerPage {
-        padding: var(--space-20) 0;
-    }
+.chipBtnActive {
+    background: rgba(255, 153, 51, 0.15);
+    border-color: #FF9933;
+    color: #b45309;
+}
 
-    .formContainer {
-        padding: var(--space-8) var(--space-6);
-        border-radius: 30px;
-    }
+.privacyNote {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #64748b;
+    text-align: center;
+    margin-top: 14px;
+}
 
-    .header h1 {
-        letter-spacing: -1px;
-    }
-
-    .header p {
-        font-size: var(--text-lg);
-        letter-spacing: 2px;
-    }
-
-    .interestsGrid {
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES (MOBILE FIRST COMPATIBLE)
+   ========================================================================== */
+@media (max-width: 900px) {
+    .heroGrid {
         grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .heroTextCol {
+        align-items: center;
+    }
+
+    .heroLead {
+        margin: 0 auto 28px;
+    }
+
+    .heroActions {
+        justify-content: center;
+    }
+
+    .flagshipBox {
+        grid-template-columns: 1fr;
+        padding: 32px;
+    }
+
+    .photoMosaicGrid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+    }
+
+    .mosaicItemLarge {
+        grid-column: span 2;
+        height: 260px;
+    }
+
+    .mosaicItem {
+        height: 200px;
     }
 }
 
-@media (max-width: 480px) {
-    .header h1 {
-        font-size: 2rem;
+@media (max-width: 640px) {
+    .formGridRow {
+        grid-template-columns: 1fr;
     }
 
-    .formContainer {
-        padding: var(--space-6) var(--space-4);
-        border-radius: 20px;
+    .impactDivider {
+        display: none;
     }
 
-    .checkboxLabel {
-        padding: 12px 16px;
-        border-radius: 12px;
+    .impactGrid {
+        flex-direction: column;
+        padding: 24px;
     }
 
-    .checkboxLabel span {
-        font-size: 1rem;
+    .threadSpine {
+        left: 20px;
+    }
+
+    .journeyStepBadge {
+        width: 36px;
+        height: 36px;
+        font-size: 12px;
+    }
+
+    .journeyRow {
+        gap: 16px;
+    }
+
+    .journeyContent {
+        padding: 18px 20px;
+    }
+
+    .photoMosaicGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .mosaicItemLarge {
+        grid-column: span 1;
+        height: 240px;
     }
 }

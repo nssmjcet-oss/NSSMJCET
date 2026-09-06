@@ -69,9 +69,11 @@ export async function POST(request) {
         );
 
         const eventData = {
+            ...body,
             title,
             description,
             date: new Date(date),
+            endDate: body.endDate ? new Date(body.endDate) : undefined,
             location,
             images: uploadedImages,
             status: eventStatus || 'published',

@@ -1,0 +1,103 @@
+.ypContainer {
+    position: relative;
+    width: 100%;
+    min-height: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background: radial-gradient(circle at 50% 30%, rgba(19, 136, 8, 0.08), transparent 70%);
+    text-align: center;
+}
+
+.badgePill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    border-radius: 9999px;
+    background: rgba(19, 136, 8, 0.12);
+    border: 1px solid rgba(19, 136, 8, 0.3);
+    color: #138808;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+}
+
+.titleWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3em 0.5em;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.wordSpan {
+    display: inline-block;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+    font-family: inherit;
+}
+
+.highlightWord {
+    display: inline-block;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #FF9933;
+    font-family: inherit;
+    position: relative;
+}
+
+.highlightWord::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF9933, #138808);
+    border-radius: 9999px;
+}
+
+.subtitle {
+    margin-top: 24px;
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    font-weight: 600;
+    color: #475569;
+    max-width: 650px;
+    line-height: 1.6;
+}
+
+.ashokaSymbol {
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.symbolLine {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 153, 51, 0.6));
+}
+
+.symbolLineRight {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(19, 136, 8, 0.6), transparent);
+}

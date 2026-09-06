@@ -60,10 +60,10 @@ export default function DebugAuth() {
                     <h3 style={{ marginTop: 0 }}>Step 1: Client Connection</h3>
                     <p>Browser Database ID: <strong style={{ color: isCorrectId ? 'green' : 'red' }}>{currentDbId}</strong></p>
                     {isCorrectId ? (
-                        <p style={{ color: 'green', fontWeight: 'bold' }}>✅ MATCHED SUCCESSFULLY!</p>
+                        <p style={{ color: 'green', fontWeight: 'bold' }}>MATCHED SUCCESSFULLY!</p>
                     ) : (
                         <div>
-                            <p style={{ color: 'red' }}>❌ MISMATCH: Browser is using <code>{currentDbId}</code></p>
+                            <p style={{ color: 'red' }}>MISMATCH: Browser is using <code>{currentDbId}</code></p>
                             <p style={{ fontSize: '13px', color: '#666' }}>Next.js is caching an old connection. Restart your server if ncessary.</p>
                         </div>
                     )}
@@ -76,10 +76,10 @@ export default function DebugAuth() {
                     {serverRole ? (
                         <div>
                             <p>Server-Confirmed Role: <strong style={{ color: 'green', fontSize: '18px' }}>{serverRole.toUpperCase()}</strong></p>
-                            <p style={{ color: 'green', fontWeight: 'bold' }}>✅ ACCESS READY!</p>
+                            <p style={{ color: 'green', fontWeight: 'bold' }}>ACCESS READY!</p>
                         </div>
                     ) : serverError ? (
-                        <p style={{ color: 'red' }}>❌ Server Error: {serverError}</p>
+                        <p style={{ color: 'red' }}>Server Error: {serverError}</p>
                     ) : (
                         <button onClick={checkServerRole} style={{ padding: '8px 16px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>RE-VERIFY SERVER</button>
                     )}
@@ -88,7 +88,7 @@ export default function DebugAuth() {
 
             {isSuperAdmin && (
                 <div style={{ padding: '30px', background: '#22c55e', color: 'white', borderRadius: '15px', marginBottom: '30px', textAlign: 'center' }}>
-                    <h2 style={{ fontSize: '32px', margin: '0 0 10px 0' }}>Access is Officially Restored! 🚀</h2>
+                    <h2 style={{ fontSize: '32px', margin: '0 0 10px 0' }}>Access is Officially Restored!</h2>
                     <p style={{ fontSize: '18px', opacity: 0.9 }}>The server has confirmed you are a Super Admin.</p>
 
                     <div style={{ marginTop: '25px', display: 'flex', gap: '15px', justifyContent: 'center' }}>

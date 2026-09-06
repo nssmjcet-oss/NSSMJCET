@@ -4,15 +4,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage, getText } from '@/contexts/LanguageContext';
 import styles from './page.module.css';
-import { motion, useScroll, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import LeadershipSection from '@/components/LeadershipSection';
-import GoverningBodySection from '@/components/GoverningBodySection';
+import FlagshipSection from '@/components/FlagshipSection';
 import EventSlider from '@/components/EventSlider';
 import EventsPortalBanner from '@/components/EventsPortalBanner';
 import EventModal from '@/components/EventModal';
 import DevelopersSection from '@/components/DevelopersSection';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, Camera } from 'lucide-react';
 import { fetchWithCache } from '@/utils/client-cache';
 
 
@@ -127,13 +127,6 @@ const dreamyReveal = {
 
 export default function Home() {
     const { language } = useLanguage();
-    const { scrollYProgress } = useScroll();
-    const scaleX = useSpring(scrollYProgress, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001
-    });
-
     const [stats, setStats] = useState({
         volunteers: 0,
         events: 0,
@@ -146,25 +139,57 @@ export default function Home() {
     const [allEvents, setAllEvents] = useState([]);
     const [liveEvent, setLiveEvent] = useState(null);
 
+    // Fetch dynamic content on mount
     useEffect(() => {
+        // Fetch stats
         fetchWithCache('/api/stats')
-            .then(data => { if (data && !data.error) setStats(data); })
+            .then(data => {
+                if (data && !data.error) {
+                    setStats({
+                        volunteers: data.volunteers || 0,
+                        events: data.events || 0,
+                        serviceHours: data.serviceHours || 0,
+                        beneficiaries: data.beneficiaries || 0
+                    });
+                }
+            })
             .catch(console.error);
 
+        // Fetch dynamic Hero content (photo + quick stats)
         fetchWithCache('/api/content?pageId=hero')
-            .then(data => { if (data?.content) setHeroData(data.content); })
+            .then(data => {
+                if (data?.content) {
+                    setHeroData(data.content);
+                }
+            })
             .catch(console.error);
 
-        fetchWithCache('/api/content?pageId=live_event')
-            .then(data => { if (data?.content) setLiveEvent(data.content); })
-            .catch(console.error);
-
+        // Fetch flagships
         fetchWithCache('/api/flagship')
-            .then(data => { if (data?.flagships) setFlagships(data.flagships); })
+            .then(data => {
+                if (data?.flagships) {
+                    setFlagships(data.flagships);
+                }
+            })
             .catch(console.error);
 
+        // Fetch events
         fetchWithCache('/api/events')
-            .then(data => { if (data?.events) setAllEvents(data.events); })
+            .then(data => {
+                const list = data?.events || (Array.isArray(data) ? data : []);
+                if (list.length > 0) {
+                    setAllEvents(list);
+                }
+            })
+            .catch(console.error);
+
+        // Fetch live spotlight event from Content model
+        fetchWithCache('/api/content?pageId=live_event')
+            .then(data => {
+                if (data?.content) {
+                    setLiveEvent(data.content);
+                }
+            })
             .catch(console.error);
     }, []);
 
@@ -174,61 +199,111 @@ export default function Home() {
 
     return (
         <div className={styles.home} data-language={language}>
-            {/* Global Scroll Progress Bar */}
-            <motion.div className={styles.progressBar} style={{ scaleX }} />
-
-            <div className={styles.ornament1} />
-            <div className={styles.ornament2} />
-            <div className={styles.ornament3} />
-
-            {/* 1. Hero Section */}
+            {/* 1. Hero Section — Original NSS MJCET Signature Design */}
             <section className={styles.hero}>
-                <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+                {/* Clean, authentic light background with subtle tricolor atmosphere */}
+                <div className={styles.heroBackdrop}>
+                    <div className={styles.heroGlowSaffron} />
+                    <div className={styles.heroGlowGreen} />
+                </div>
+
+                <div className={`container ${styles.heroContainer}`} style={{ position: 'relative', zIndex: 2 }}>
                     <motion.div
-                        className={styles.heroContent}
+                        className={styles.heroGrid}
                         initial="initial"
                         animate="animate"
                         variants={{
                             initial: { opacity: 0 },
                             animate: {
                                 opacity: 1,
-                                transition: { staggerChildren: 0.15, delayChildren: 0.3 }
+                                transition: { staggerChildren: 0.15, delayChildren: 0.1 }
                             }
                         }}
                     >
-                        <motion.span
-                            className={styles.heroTagline}
-                            variants={dreamyReveal}
-                        >
-                            {getText(translations.hero.tagline, language)}
-                        </motion.span>
-                        <motion.h1
-                            className={styles.heroTitle}
-                            variants={dreamyReveal}
-                        >
-                            {displayHeroTitle}
-                        </motion.h1>
-                        <motion.p
-                            className={styles.heroDescription}
-                            variants={dreamyReveal}
-                        >
-                            {displayHeroDesc}
-                        </motion.p>
-                        <motion.div
-                            className={styles.heroActions}
-                            variants={dreamyReveal}
-                            style={{ gap: '1rem', marginTop: '1.25rem' }}
-                        >
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        {/* Left Column: Authentic Brand Narrative */}
+                        <div className={styles.heroTextCol}>
+                            {/* Mission Pill */}
+                            <motion.div className={styles.heroBadge} variants={dreamyReveal}>
+                                <span className={styles.heroBadgeDot} />
+                                <span className={styles.heroBadgeText}>MUFFAKHAM JAH COLLEGE OF ENGINEERING & TECHNOLOGY</span>
+                            </motion.div>
+
+                            {/* Main Title with NSS Identity */}
+                            <motion.h1 className={styles.heroHeading} variants={dreamyReveal}>
+                                <span className={styles.heroHeadingSub}>NATIONAL SERVICE SCHEME</span>
+                                <span className={styles.heroHeadingMain}>NSS MJCET</span>
+                            </motion.h1>
+
+                            {/* Official Motto Callout */}
+                            <motion.div className={styles.heroMottoBanner} variants={dreamyReveal}>
+                                <span className={styles.heroMottoQuote}>“</span>
+                                <span className={styles.heroMottoText}>NOT ME BUT YOU</span>
+                                <span className={styles.heroMottoQuote}>”</span>
+                            </motion.div>
+
+                            {/* Mission description */}
+                            <motion.p className={styles.heroDescText} variants={dreamyReveal}>
+                                Empowering students through selfless community service, leadership development,
+                                and impactful social initiatives across society.
+                            </motion.p>
+
+                            {/* Action Buttons */}
+                            <motion.div className={styles.heroActionButtons} variants={dreamyReveal}>
                                 <Link href="/volunteer" className="marvelous-btn marvelous-btn-primary marvelous-btn-lg">
-                                    {getText(translations.hero.joinBtn, language)}
+                                    Become a Volunteer
                                 </Link>
-                            </motion.div>
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                 <Link href="/about" className="marvelous-btn marvelous-btn-outline marvelous-btn-lg">
-                                    {getText(translations.hero.learnMore, language)}
+                                    Explore NSS
                                 </Link>
                             </motion.div>
+
+                            {/* Quick Stats Pill Strip */}
+                            <motion.div className={styles.heroTrustStrip} variants={dreamyReveal}>
+                                <div className={styles.heroTrustItem}>
+                                    <strong>{heroData?.volunteers || stats.volunteers || '500'}+</strong>
+                                    <span>Volunteers</span>
+                                </div>
+                                <div className={styles.heroTrustDivider} />
+                                <div className={styles.heroTrustItem}>
+                                    <strong>{heroData?.events || stats.events || '50'}+</strong>
+                                    <span>Events</span>
+                                </div>
+                                <div className={styles.heroTrustDivider} />
+                                <div className={styles.heroTrustItem}>
+                                    <strong>{heroData?.serviceHours || stats.serviceHours || '10000'}+</strong>
+                                    <span>Service Hrs</span>
+                                </div>
+                            </motion.div>
+                        </div>
+
+                        {/* Right Column: Hero Team Visual Card (Original, No Dark Veil) */}
+                        <motion.div className={styles.heroCardCol} variants={dreamyReveal}>
+                            <div className={styles.heroCardFrame}>
+                                <div className={styles.heroCardImgWrap}>
+                                    <Image
+                                        src={heroData?.image || '/uploads/nss-team-hero.jpg'}
+                                        alt="NSS MJCET Volunteer Team"
+                                        fill
+                                        priority
+                                        unoptimized={typeof heroData?.image === 'string' && heroData.image.startsWith('data:')}
+                                        className={styles.heroCardImg}
+                                        style={{ objectFit: 'cover', objectPosition: 'center center' }}
+                                    />
+                                    <div className={styles.heroCardImgGlow} />
+                                </div>
+
+                                {/* Floating Authentic NSS Emblem Badge */}
+                                <div className={styles.heroEmblemFloat}>
+                                    <Image
+                                        src="/uploads/nss-logo.png"
+                                        alt="NSS Emblem"
+                                        width={68}
+                                        height={68}
+                                        priority
+                                    />
+                                </div>
+
+                            </div>
                         </motion.div>
                     </motion.div>
                 </div>
@@ -260,7 +335,7 @@ export default function Home() {
                                     />
                                 ) : (
                                     <div className={styles.spotlightPlaceholder}>
-                                        <span style={{ fontSize: '3rem', opacity: 0.15 }}>📸</span>
+                                        <Camera size={44} style={{ opacity: 0.2, color: 'currentColor' }} />
                                     </div>
                                 )}
                             </div>
@@ -294,144 +369,15 @@ export default function Home() {
             )}
 
             {/* Flagship Campaigns — DB-driven portrait cards */}
-            {flagships.length > 0 && (
-                <section className={styles.flagshipSection}>
-                    <div className={styles.flagshipGlow1} />
-                    <div className={styles.flagshipGlow2} />
-                    <div className={styles.flagshipContainer}>
-                        <div className={styles.flagshipHeader}>
-                            <motion.div className={styles.flagshipLabel} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-                                <Sparkles size={12} />
-                                <span>{getText({ en: 'Signature Initiatives', te: 'సంతకం కార్యక్రమాలు', hi: 'प्रमुख पहल' }, language)}</span>
-                            </motion.div>
-                            <motion.h2 className={styles.flagshipTitleText} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }}>
-                                {getText({ en: 'Flagship Campaigns', te: 'ప్రధాన సేవా కార్యక్రమాలు', hi: 'प्रमुख अभियान' }, language)}
-                            </motion.h2>
-                            <motion.p className={styles.flagshipSubtitleText} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
-                                {getText({ en: 'Our benchmark social drives creating monumental impact across communities.', te: 'సమాజంలో స్మరణీయమైన మార్పును చూపే మా ప్రధాన సేవా కార్యక్రమాలు.', hi: 'समाज में महत्वपूर्ण बदलाव लाने वाले हमारे प्रमुख सामाजिक अभियान।' }, language)}
-                            </motion.p>
-                        </div>
-                        <div className={styles.flagshipPortraitGrid}>
-                            {flagships.map((camp, idx) => {
-                                const cardAccents = ['#ef4444', '#10b981', '#f59e0b', '#3b82f6'];
-                                const accent = cardAccents[idx % 4];
-                                
-                                // Resolve matching event details for bulletproof text fallbacks
-                                const matchedEvent = allEvents.find(e => e.id === camp.linkedEventId || e._id === camp.linkedEventId);
-                                
-                                const finalTitle = camp.title?.[language] || camp.title?.en || matchedEvent?.title?.[language] || matchedEvent?.title?.en || 'NSS Special Campaign';
-                                const finalTagline = camp.tagline?.[language] || camp.tagline?.en || matchedEvent?.tagline?.[language] || matchedEvent?.tagline?.en || 'Community Drive';
-                                const finalDesc = camp.description?.[language] || camp.description?.en || matchedEvent?.description?.[language] || matchedEvent?.description?.en || 'An intensive community initiative driven by NSS MJCET to create sustainable social impact.';
-                                const finalTag = camp.tag?.[language] || camp.tag?.en || (typeof matchedEvent?.category === 'object' ? (matchedEvent?.category?.[language] || matchedEvent?.category?.en) : matchedEvent?.category) || 'SPECIAL INITIATIVE';
+            {/* 3. Flagship Initiatives — E-Cell inspired letterform hero, dynamic multi-initiative support */}
+            <FlagshipSection
+                flagships={flagships}
+                allEvents={allEvents}
+                onSelectEvent={setSelectedEvent}
+            />
 
-                                return (
-                                    <motion.div
-                                        key={camp.id || idx}
-                                        className={styles.flagshipPortraitCard}
-                                        style={{ '--card-accent': accent }}
-                                        initial={{ opacity: 0, y: 40 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true, margin: '-40px' }}
-                                        transition={{ duration: 0.6, delay: idx * 0.1 }}
-                                        whileHover={{ y: -8 }}
-                                    >
-                                        <div className={styles.flagshipPortraitImgWrap}>
-                                            {camp.image ? (
-                                                <Image src={camp.image} alt={finalTitle} width={500} height={750} className={styles.flagshipPortraitImg} style={{ objectFit: 'cover', width: '100%', height: '100%' }} />
-                                            ) : (
-                                                <div className={styles.flagshipPortraitPlaceholder}>
-                                                    <span style={{ fontSize: '3rem', opacity: 0.15 }}>📸</span>
-                                                </div>
-                                            )}
-                                            <div className={styles.flagshipPortraitOverlay} />
-                                            <div className={styles.flagshipPortraitNum}>0{idx + 1}</div>
-                                        </div>
-                                        <div className={styles.flagshipPortraitBody}>
-                                            {finalTag && (
-                                                <span className={styles.flagshipPortraitTag} style={{ color: accent, borderColor: `${accent}40`, background: `${accent}15` }}>
-                                                    {finalTag}
-                                                </span>
-                                            )}
-                                            <h3 className={styles.flagshipPortraitTitle}>
-                                                {(() => {
-                                                    const lowerTitle = finalTitle.toLowerCase();
-                                                    let xIdx = lowerTitle.indexOf(' x ');
-                                                    if (xIdx === -1) {
-                                                        xIdx = lowerTitle.indexOf('x');
-                                                    }
-                                                    return finalTitle.split('').map((char, charIdx) => {
-                                                        if (char === ' ') {
-                                                            return <span key={charIdx} style={{ display: 'inline-block' }}>&nbsp;</span>;
-                                                        }
-                                                        const isX = (xIdx !== -1 && charIdx === xIdx) || (xIdx === -1 && char.toLowerCase() === 'x');
-                                                        let positionClass = '';
-                                                        if (!isX) {
-                                                            if (xIdx !== -1) {
-                                                                positionClass = charIdx < xIdx ? styles.partOne : styles.partTwo;
-                                                            } else {
-                                                                positionClass = charIdx < finalTitle.length / 2 ? styles.partOne : styles.partTwo;
-                                                            }
-                                                        }
-                                                        return (
-                                                            <span
-                                                                key={charIdx}
-                                                                className={`${styles.animatedLetter} ${isX ? styles.letterX : positionClass}`}
-                                                                style={{ '--index': charIdx }}
-                                                            >
-                                                                {char}
-                                                            </span>
-                                                        );
-                                                    });
-                                                })()}
-                                            </h3>
-                                            {finalTagline && (
-                                                <p className={styles.flagshipPortraitTagline}>
-                                                    {finalTagline}
-                                                </p>
-                                            )}
-                                            <p className={styles.flagshipPortraitDesc}>
-                                                {finalDesc.length > 120 ? `${finalDesc.substring(0, 120)}...` : finalDesc}
-                                            </p>
-                                            {camp.linkedEventId ? (
-                                                matchedEvent ? (
-                                                    <button
-                                                        onClick={() => setSelectedEvent(matchedEvent)}
-                                                        className={styles.flagshipMoreInfoBtn}
-                                                        style={{ 
-                                                            '--btn-accent': accent,
-                                                            cursor: 'pointer',
-                                                            fontFamily: 'inherit'
-                                                        }}
-                                                    >
-                                                        {getText({ en: 'More Info', te: 'మరింత సమాచారం', hi: 'अधिक जानें' }, language)}
-                                                        <ArrowRight size={14} />
-                                                    </button>
-                                                ) : (
-                                                    <Link href={`/events?open=${camp.linkedEventId}`} className={styles.flagshipMoreInfoBtn} style={{ '--btn-accent': accent }}>
-                                                        {getText({ en: 'More Info', te: 'మరింత సమాచారం', hi: 'अधिक जानें' }, language)}
-                                                        <ArrowRight size={14} />
-                                                    </Link>
-                                                )
-                                            ) : (
-                                                <Link href="/events" className={styles.flagshipMoreInfoBtn} style={{ '--btn-accent': accent }}>
-                                                    {getText({ en: 'View Events', te: 'ఈవెంట్స్ చూడండి', hi: 'कार्यक्रम देखें' }, language)}
-                                                    <ArrowRight size={14} />
-                                                </Link>
-                                            )}
-                                        </div>
-                                    </motion.div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </section>
-            )}
-
-            {/* 3. Leadership Section (Chairman & Program Officer) */}
+            {/* 4. Leadership Section (Chairman & Program Officer) */}
             <LeadershipSection />
-
-            {/* 4. Governing Body Section */}
-            <GoverningBodySection />
 
             {/* 5. Flagship Events Portal Banner */}
             <EventsPortalBanner />

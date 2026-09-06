@@ -7,8 +7,10 @@ import { formatDate } from '@/utils/formatters';
 import styles from './events.module.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import EventModal from '@/components/EventModal';
-import { Calendar, MapPin, ArrowRight, Clock } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight, Clock, Sparkles } from 'lucide-react';
+import InteractiveTypography from '@/components/InteractiveTypography';
 
 const translations = {
     // ... same as before
@@ -106,18 +108,16 @@ export default function EventsClient({ events }) {
 
     const now = new Date();
     const filteredEvents = events.filter(event => {
-        // 1. Filter by Status/Date (Upcoming / Past)
-        let matchesCategory = true;
-        if (event.eventType) {
-            if (filter === 'upcoming') matchesCategory = event.eventType === 'upcoming';
-            else if (filter === 'past') matchesCategory = event.eventType === 'past';
-        } else {
-            const eventDate = new Date(event.date);
-            if (filter === 'upcoming') matchesCategory = eventDate >= now;
-            else if (filter === 'past') matchesCategory = eventDate < now;
+        // 1. Filter by Status/Lifecycle
+        if (filter === 'upcoming') {
+            const isUp = event.eventType === 'upcoming' || (!event.eventType && new Date(event.date) >= now);
+            if (!isUp) return false;
+        } else if (filter === 'ongoing') {
+            if (event.eventType !== 'ongoing') return false;
+        } else if (filter === 'completed') {
+            const isComp = event.eventType === 'completed' || event.eventType === 'past' || (!event.eventType && new Date(event.date) < now);
+            if (!isComp) return false;
         }
-
-        if (!matchesCategory) return false;
 
         // 2. Filter by Academic Year
         if (selectedYear === 'ALL') return true;
@@ -125,10 +125,33 @@ export default function EventsClient({ events }) {
         return eventYear === selectedYear;
     });
 
+    // Select the premier/featured event: prefer an event flagged with isFeatured / flagship / ongoing / upcoming, or first event
+    const featuredEvent = events.find(e => e.isFeatured || e.eventType === 'ongoing') || events.find(e => e.eventType === 'upcoming') || events[0];
+
     return (
         <div className={styles.eventsPage}>
+            {/* Hero Header */}
             <section className={styles.hero}>
                 <div className="container">
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            display: 'inline-block',
+                            padding: '6px 18px',
+                            background: 'rgba(255, 153, 51, 0.1)',
+                            border: '1px solid rgba(255, 153, 51, 0.25)',
+                            borderRadius: '9999px',
+                            color: '#FF9933',
+                            fontSize: '12px',
+                            fontWeight: '800',
+                            letterSpacing: '2px',
+                            textTransform: 'uppercase',
+                            marginBottom: '16px'
+                        }}
+                    >
+                        NSS MJCET INITIATIVES & DRIVES
+                    </motion.div>
                     <motion.h1
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -146,17 +169,138 @@ export default function EventsClient({ events }) {
             </section>
 
             <div className="container">
-                {/* Elegant Dynamic Year Slider - Premium styling relevant to the light/glass bg theme */}
+                {/* 1. CINEMATIC FEATURED / FLAGSHIP EVENT BANNER (E-Cell MJCET style) */}
+                {featuredEvent && (
+                    <motion.section
+                        className={styles.featuredSection}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2, duration: 0.5 }}
+                    >
+                        <div
+                            className={styles.featuredCard}
+                            onClick={() => setSelectedEvent(featuredEvent)}
+                        >
+                            <div className={styles.featuredBg}>
+                                <Image
+                                    src={(featuredEvent.images && featuredEvent.images.length > 0) ? featuredEvent.images[0] : '/placeholder-event.jpg'}
+                                    alt={featuredEvent.title[language] || featuredEvent.title.en}
+                                    fill
+                                    sizes="100vw"
+                                    style={{ objectFit: 'cover' }}
+                                    priority
+                                    unoptimized={typeof featuredEvent.images?.[0] === 'string' && featuredEvent.images[0].startsWith('data:')}
+                                    onError={(e) => {
+                                        if (e.target) e.target.src = '/placeholder-event.jpg';
+                                    }}
+                                />
+                            </div>
+                            <div className={styles.featuredOverlay} />
+                            
+                            <div className={styles.featuredContent}>
+                                <div className={styles.titleGroup}>
+                                    <InteractiveTypography
+                                        title={((featuredEvent.title?.en || '').toLowerCase().includes('mun') || (featuredEvent.title?.en || '').toLowerCase().includes('yds'))
+                                            ? 'MUN x NSS'
+                                            : (featuredEvent.short_title || featuredEvent.title[language] || featuredEvent.title.en)}
+                                        subtitle="Youth Diplomacy Summit"
+                                        animationPreset="diplomatic"
+                                        accentColor="saffron"
+                                        theme="dark"
+                                        size="xl"
+                                    />
+                                </div>
+
+                                <div className={styles.featuredMeta}>
+                                    <div className={styles.featuredMetaItem}>
+                                        <Calendar size={15} style={{ color: '#93c5fd' }} />
+                                        <span>
+                                            {featuredEvent.endDate && featuredEvent.endDate !== featuredEvent.date
+                                                ? `${formatDate(featuredEvent.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')} - ${formatDate(featuredEvent.endDate, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}`
+                                                : formatDate(featuredEvent.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}
+                                        </span>
+                                    </div>
+                                    {featuredEvent.location && (
+                                        <div className={styles.featuredMetaItem}>
+                                            <MapPin size={15} style={{ color: '#93c5fd' }} />
+                                            <span>{featuredEvent.location}</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <p className={styles.featuredDesc}>
+                                    {featuredEvent.description[language] || featuredEvent.description.en}
+                                </p>
+
+                                <button
+                                    type="button"
+                                    className={styles.featuredBtn}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedEvent(featuredEvent);
+                                    }}
+                                >
+                                    <span>Explore Initiative</span>
+                                    <ArrowRight size={16} />
+                                </button>
+                            </div>
+                        </div>
+                    </motion.section>
+                )}
+
+                {/* 2. SECTION HEADER: ALL EVENTS */}
+                <div className={styles.allEventsHeader}>
+                    <h2 className={styles.allEventsTitle}>All Events & Drives</h2>
+                    <div className={styles.allEventsLine} />
+                </div>
+
+                {/* Lifecycle Status Filter Tabs */}
+                <motion.div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        flexWrap: 'wrap',
+                        marginBottom: '20px'
+                    }}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35 }}
+                >
+                    {[
+                        { id: 'all', label: 'All Events' },
+                        { id: 'upcoming', label: 'Upcoming' },
+                        { id: 'ongoing', label: '● Live Now' },
+                        { id: 'completed', label: 'Completed' }
+                    ].map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setFilter(tab.id)}
+                            style={{
+                                padding: '10px 22px',
+                                borderRadius: '9999px',
+                                fontSize: '13px',
+                                fontWeight: '700',
+                                cursor: 'pointer',
+                                transition: 'all 0.25s ease',
+                                border: filter === tab.id ? '1px solid #2563eb' : '1px solid rgba(0,0,0,0.08)',
+                                background: filter === tab.id ? '#2563eb' : 'rgba(255, 255, 255, 0.9)',
+                                color: filter === tab.id ? '#FFFFFF' : '#334155',
+                                boxShadow: filter === tab.id ? '0 4px 14px rgba(37, 99, 235, 0.3)' : '0 2px 8px rgba(0,0,0,0.04)',
+                            }}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </motion.div>
+
+                {/* Elegant Dynamic Year Slider */}
                 <motion.div
                     className={styles.yearSliderContainer}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.45 }}
                 >
-                    <div className={styles.yearSliderLabel}>
-                        <Calendar size={14} style={{ color: '#FF9933' }} />
-                        <span>Academic Session</span>
-                    </div>
                     <div className={styles.yearSlider}>
                         {academicYears.map((year) => (
                             <button
@@ -231,8 +375,15 @@ export default function EventsClient({ events }) {
                                                         }}
                                                     />
                                                 </motion.div>
-                                                <div className={`${styles.eventStatus} ${isUpcoming ? styles.statusUpcoming : styles.statusPast}`}>
-                                                    {isUpcoming ? t.upcoming : 'COMPLETED'}
+                                                <div className={`${styles.eventStatus} ${
+                                                    event.eventType === 'ongoing' ? styles.statusOngoing :
+                                                    (event.eventType === 'completed' || (!isUpcoming && !event.eventType)) ? styles.statusPast :
+                                                    styles.statusUpcoming
+                                                }`}>
+                                                    {event.eventType === 'ongoing' ? '● LIVE NOW' :
+                                                     (event.eventType === 'completed' || (!isUpcoming && !event.eventType)) ? 'COMPLETED' :
+                                                     event.eventType === 'archived' ? 'ARCHIVED' :
+                                                     t.upcoming}
                                                 </div>
                                             </div>
                                             <div className={styles.eventContent}>
@@ -248,6 +399,10 @@ export default function EventsClient({ events }) {
                                                 <p className={styles.eventDescription}>
                                                     {(event.description[language] || event.description.en).substring(0, 120)}...
                                                 </p>
+                                                <div className={styles.cardAction}>
+                                                    <span>VIEW EVENT</span>
+                                                    <ArrowRight size={14} className={styles.actionArrow} />
+                                                </div>
                                             </div>
                                         </motion.div>
                                     );
@@ -256,6 +411,24 @@ export default function EventsClient({ events }) {
                         )}
                     </AnimatePresence>
                 </div>
+
+                {/* 3. INSPIRATIONAL BOTTOM CTA (E-Cell style: "Don't Miss Our Next Drive") */}
+                <motion.section
+                    className={styles.bottomCta}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <h3 className={styles.bottomCtaTitle}>Be Part of Our Next Drive</h3>
+                    <p className={styles.bottomCtaDesc}>
+                        Join dedicated student volunteers driving real community impact across Telangana. Every voice, every pair of hands, and every heart counts.
+                    </p>
+                    <Link href="/volunteer" className={styles.bottomCtaBtn}>
+                        <span>Join As Volunteer</span>
+                        <ArrowRight size={16} />
+                    </Link>
+                </motion.section>
             </div>
 
             <EventModal

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&family=Cinzel:wght@600;800;900&family=Dancing+Script:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Semi+Condensed:wght@600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
 @import "../styles/variables.css";
 
 
@@ -317,85 +317,86 @@ button {
     font-size: var(--text-lg);
 }
 
-/* Marvelous Button Styles */
+/* Marvelous Button Styles - Refined Premium NSS Style */
 .marvelous-btn {
-    padding: 18px 42px;
-    border-radius: 14px;
-    font-weight: 800;
-    font-size: 1rem;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 12px 28px;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    gap: 8px;
+    letter-spacing: 0.5px;
     border: none;
     position: relative;
-    overflow: hidden;
     text-decoration: none !important;
     white-space: nowrap;
-    line-height: 1;
+    line-height: 1.2;
 }
 
 .marvelous-btn-primary {
-    background: var(--gradient-saffron-premium);
+    background: #2563eb;
     color: white !important;
-    box-shadow: var(--marvel-glow-saffron);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .marvelous-btn-primary:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 15px 45px rgba(255, 153, 51, 0.4);
-    filter: brightness(1.1);
+    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
 }
 
 .marvelous-btn-secondary {
-    background: var(--gradient-green-premium);
+    background: #138808;
     color: white !important;
-    box-shadow: var(--marvel-glow-green);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 14px rgba(19, 136, 8, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .marvelous-btn-secondary:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 40px rgba(19, 136, 8, 0.4);
-    filter: brightness(1.1);
+    background: #0d5e06;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(19, 136, 8, 0.4);
 }
 
 .marvelous-btn-outline {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--marvel-border);
-    color: var(--marvel-text) !important;
-    backdrop-filter: var(--marvel-glass);
+    background: #ffffff;
+    border: 1.5px solid #2563eb;
+    color: #2563eb !important;
 }
 
 .marvelous-btn-outline:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--color-primary-light);
-    color: var(--color-primary-light) !important;
-    transform: translateY(-3px);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+    background: rgba(37, 99, 235, 0.06);
+    border-color: #1d4ed8;
+    color: #1d4ed8 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);
 }
 
 [data-theme='light'] .marvelous-btn-outline {
-    background: rgba(30, 58, 138, 0.05);
-    border-color: rgba(30, 58, 138, 0.2);
-    color: var(--color-primary-dark) !important;
+    background: #ffffff;
+    border-color: #2563eb;
+    color: #2563eb !important;
+}
+
+[data-theme='light'] .marvelous-btn-outline:hover {
+    background: rgba(37, 99, 235, 0.06);
+    border-color: #1d4ed8;
+    color: #1d4ed8 !important;
 }
 
 .marvelous-btn-lg {
-    padding: 1.25rem 3rem;
-    /* Fixed: 20px 48px */
-    font-size: var(--text-lg);
+    padding: 14px 34px;
+    font-size: 1.05rem;
 }
 
 .marvelous-btn-sm {
-    padding: 0.5rem 1.5rem;
-    /* Fixed: 8px 24px */
-    font-size: 0.75rem;
+    padding: 8px 18px;
+    font-size: 0.8rem;
 }
 
 .marvelous-btn:disabled {

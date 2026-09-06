@@ -28,7 +28,7 @@ export async function GET(request) {
 
         // Lightweight list view: projection returns ONLY the cover image and list fields
         const eventsData = await Event.find(
-            { status: 'published' },
+            { status: { $ne: 'draft' } },
             {
                 title: 1,
                 date: 1,

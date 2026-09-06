@@ -6,7 +6,8 @@ import styles from '../admin-content.module.css';
 import { translateText } from '@/utils/translation';
 import { compressImageToDataURL, validateImageFile, compressMemberPhoto } from '@/utils/image-compression';
 import { adminFetch } from '@/utils/api-client';
-import { Award, Check, Plus, ShieldCheck } from 'lucide-react';
+import { Award, Check, Plus, ShieldCheck, Crop } from 'lucide-react';
+import ImageCropperModal from '@/components/ImageCropperModal';
 
 export default function TeamPage() {
     const { user } = useAuth();
@@ -32,6 +33,33 @@ export default function TeamPage() {
         academicYear: '2025-2026',
         quote: { en: '', te: '', hi: '' }
     });
+
+    const [cropper, setCropper] = useState({
+        isOpen: false,
+        imageSrc: '',
+        aspectRatio: 3 / 4,
+        title: 'Crop Member Photo (3:4 Portrait)'
+    });
+
+    const handleImageSelect = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            setCropper({
+                isOpen: true,
+                imageSrc: reader.result,
+                aspectRatio: 3 / 4,
+                title: 'Crop Member Photo (3:4 Portrait)'
+            });
+        };
+        reader.readAsDataURL(file);
+        e.target.value = '';
+    };
+
+    const handleCropComplete = (croppedDataUrl) => {
+        setFormData(prev => ({ ...prev, image: croppedDataUrl }));
+    };
 
     const handleAutoTranslate = async (field, value) => {
         if (!value || value.trim().length < 3) return;
@@ -443,13 +471,20 @@ All previous teams will remain completely preserved in the Historical Archive.`;
                                             >
                                                 Edit
                                             </button>
-                                            <button
-                                                className={`${styles.btn} ${styles.btnSm} ${styles.btnDanger}`}
-                                                style={{ backgroundColor: '#ff4d4f', color: 'white', borderColor: 'transparent' }}
-                                                onClick={() => handleDelete(member.id)}
-                                            >
-                                                Delete
-                                            </button>
+                                            {(member.academicYear || '2025-2026') === currentActiveYear && (
+                                                <button
+                                                    className={`${styles.btn} ${styles.btnSm} ${styles.btnDanger}`}
+                                                    style={{ backgroundColor: '#ff4d4f', color: 'white', borderColor: 'transparent' }}
+                                                    onClick={() => handleDelete(member.id)}
+                                                >
+                                                    Delete
+                                                </button>
+                                            )}
+                                            {(member.academicYear || '2025-2026') !== currentActiveYear && (
+                                                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', fontStyle: 'italic' }}>
+                                                    archived
+                                                </span>
+                                            )}
                                         </td>
                                     </tr>
                                 ))
@@ -623,18 +658,51 @@ All previous teams will remain completely preserved in the Historical Archive.`;
                                         />
                                     </div>
                                     <div className={styles.formGroup}>
-                                        <label className={styles.label}>Photo</label>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            className={styles.input}
-                                            onChange={handleImageUpload}
-                                            disabled={uploading}
-                                        />
-                                        {uploading && <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>Processing image...</div>}
-                                        {formData.image && (
-                                            <div style={{ marginTop: '5px', fontSize: '12px', color: '#aaa' }}>Image uploaded</div>
-                                        )}
+                                        <label className={styles.label}>Photo (3:4 Portrait)</label>
+                                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap', marginTop: '6px' }}>
+                                            {formData.image && (
+                                                <img
+                                                    src={formData.image}
+                                                    alt="Preview"
+                                                    style={{ width: '60px', height: '80px', borderRadius: '8px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.2)' }}
+                                                />
+                                            )}
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                className={styles.input}
+                                                onChange={handleImageSelect}
+                                                disabled={uploading}
+                                                style={{ maxWidth: '240px' }}
+                                            />
+                                            {formData.image && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setCropper({
+                                                        isOpen: true,
+                                                        imageSrc: formData.image,
+                                                        aspectRatio: 3 / 4,
+                                                        title: 'Crop Member Photo (3:4 Portrait)'
+                                                    })}
+                                                    style={{
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '4px',
+                                                        background: 'rgba(255,153,51,0.2)',
+                                                        color: '#FF9933',
+                                                        border: '1px solid rgba(255,153,51,0.3)',
+                                                        borderRadius: '6px',
+                                                        padding: '6px 12px',
+                                                        fontSize: '12px',
+                                                        fontWeight: '700',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    <Crop size={14} />
+                                                    <span>Crop / Adjust</span>
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -733,6 +801,15 @@ All previous teams will remain completely preserved in the Historical Archive.`;
                     </div>
                 </div>
             )}
+
+            <ImageCropperModal
+                isOpen={cropper.isOpen}
+                imageSrc={cropper.imageSrc}
+                aspectRatio={cropper.aspectRatio}
+                title={cropper.title}
+                onCropComplete={handleCropComplete}
+                onClose={() => setCropper(prev => ({ ...prev, isOpen: false }))}
+            />
         </div>
     );
 }

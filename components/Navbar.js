@@ -62,14 +62,57 @@ export default function Navbar() {
     const router = useRouter();
     const t = translations[language] || translations['en'] || translations.en;
 
-    // Magnetic Button Coordinates
-    const [magneticCoords, setMagneticCoords] = useState({ x: 0, y: 0 });
+    // Intelligent route & data prefetch on hover/focus/touch
+    const prefetchedRoutes = useRef(new Set());
+    const handlePrefetchRoute = (href) => {
+        if (!href || prefetchedRoutes.current.has(href)) return;
+        prefetchedRoutes.current.add(href);
+
+        // 1. Next.js router prefetch code & flight data
+        try {
+            router.prefetch(href);
+        } catch (e) {}
+
+        // 2. Pre-warm data cache for the target route
+        if (href === '/team') {
+            fetchWithCache('/api/stats');
+        } else if (href === '/events') {
+            fetchWithCache('/api/events');
+        } else if (href === '/about') {
+            fetchWithCache('/api/content?pageId=about');
+        } else if (href === '/unit') {
+            fetchWithCache('/api/stats');
+            fetchWithCache('/api/content?pageId=unit');
+        } else if (href === '/volunteer') {
+            fetchWithCache('/api/stats');
+            fetchWithCache('/api/content?pageId=volunteer_gallery');
+        } else if (href === '/announcements') {
+            fetchWithCache('/api/announcements');
+        }
+    };
+
+    // Magnetic Button Coordinates using Ref + Transform to avoid rerendering Navbar
+    const magneticBtnRef = useRef(null);
+    const handleMagneticMove = (e) => {
+        if (!magneticBtnRef.current) return;
+        const rect = magneticBtnRef.current.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width / 2) * 0.35;
+        const y = (e.clientY - rect.top - rect.height / 2) * 0.35;
+        magneticBtnRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        magneticBtnRef.current.style.transition = 'transform 0.1s ease-out';
+    };
+
+    const handleMagneticLeave = () => {
+        if (!magneticBtnRef.current) return;
+        magneticBtnRef.current.style.transform = 'translate3d(0, 0, 0)';
+        magneticBtnRef.current.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+    };
 
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -116,18 +159,6 @@ export default function Navbar() {
         }
     };
 
-    // Magnetic Hover Event Handlers
-    const handleMagneticMove = (e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        setMagneticCoords({ x: x * 0.35, y: y * 0.35 });
-    };
-
-    const handleMagneticLeave = () => {
-        setMagneticCoords({ x: 0, y: 0 });
-    };
-
     // Stagger animation rules for mobile menu items
     const mobileContainerVariants = {
         hidden: { opacity: 0 },
@@ -163,7 +194,7 @@ export default function Navbar() {
                 transition={{ type: 'spring', stiffness: 100, damping: 20 }}
             >
                 <div className={styles.logoWrapper}>
-                    <Link href="/" className={styles.logo}>
+                    <Link href="/" className={styles.logo} onMouseEnter={() => handlePrefetchRoute('/')}>
                         <Image 
                             src="/uploads/nss-logo.png" 
                             alt="NSS Logo" 
@@ -184,6 +215,9 @@ export default function Navbar() {
                                         key={item.href}
                                         href={item.href}
                                         prefetch={true}
+                                        onMouseEnter={() => handlePrefetchRoute(item.href)}
+                                        onFocus={() => handlePrefetchRoute(item.href)}
+                                        onTouchStart={() => handlePrefetchRoute(item.href)}
                                         className={pathname === item.href ? styles.active : ''}
                                     >
                                         {item.label}
@@ -204,17 +238,18 @@ export default function Navbar() {
                                 <LanguageToggle />
                                 <div className={styles.authButtons}>
                                     {/* Magnetic Join Us button */}
-                                    <motion.div
+                                    <div
+                                        ref={magneticBtnRef}
                                         onMouseMove={handleMagneticMove}
                                         onMouseLeave={handleMagneticLeave}
-                                        animate={{ x: magneticCoords.x, y: magneticCoords.y }}
-                                        transition={{ type: "spring", stiffness: 150, damping: 15 }}
+                                        onMouseEnter={() => handlePrefetchRoute('/volunteer')}
+                                        onTouchStart={() => handlePrefetchRoute('/volunteer')}
                                         style={{ display: 'inline-block' }}
                                     >
-                                        <Link href="/volunteer" className={`${styles.volunteerLink} ${pathname === '/volunteer' ? styles.active : ''}`}>
+                                        <Link href="/volunteer" prefetch={true} className={`${styles.volunteerLink} ${pathname === '/volunteer' ? styles.active : ''}`}>
                                             {t.volunteer}
                                         </Link>
-                                    </motion.div>
+                                    </div>
 
                                     {session && (
                                         <Link href="/admin" className="marvelous-btn marvelous-btn-outline marvelous-btn-sm" style={{ padding: '8px 16px', fontSize: '12px' }}>
@@ -263,7 +298,13 @@ export default function Navbar() {
                         >
                             {navItems.map((item) => (
                                 <motion.div key={item.href} variants={mobileItemVariants}>
-                                    <Link href={item.href} prefetch={true} className={`${styles.mobileMenuItem} ${pathname === item.href ? styles.mobileMenuItemActive : ''}`} onClick={closeMenu}>
+                                    <Link 
+                                        href={item.href} 
+                                        prefetch={true} 
+                                        onTouchStart={() => handlePrefetchRoute(item.href)}
+                                        className={`${styles.mobileMenuItem} ${pathname === item.href ? styles.mobileMenuItemActive : ''}`} 
+                                        onClick={closeMenu}
+                                    >
                                         {item.label}
                                     </Link>
                                 </motion.div>
@@ -272,7 +313,13 @@ export default function Navbar() {
                             <motion.div variants={mobileItemVariants} className={styles.mobileDivider}></motion.div>
                             
                             <motion.div variants={mobileItemVariants}>
-                                <Link href="/volunteer" className={`${styles.mobileMenuItem} ${styles.mobileMenuItemCTA}`} onClick={closeMenu}>
+                                <Link 
+                                    href="/volunteer" 
+                                    prefetch={true} 
+                                    onTouchStart={() => handlePrefetchRoute('/volunteer')}
+                                    className={`${styles.mobileMenuItem} ${styles.mobileMenuItemCTA}`} 
+                                    onClick={closeMenu}
+                                >
                                     {t.volunteer}
                                 </Link>
                             </motion.div>

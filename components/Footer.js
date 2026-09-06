@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './Footer.module.css';
+import { MapPin, Mail, Phone } from 'lucide-react';
 
 const translations = {
     en: {
@@ -88,18 +89,18 @@ export default function Footer() {
                         <h4 className={styles.sectionTitle}>{t.contact}</h4>
                         <ul className={styles.contactInfo}>
                             <li>
-                                <span className={styles.contactIcon}>📍</span>
+                                <span className={styles.contactIcon}><MapPin size={16} /></span>
                                 <div>
                                     <p>{t.address}</p>
                                     <p>{t.addressLine2}</p>
                                 </div>
                             </li>
                             <li>
-                                <span className={styles.contactIcon}>📧</span>
+                                <span className={styles.contactIcon}><Mail size={16} /></span>
                                 <a href="mailto:nssmjcet@mjcollege.ac.in">{t.email}</a>
                             </li>
                             <li>
-                                <span className={styles.contactIcon}>📞</span>
+                                <span className={styles.contactIcon}><Phone size={16} /></span>
                                 <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
                                     <p style={{ margin: 0 }}><span style={{ fontWeight: 600 }}>AYAN:</span> <a href="tel:+919963743377" style={{ textDecoration: 'none' }}>+91 99637 43377</a></p>
                                     <span style={{ color: 'rgba(0,0,0,0.2)', fontWeight: 300 }}>|</span>
@@ -149,7 +150,8 @@ export default function Footer() {
                                 rel="noopener noreferrer"
                                 className={styles.mapLink}
                             >
-                                📍 Open in Google Maps
+                                <MapPin size={14} style={{ display: 'inline-block', verticalAlign: '-2px', marginRight: '4px' }} />
+                                Open in Google Maps
                             </a>
                         </div>
                     </div>

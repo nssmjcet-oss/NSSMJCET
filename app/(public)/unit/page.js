@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import styles from './unit.module.css';
 import FacultyAdvisor from '@/components/FacultyAdvisor';
 import { Users, Calendar, Clock, Mail, Phone, MapPin, Star } from 'lucide-react';
+import { fetchWithCache } from '@/utils/client-cache';
 
 const focusAreas = [
     "Community Service and Development",
@@ -22,11 +23,8 @@ export default function UnitPage() {
         const fetchStats = async () => {
             try {
                 setLoading(true);
-                // Fetch centralized stats - optimized and accurate
-                const res = await fetch('/api/stats', { cache: 'no-store' });
-                const data = await res.json();
-
-                if (res.ok) {
+                const data = await fetchWithCache('/api/stats');
+                if (data && !data.error) {
                     setStats({
                         totalVolunteers: data.volunteers || 0,
                         totalEvents: data.events || 0,

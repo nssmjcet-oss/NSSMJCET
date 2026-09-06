@@ -80,10 +80,11 @@
     position: absolute;
     bottom: -8px;
     left: 0;
-    width: 30px;
-    height: 2px;
-    background: var(--color-primary-light);
-    box-shadow: var(--marvel-glow-blue);
+    width: 36px;
+    height: 3px;
+    background: #FF9933;
+    border-radius: 99px;
+    box-shadow: 0 2px 6px rgba(255, 153, 51, 0.4);
 }
 
 .footerLinks {
@@ -106,8 +107,8 @@
 }
 
 .footerLinks li a:hover {
-    color: var(--color-primary);
-    transform: translateX(8px);
+    color: #FF9933;
+    transform: translateX(6px);
 }
 
 .contactInfo {
@@ -128,7 +129,7 @@
 
 .contactIcon {
     font-size: var(--text-xl);
-    color: var(--color-primary-light);
+    color: #FF9933;
     flex-shrink: 0;
 }
 
@@ -147,29 +148,29 @@
 }
 
 .socialIcon {
-    width: 50px;
-    height: 50px;
-    background: #f1f5f9;
+    width: 48px;
+    height: 48px;
+    background: #f8fafc;
     border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 15px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #1a1a1a;
-    transition: all var(--transition-base);
+    color: #4a5568;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .socialIcon svg {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
 }
 
 .socialIcon:hover {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
+    background: #FF9933;
+    border-color: #FF9933;
     color: white;
-    transform: translateY(-5px);
-    box-shadow: var(--marvel-glow-blue);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(255, 153, 51, 0.35);
 }
 
 .footerBottom {
@@ -222,18 +223,18 @@
     text-align: center;
     padding: 8px 12px;
     font-size: 0.8rem;
-    font-weight: 600;
-    color: #1e3a8a;
-    background: #f0f4ff;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    font-weight: 700;
+    color: #e07800;
+    background: rgba(255, 153, 51, 0.08);
+    border-top: 1px solid rgba(255, 153, 51, 0.15);
     text-decoration: none;
-    transition: background 0.2s ease, color 0.2s ease;
+    transition: all 0.2s ease;
     border-radius: 0 0 12px 12px;
 }
 
 .mapLink:hover {
-    background: #dbeafe;
-    color: #1e40af;
+    background: #FF9933;
+    color: #ffffff;
 }
 
 @media (max-width: 768px) {

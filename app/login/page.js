@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './login.module.css';
+import { Eye, EyeOff } from 'lucide-react';
 
 const translations = {
     en: {
@@ -144,7 +145,7 @@ export default function LoginPage() {
                                         }}
                                         aria-label={showPassword ? "Hide password" : "Show password"}
                                     >
-                                        {showPassword ? '👁️' : '👁️‍🗨️'}
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
                                 </div>
                             </div>

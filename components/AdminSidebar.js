@@ -103,7 +103,8 @@ export default function AdminSidebar() {
         { href: '/admin/team', label: t.team, icon: Icons.Team, show: isAdminUser },
         { href: '/admin/volunteers', label: t.volunteers, icon: Icons.Volunteers, show: isAdminUser },
         { href: '/admin/portals', label: t.portals, icon: Icons.Globe, show: isAdminUser },
-        { href: '/admin/flagship', label: t.flagship, icon: Icons.Events, show: isAdminUser },
+        { href: '/admin/flagship', label: 'Flagship Initiatives', icon: Icons.Events, show: isAdminUser },
+        { href: '/admin/gallery', label: 'Photo Gallery', icon: Icons.Events, show: isAdminUser },
         { href: '/admin/developers', label: t.developers, icon: Icons.Users, show: isAdminUser },
         { href: '/admin/contact', label: t.contact, icon: Icons.Contact, show: isAdminUser },
     ];

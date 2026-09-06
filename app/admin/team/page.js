@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from '../admin-content.module.css';
 import { translateText } from '@/utils/translation';
-import { compressImageToDataURL } from '@/utils/image-compression';
+import { compressImageToDataURL, validateImageFile, compressMemberPhoto } from '@/utils/image-compression';
 import { adminFetch } from '@/utils/api-client';
+import { Award, Check, Plus, ShieldCheck } from 'lucide-react';
 
 export default function TeamPage() {
     const { user } = useAuth();
@@ -57,6 +58,16 @@ export default function TeamPage() {
         }
     };
 
+    const [sessions, setSessions] = useState([]);
+    const [currentActiveYear, setCurrentActiveYear] = useState('2025-2026');
+    const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
+    const [sessionFormData, setSessionFormData] = useState({
+        academicYear: '',
+        teamType: 'Governing Body / Execom / Core',
+        publishAsCurrent: false,
+        description: ''
+    });
+
     useEffect(() => {
         fetchTeam();
     }, []);
@@ -68,6 +79,14 @@ export default function TeamPage() {
             if (data.team) {
                 setTeam(data.team);
             }
+            if (data.sessions) {
+                setSessions(data.sessions);
+            }
+            if (data.currentYear) {
+                setCurrentActiveYear(data.currentYear);
+                // Also default the selected tab to current active year if not manually changed
+                setSelectedAdminYear(prev => prev || data.currentYear);
+            }
         } catch (error) {
             console.error('Failed to fetch team', error);
         } finally {
@@ -75,14 +94,97 @@ export default function TeamPage() {
         }
     };
 
+    const handleSetCurrentSession = async (yr) => {
+        const confirmMsg = `Are you sure you want to set Session ${yr} as the active CURRENT TEAM?
+All previous teams will remain completely preserved in the Historical Archive.`;
+        if (!confirm(confirmMsg)) return;
+
+        try {
+            const res = await adminFetch('/api/admin/team', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'set_current_session', academicYear: yr })
+            });
+            if (res.ok) {
+                alert(`Session ${yr} is now the active Current Team!`);
+                fetchTeam();
+                adminFetch('/api/revalidate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paths: ['/team', '/team/archive', '/'] }),
+                }).catch(() => {});
+            } else {
+                alert('Failed to set current session.');
+            }
+        } catch (e) {
+            alert('Error setting current session');
+        }
+    };
+
+    const handleCreateSessionSubmit = async (e) => {
+        e.preventDefault();
+        if (!sessionFormData.academicYear) {
+            alert('Please enter an academic year (e.g. 2026-2027)');
+            return;
+        }
+
+        setSaving(true);
+        try {
+            const res = await adminFetch('/api/admin/team', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'create_session',
+                    academicYear: sessionFormData.academicYear.trim(),
+                    teamType: sessionFormData.teamType,
+                    publishAsCurrent: sessionFormData.publishAsCurrent,
+                    description: sessionFormData.description
+                })
+            });
+
+            if (res.ok) {
+                alert(`Session ${sessionFormData.academicYear} created successfully!`);
+                setIsSessionModalOpen(false);
+                setSelectedAdminYear(sessionFormData.academicYear.trim());
+                setSessionFormData({
+                    academicYear: '',
+                    teamType: 'Governing Body / Execom / Core',
+                    publishAsCurrent: false,
+                    description: ''
+                });
+                fetchTeam();
+                adminFetch('/api/revalidate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paths: ['/team', '/team/archive', '/'] }),
+                }).catch(() => {});
+            } else {
+                const err = await res.json();
+                alert(`Failed: ${err.error || 'Could not create session'}`);
+            }
+        } catch (err) {
+            alert('Error creating session');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // 1. Strict validation
+        const val = validateImageFile(file, { maxSizeBytes: 5 * 1024 * 1024 });
+        if (!val.valid) {
+            alert(val.error);
+            e.target.value = '';
+            return;
+        }
+
         setUploading(true);
         try {
-            // Compress & convert to Base64 — no Firebase Storage upload needed
-            const dataURL = await compressImageToDataURL(file, { maxWidth: 800, maxHeight: 800, quality: 0.6 });
+            // 2. High-efficiency compression for team member card
+            const dataURL = await compressMemberPhoto(file);
             setFormData(prev => ({ ...prev, image: dataURL }));
         } catch (error) {
             console.error('Error processing image:', error);
@@ -107,11 +209,11 @@ export default function TeamPage() {
             });
 
             if (res.ok) {
-                // Revalidate the public team page (non-blocking)
+                // Revalidate the public team page and archive (non-blocking)
                 adminFetch('/api/revalidate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ path: '/team' }),
+                    body: JSON.stringify({ paths: ['/team', '/team/archive', '/'] }),
                 }).catch(err => console.log('Revalidation error:', err));
 
                 closeModal();
@@ -177,11 +279,44 @@ export default function TeamPage() {
     return (
         <div>
             <div className={styles.pageHeader}>
-                <h2 className={styles.sectionTitle}>Team Management</h2>
-                <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={() => openModal()}>+ Add Member</button>
+                <div>
+                    <h2 className={styles.sectionTitle}>Team Management</h2>
+                    <p className={styles.sectionSubtitle} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                        <span>Active Website Team:</span>
+                        <span style={{
+                            padding: '2px 10px',
+                            borderRadius: '12px',
+                            background: 'rgba(18, 136, 7, 0.25)',
+                            color: '#4ade80',
+                            fontWeight: '700',
+                            fontSize: '12px',
+                            border: '1px solid rgba(74, 222, 128, 0.3)'
+                        }}>
+                            {currentActiveYear} (Current)
+                        </span>
+                    </p>
+                </div>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    <button
+                        type="button"
+                        className="marvelous-btn marvelous-btn-outline marvelous-btn-sm"
+                        onClick={() => setIsSessionModalOpen(true)}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                    >
+                        <Plus size={16} /> New Academic Session
+                    </button>
+                    <button
+                        type="button"
+                        className="marvelous-btn marvelous-btn-primary marvelous-btn-sm"
+                        onClick={() => openModal()}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                    >
+                        <Plus size={16} /> Add Member
+                    </button>
+                </div>
             </div>
 
-            {/* Year Selector with Custom Year Adding */}
+            {/* Year Selector with Active / Archive Status */}
             <div style={{
                 display: 'flex',
                 gap: '12px',
@@ -191,87 +326,75 @@ export default function TeamPage() {
                 padding: '14px 20px',
                 borderRadius: '12px',
                 border: '1px solid rgba(255, 255, 255, 0.08)',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                justifyContent: 'space-between'
             }}>
-                <label style={{ fontWeight: '700', fontSize: '14px', color: '#FF9933', textTransform: 'uppercase', letterSpacing: '1px' }}>Academic Session:</label>
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-                    {/* Dynamic year tabs: from DB + customYears, deduplicated */}
-                    {Array.from(new Set([
-                        ...customYears,
-                        ...team.map(m => m.academicYear).filter(Boolean)
-                    ])).sort((a, b) => b.localeCompare(a)).map((yr) => (
-                        <button
-                            key={yr}
-                            type="button"
-                            onClick={() => setSelectedAdminYear(yr)}
-                            style={{
-                                padding: '8px 16px',
-                                borderRadius: '20px',
-                                border: '1px solid',
-                                borderColor: selectedAdminYear === yr ? 'transparent' : 'rgba(255,255,255,0.15)',
-                                background: selectedAdminYear === yr ? 'linear-gradient(135deg, #FF9933 0%, #128807 100%)' : 'rgba(255,255,255,0.03)',
-                                color: '#fff',
-                                fontSize: '13px',
-                                fontWeight: '700',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease'
-                            }}
-                        >
-                            {yr}
-                        </button>
-                    ))}
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <label style={{ fontWeight: '700', fontSize: '13px', color: '#FF9933', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                        Session:
+                    </label>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                        {Array.from(new Set([
+                            '2025-2026',
+                            ...sessions.map(s => s.academicYear),
+                            ...customYears,
+                            ...team.map(m => m.academicYear).filter(Boolean)
+                        ])).sort((a, b) => b.localeCompare(a)).map((yr) => {
+                            const isCurrent = yr === currentActiveYear;
+                            const isSelected = selectedAdminYear === yr;
 
-                    {/* Add custom year input */}
-                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', marginLeft: '8px' }}>
-                        <input
-                            type="text"
-                            placeholder="e.g. 2026-2027"
-                            value={newYearInput}
-                            onChange={(e) => setNewYearInput(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    const yr = newYearInput.trim();
-                                    if (yr && /^\d{4}-\d{4}$/.test(yr) && !customYears.includes(yr)) {
-                                        setCustomYears(prev => [...prev, yr]);
-                                        setSelectedAdminYear(yr);
-                                    }
-                                    setNewYearInput('');
-                                }
-                            }}
-                            style={{
-                                padding: '7px 12px',
-                                borderRadius: '20px',
-                                border: '1px dashed rgba(255,153,51,0.5)',
-                                background: 'rgba(255,153,51,0.05)',
-                                color: '#fff',
-                                fontSize: '13px',
-                                outline: 'none',
-                                width: '110px'
-                            }}
-                        />
-                        <button
-                            type="button"
-                            onClick={() => {
-                                const yr = newYearInput.trim();
-                                if (yr && /^\d{4}-\d{4}$/.test(yr) && !customYears.includes(yr)) {
-                                    setCustomYears(prev => [...prev, yr]);
-                                    setSelectedAdminYear(yr);
-                                }
-                                setNewYearInput('');
-                            }}
-                            style={{
-                                padding: '7px 14px',
-                                borderRadius: '20px',
-                                border: 'none',
-                                background: 'linear-gradient(135deg, #FF9933, #128807)',
-                                color: '#fff',
-                                fontSize: '13px',
-                                fontWeight: '700',
-                                cursor: 'pointer'
-                            }}
-                        >+ Add</button>
+                            return (
+                                <button
+                                    key={yr}
+                                    type="button"
+                                    onClick={() => setSelectedAdminYear(yr)}
+                                    style={{
+                                        padding: '7px 14px',
+                                        borderRadius: '16px',
+                                        border: '1px solid',
+                                        borderColor: isSelected ? '#FF9933' : 'rgba(255,255,255,0.15)',
+                                        background: isSelected ? 'rgba(255, 153, 51, 0.2)' : 'rgba(255,255,255,0.03)',
+                                        color: '#fff',
+                                        fontSize: '13px',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '6px'
+                                    }}
+                                >
+                                    <span>{yr}</span>
+                                    {isCurrent && (
+                                        <span style={{ fontSize: '10px', background: '#128807', color: '#fff', padding: '1px 6px', borderRadius: '8px' }}>
+                                            Active
+                                        </span>
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
+
+                {/* Switch Active Session Action */}
+                {selectedAdminYear !== currentActiveYear && (
+                    <button
+                        type="button"
+                        onClick={() => handleSetCurrentSession(selectedAdminYear)}
+                        className="marvelous-btn marvelous-btn-sm"
+                        style={{
+                            background: 'linear-gradient(135deg, #128807, #0d6305)',
+                            color: '#fff',
+                            border: 'none',
+                            fontSize: '12px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                        }}
+                    >
+                        <ShieldCheck size={14} />
+                        <span>Publish {selectedAdminYear} as Current Team</span>
+                    </button>
+                )}
             </div>
 
             <div className={styles.card}>
@@ -519,6 +642,91 @@ export default function TeamPage() {
                                 <button type="button" className={`${styles.btn} ${styles.btnSecondary}`} onClick={closeModal}>Cancel</button>
                                 <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`} disabled={saving || uploading}>
                                     {saving ? 'Saving...' : 'Save'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Create New Academic Session Modal */}
+            {isSessionModalOpen && (
+                <div className={styles.modalOverlay} onClick={(e) => { if (e.target === e.currentTarget) setIsSessionModalOpen(false); }}>
+                    <div className={styles.modalContent} style={{ maxWidth: '520px' }}>
+                        <div className={styles.modalHeader}>
+                            <h3 className={styles.modalTitle}>Create Academic Session</h3>
+                            <button className={styles.closeBtn} onClick={() => setIsSessionModalOpen(false)}>&times;</button>
+                        </div>
+                        <form onSubmit={handleCreateSessionSubmit}>
+                            <div className={styles.modalBody}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Academic Year *</label>
+                                        <input
+                                            type="text"
+                                            className={styles.input}
+                                            placeholder="e.g. 2026-2027"
+                                            required
+                                            value={sessionFormData.academicYear}
+                                            onChange={(e) => setSessionFormData({ ...sessionFormData, academicYear: e.target.value })}
+                                        />
+                                        <small style={{ color: '#888', fontSize: '11px', marginTop: '4px' }}>
+                                            Format: YYYY-YYYY (e.g. 2026-2027)
+                                        </small>
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Team Structure</label>
+                                        <input
+                                            type="text"
+                                            className={styles.input}
+                                            value={sessionFormData.teamType}
+                                            onChange={(e) => setSessionFormData({ ...sessionFormData, teamType: e.target.value })}
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.label}>Session Description / Theme</label>
+                                        <textarea
+                                            className={styles.input}
+                                            placeholder="Brief notes or theme for this academic session"
+                                            rows={2}
+                                            value={sessionFormData.description}
+                                            onChange={(e) => setSessionFormData({ ...sessionFormData, description: e.target.value })}
+                                        />
+                                    </div>
+
+                                    <div style={{
+                                        padding: '14px',
+                                        borderRadius: '12px',
+                                        background: 'rgba(255, 153, 51, 0.08)',
+                                        border: '1px solid rgba(255, 153, 51, 0.25)',
+                                        display: 'flex',
+                                        gap: '12px',
+                                        alignItems: 'flex-start'
+                                    }}>
+                                        <input
+                                            type="checkbox"
+                                            id="publishAsCurrent"
+                                            style={{ marginTop: '3px', cursor: 'pointer' }}
+                                            checked={sessionFormData.publishAsCurrent}
+                                            onChange={(e) => setSessionFormData({ ...sessionFormData, publishAsCurrent: e.target.checked })}
+                                        />
+                                        <label htmlFor="publishAsCurrent" style={{ fontSize: '13px', color: '#fff', cursor: 'pointer', lineHeight: '1.4' }}>
+                                            <strong>Publish as active Current Team immediately</strong>
+                                            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', marginTop: '4px' }}>
+                                                Previous active team will be moved to the Historical Archive. Existing team members and photographs remain 100% safe.
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.modalFooter}>
+                                <button type="button" className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => setIsSessionModalOpen(false)}>
+                                    Cancel
+                                </button>
+                                <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`} disabled={saving}>
+                                    {saving ? 'Creating...' : 'Create Academic Session'}
                                 </button>
                             </div>
                         </form>

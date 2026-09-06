@@ -73,18 +73,6 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Prefetch all public routes immediately on mount for zero-latency tab switches
-    useEffect(() => {
-        const routes = ['/', '/about', '/unit', '/events', '/team', '/announcements', '/contact', '/volunteer'];
-        routes.forEach(route => {
-            try {
-                router.prefetch(route);
-            } catch (e) {
-                // ignore prefetch errors
-            }
-        });
-    }, [router]);
-
     useEffect(() => {
         if (isMenuOpen) {
             document.body.style.overflow = 'hidden';

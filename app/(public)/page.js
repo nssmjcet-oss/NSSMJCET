@@ -13,6 +13,7 @@ import EventsPortalBanner from '@/components/EventsPortalBanner';
 import EventModal from '@/components/EventModal';
 import DevelopersSection from '@/components/DevelopersSection';
 import { Sparkles, ArrowRight } from 'lucide-react';
+import { fetchWithCache } from '@/utils/client-cache';
 
 
 const translations = {
@@ -146,29 +147,24 @@ export default function Home() {
     const [liveEvent, setLiveEvent] = useState(null);
 
     useEffect(() => {
-        fetch('/api/stats', { cache: 'no-store' })
-            .then(res => res.json())
-            .then(data => { if (!data.error) setStats(data); })
+        fetchWithCache('/api/stats')
+            .then(data => { if (data && !data.error) setStats(data); })
             .catch(console.error);
 
-        fetch('/api/content?pageId=hero', { cache: 'no-store' })
-            .then(res => res.json())
-            .then(data => { if (data.content) setHeroData(data.content); })
+        fetchWithCache('/api/content?pageId=hero')
+            .then(data => { if (data?.content) setHeroData(data.content); })
             .catch(console.error);
 
-        fetch('/api/content?pageId=live_event', { cache: 'no-store' })
-            .then(res => res.json())
-            .then(data => { if (data.content) setLiveEvent(data.content); })
+        fetchWithCache('/api/content?pageId=live_event')
+            .then(data => { if (data?.content) setLiveEvent(data.content); })
             .catch(console.error);
 
-        fetch('/api/flagship', { cache: 'no-store' })
-            .then(res => res.json())
-            .then(data => { if (data.flagships) setFlagships(data.flagships); })
+        fetchWithCache('/api/flagship')
+            .then(data => { if (data?.flagships) setFlagships(data.flagships); })
             .catch(console.error);
 
-        fetch(`/api/events?t=${Date.now()}`, { cache: 'no-store' })
-            .then(res => res.json())
-            .then(data => { if (data.events) setAllEvents(data.events); })
+        fetchWithCache('/api/events')
+            .then(data => { if (data?.events) setAllEvents(data.events); })
             .catch(console.error);
     }, []);
 

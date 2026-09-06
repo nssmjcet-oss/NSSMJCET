@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './team.module.css';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { fetchWithCache } from '@/utils/client-cache';
+import { Archive, ArrowRight } from 'lucide-react';
 
 const translations = {
     en: {
@@ -56,23 +59,33 @@ const filterQuotes = {
     TECH: { en: "“Coding for change, building platforms, and empowering social service through technology.”", te: "“మార్పు కోసం కోడింగ్, ప్లాట్‌ఫారమ్‌లను నిర్మించడం మరియు సాంకేతికత ద్వారా సామాజిక సేవను బలోపేతం చేయడం.”", hi: "“बदलाव के लिए कोडिंग, प्लेटफॉर्म बनाना और तकनीक के माध्यम से समाज सेवा को सशक्त बनाना।”" }
 };
 
-export default function TeamClient({ members }) {
+export default function TeamClient({ initialMembers = [], currentYear = '2025-2026', allYears = ['2025-2026'] }) {
     const { language } = useLanguage();
     const t = translations[language];
 
     const [execomFilter, setExecomFilter] = useState('ALL');
     const [coreFilter, setCoreFilter] = useState('ALL');
-    const [selectedYear, setSelectedYear] = useState('2025-2026'); // Default to 2025-2026 as requested
+    const [selectedYear, setSelectedYear] = useState(currentYear);
+    const [yearMembersMap, setYearMembersMap] = useState({ [currentYear]: initialMembers });
+    const [loadingYear, setLoadingYear] = useState(false);
 
     const filters = ['ALL', 'HR', 'PR', 'MEDIA', 'DESIGN', 'DOC', 'EVENTS', 'MARKETING', 'LOGISTICS', 'TECH'];
+    const academicYears = Array.from(new Set([currentYear, ...allYears])).sort((a, b) => b.localeCompare(a));
 
-    // Only show years that have actual members, plus always include 2025-2026
-    const academicYears = Array.from(
-        new Set([
-            '2025-2026',
-            ...members.map(m => m.academicYear).filter(Boolean)
-        ])
-    ).sort((a, b) => b.localeCompare(a));
+    // Fetch members on-demand when switching away from the current year
+    useEffect(() => {
+        if (!yearMembersMap[selectedYear]) {
+            setLoadingYear(true);
+            fetchWithCache(`/api/team/archive?year=${encodeURIComponent(selectedYear)}`)
+                .then(data => {
+                    if (data?.members) {
+                        setYearMembersMap(prev => ({ ...prev, [selectedYear]: data.members }));
+                    }
+                })
+                .catch(err => console.error('Failed to load archive year:', err))
+                .finally(() => setLoadingYear(false));
+        }
+    }, [selectedYear, yearMembersMap]);
 
     const matchesFilter = (member, filter) => {
         if (filter === 'ALL') return true;
@@ -102,12 +115,10 @@ export default function TeamClient({ members }) {
         }
     };
 
-    // Filter members first by Year (defaulting missing fields to 2025-2026)
-    const yearMembers = members.filter(m => (m.academicYear || '2025-2026') === selectedYear);
-
-    const gbsMembers = yearMembers.filter(m => m.role === 'GB');
-    const execomMembers = yearMembers.filter(m => m.role === 'Execom');
-    const coreMembers = yearMembers.filter(m => m.role === 'Core');
+    const currentDisplayMembers = yearMembersMap[selectedYear] || [];
+    const gbsMembers = currentDisplayMembers.filter(m => m.role === 'GB');
+    const execomMembers = currentDisplayMembers.filter(m => m.role === 'Execom');
+    const coreMembers = currentDisplayMembers.filter(m => m.role === 'Core');
 
     const filteredExecom = execomMembers.filter(m => matchesFilter(m, execomFilter));
     const filteredCore = coreMembers.filter(m => matchesFilter(m, coreFilter));
@@ -117,7 +128,7 @@ export default function TeamClient({ members }) {
         visible: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.03 // Even faster stagger
+                staggerChildren: 0.03
             }
         }
     };
@@ -316,11 +327,59 @@ export default function TeamClient({ members }) {
 
 
 
-                {yearMembers.length === 0 && (
-                    <div className={styles.noMembers}>
-                        <p>{t.noMembers}</p>
+                {loadingYear ? (
+                    <div style={{ textAlign: 'center', padding: '60px 20px', color: 'rgba(255,255,255,0.7)' }}>
+                        <div className="spinner" style={{ margin: '0 auto 16px' }} />
+                        <p>Loading {selectedYear} team archive...</p>
                     </div>
+                ) : (
+                    currentDisplayMembers.length === 0 && (
+                        <div className={styles.noMembers}>
+                            <p>{t.noMembers}</p>
+                        </div>
+                    )
                 )}
+
+                {/* Team Archive Explorer Banner */}
+                <motion.div
+                    className={styles.archiveBanner}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    style={{
+                        marginTop: '60px',
+                        marginBottom: '40px',
+                        padding: '32px 24px',
+                        borderRadius: '24px',
+                        background: 'linear-gradient(135deg, rgba(255, 153, 51, 0.08) 0%, rgba(18, 136, 7, 0.08) 100%)',
+                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        textAlign: 'center',
+                        gap: '16px'
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#FF9933', fontWeight: '700', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                        <Archive size={16} />
+                        <span>Historical Archives</span>
+                    </div>
+                    <h3 style={{ fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', fontWeight: '800', color: '#fff', margin: 0 }}>
+                        Looking for Previous NSS MJCET Teams?
+                    </h3>
+                    <p style={{ maxWidth: '600px', color: 'rgba(255,255,255,0.7)', fontSize: '14px', lineHeight: '1.6', margin: 0 }}>
+                        Explore the dedicated individuals and leaders from past academic sessions who contributed to the legacy of selfless community service.
+                    </p>
+                    <Link
+                        href="/team/archive"
+                        className="marvelous-btn marvelous-btn-primary marvelous-btn-md"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}
+                    >
+                        <span>View Historical Team Archive</span>
+                        <ArrowRight size={16} />
+                    </Link>
+                </motion.div>
             </div>
         </div>
     );
@@ -446,6 +505,7 @@ function MemberCard({ member, type = 'Core', compact = false, priority = false }
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             style={{ objectFit: 'cover', objectPosition: 'top center' }}
                             priority={priority}
+                            unoptimized={typeof member.image === 'string' && member.image.startsWith('data:')}
                             className={styles.memberImage}
                         />
                     </div>

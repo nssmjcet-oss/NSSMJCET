@@ -168,3 +168,53 @@ export async function compressImageToDataURL(file, options = {}) {
     });
 }
 
+/**
+ * Validates uploaded image file against allowed types and maximum size.
+ * @param {File} file
+ * @param {Object} [options]
+ * @param {number} [options.maxSizeBytes=5242880] - 5MB default ceiling
+ * @param {string[]} [options.allowedTypes]
+ * @returns {{ valid: boolean, error?: string }}
+ */
+export function validateImageFile(file, options = {}) {
+    const {
+        maxSizeBytes = 5 * 1024 * 1024, // 5MB limit
+        allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/heic', 'image/heif']
+    } = options;
+
+    if (!file) {
+        return { valid: false, error: 'No file selected.' };
+    }
+
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    const isAllowedExt = ['jpg', 'jpeg', 'png', 'webp', 'heic', 'heif'].includes(ext);
+    const isAllowedType = allowedTypes.includes(file.type.toLowerCase()) || isAllowedExt;
+
+    if (!isAllowedType) {
+        return { valid: false, error: 'Unsupported file type. Please upload a JPG, PNG, or WebP image.' };
+    }
+
+    if (file.size > maxSizeBytes) {
+        const mb = (maxSizeBytes / (1024 * 1024)).toFixed(0);
+        return { valid: false, error: `Image size (${(file.size / (1024 * 1024)).toFixed(1)}MB) exceeds the maximum allowed ${mb}MB limit.` };
+    }
+
+    return { valid: true };
+}
+
+/**
+ * High-efficiency compression tailored specifically for Team Member Cards.
+ * Resizes to max 500x500 at 0.60 quality, resulting in ~25-45KB data instead of ~300KB+.
+ * 
+ * @param {File} file 
+ * @returns {Promise<string>}
+ */
+export async function compressMemberPhoto(file) {
+    return compressImageToDataURL(file, {
+        maxWidth: 500,
+        maxHeight: 500,
+        quality: 0.60,
+        type: 'image/jpeg'
+    });
+}
+

@@ -18,16 +18,16 @@ const dreamyReveal = {
     }
 };
 
+import { fetchWithCache } from '@/utils/client-cache';
+
 export default function DevelopersSection() {
     const [developers, setDevelopers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Added cache: 'no-store' to ensure we get the latest data
-        fetch('/api/developers', { cache: 'no-store' })
-            .then(res => res.json())
+        fetchWithCache('/api/developers')
             .then(data => {
-                if (data.developers) setDevelopers(data.developers);
+                if (data?.developers) setDevelopers(data.developers);
                 setLoading(false);
             })
             .catch(err => {

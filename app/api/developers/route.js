@@ -3,8 +3,6 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { Developer } from '@/lib/models';
 
-export const revalidate = 60;
-
 export async function GET() {
     try {
         await connectToDatabase();
@@ -24,7 +22,12 @@ export async function GET() {
             developers.splice(2, 0, farnaaz);
         }
 
-        return NextResponse.json({ developers });
+        return NextResponse.json({ developers }, {
+            status: 200,
+            headers: {
+                'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+            }
+        });
     } catch (error) {
         console.error('Public Developers GET error:', error);
         return NextResponse.json({ developers: [] }, { status: 200 });

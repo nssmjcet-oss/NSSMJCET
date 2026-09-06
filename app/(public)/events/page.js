@@ -16,13 +16,27 @@ export const metadata = {
     },
 };
 
-// Revalidate events page every 10 seconds for instant Edge CDN delivery
-export const revalidate = 10;
+// Revalidate events page every hour (purged instantly on-demand by admin changes via /api/revalidate)
+export const revalidate = 3600;
 
 async function getEvents() {
     try {
         await connectToDatabase();
-        const eventsData = await Event.find({ status: 'published' })
+        const eventsData = await Event.find(
+            { status: 'published' },
+            {
+                title: 1,
+                date: 1,
+                endDate: 1,
+                location: 1,
+                category: 1,
+                eventType: 1,
+                academicYear: 1,
+                description: 1,
+                status: 1,
+                images: { $slice: 1 }
+            }
+        )
             .sort({ date: -1 })
             .lean();
 

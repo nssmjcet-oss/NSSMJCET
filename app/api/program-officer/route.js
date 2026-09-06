@@ -3,8 +3,6 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { ProgramOfficer } from '@/lib/models';
 
-export const revalidate = 0;
-
 export async function GET() {
     try {
         await connectToDatabase();
@@ -20,7 +18,12 @@ export async function GET() {
                 photo: ''
             };
 
-        return NextResponse.json({ officer });
+        return NextResponse.json({ officer }, {
+            status: 200,
+            headers: {
+                'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+            }
+        });
     } catch (error) {
         console.error('ProgramOfficer public GET error:', error);
         return NextResponse.json({ officer: null }, { status: 200 });

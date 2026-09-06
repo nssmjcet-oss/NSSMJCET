@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage, getText } from '@/contexts/LanguageContext';
 import styles from './EventSlider.module.css';
+import { fetchWithCache } from '@/utils/client-cache';
 
 export default function EventSlider({ onViewDetails }) {
     const { language } = useLanguage();
@@ -12,10 +13,9 @@ export default function EventSlider({ onViewDetails }) {
     const [paused, setPaused] = useState(false);
 
     useEffect(() => {
-        fetch(`/api/events?t=${Date.now()}`, { cache: 'no-store' })
-            .then(res => res.json())
+        fetchWithCache('/api/events')
             .then(data => {
-                if (data.events) {
+                if (data?.events) {
                     setEvents(data.events);
                 }
                 setLoading(false);

@@ -10,7 +10,12 @@ export async function GET() {
         await connectToDatabase();
         const data = await GoverningBody.find({}).sort({ order: 1 }).lean();
         const members = data.map(doc => ({ ...doc, id: doc._id }));
-        return NextResponse.json({ members });
+        return NextResponse.json({ members }, {
+            status: 200,
+            headers: {
+                'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+            }
+        });
     } catch (error) {
         console.error('Error fetching governing body:', error);
         return NextResponse.json({ members: [] }, { status: 500 });

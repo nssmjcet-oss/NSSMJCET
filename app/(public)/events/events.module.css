@@ -359,3 +359,23 @@
                 0 0 15px rgba(255, 153, 51, 0.25);
     transform: translateY(-2px) scale(1.05);
 }
+
+@media (max-width: 640px) {
+    .eventsGrid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+    .hero h1 {
+        font-size: clamp(2rem, 7vw, 2.8rem) !important;
+    }
+    .yearSlider {
+        overflow-x: auto;
+        justify-content: flex-start !important;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .yearTab {
+        padding: 8px 16px !important;
+        font-size: 13px !important;
+    }
+}

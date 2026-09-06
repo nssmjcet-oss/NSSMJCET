@@ -4,12 +4,14 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request) {
     try {
-        const { path } = await request.json();
+        const body = await request.json();
+        const paths = Array.isArray(body.paths) ? body.paths : [body.path || '/team'];
 
-        // Revalidate the specified path or default to /team
-        revalidatePath(path || '/team');
+        for (const p of paths) {
+            if (p) revalidatePath(p);
+        }
 
-        return NextResponse.json({ revalidated: true, now: Date.now() });
+        return NextResponse.json({ revalidated: true, paths, now: Date.now() });
     } catch (err) {
         return NextResponse.json({ revalidated: false, error: err.message }, { status: 500 });
     }

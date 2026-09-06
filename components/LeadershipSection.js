@@ -5,6 +5,7 @@ import styles from './LeadershipSection.module.css';
 import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { Building2 } from 'lucide-react';
+import { fetchWithCache } from '@/utils/client-cache';
 
 export default function LeadershipSection() {
     const { language } = useLanguage();
@@ -13,18 +14,16 @@ export default function LeadershipSection() {
 
     useEffect(() => {
         // Fetch Program Officer
-        fetch('/api/program-officer')
-            .then(res => res.json())
+        fetchWithCache('/api/program-officer')
             .then(json => {
-                if (json.officer) setOfficerData(json.officer);
+                if (json?.officer) setOfficerData(json.officer);
             })
             .catch(console.error);
 
         // Fetch Chairman
-        fetch('/api/chairman')
-            .then(res => res.json())
+        fetchWithCache('/api/chairman')
             .then(json => {
-                if (json.chairman) setChairmanData(json.chairman);
+                if (json?.chairman) setChairmanData(json.chairman);
             })
             .catch(console.error);
 

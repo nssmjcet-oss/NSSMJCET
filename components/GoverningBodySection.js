@@ -5,6 +5,7 @@ import { useLanguage, getText } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import { Linkedin } from 'lucide-react';
 import styles from './GoverningBody.module.css';
+import { fetchWithCache } from '@/utils/client-cache';
 
 export default function GoverningBodySection() {
     const { language } = useLanguage();
@@ -12,10 +13,9 @@ export default function GoverningBodySection() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/governing-body')
-            .then(res => res.json())
+        fetchWithCache('/api/governing-body')
             .then(data => {
-                if (data.members) setMembers(data.members);
+                if (data?.members) setMembers(data.members);
                 setLoading(false);
             })
             .catch(() => setLoading(false));

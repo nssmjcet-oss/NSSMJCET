@@ -1,5 +1,5 @@
 import connectToDatabase from '@/lib/mongodb';
-import { Team } from '@/lib/models';
+import { Team, TeamSession } from '@/lib/models';
 import TeamClient from './TeamClient';
 
 export const metadata = {
@@ -15,30 +15,59 @@ export const metadata = {
     },
 };
 
-// Revalidate team page every 10 seconds for instant Edge CDN delivery
-export const revalidate = 10;
+// Revalidate team page every 1 hour (purged instantly on-demand by admin changes via /api/revalidate)
+export const revalidate = 3600;
 
-async function getTeamMembers() {
+async function getTeamData() {
     try {
         await connectToDatabase();
-        const teamData = await Team.find({}).sort({ order: 1 }).lean();
 
-        return teamData.map(doc => {
+        // 1. Get current active session
+        const currentSession = await TeamSession.findOne({ status: 'current' }).lean();
+        const currentYear = currentSession?.academicYear || '2025-2026';
+
+        // 2. Fetch distinct years (metadata only, no photos)
+        const distinctYears = await Team.distinct('academicYear');
+        const sessionDocs = await TeamSession.find({}, { academicYear: 1, teamYear: 1 }).lean();
+        const allYears = Array.from(new Set([...distinctYears, '2025-2026', ...sessionDocs.map(s => s.academicYear)])).filter(Boolean);
+        allYears.sort((a, b) => b.localeCompare(a));
+
+        // 3. Fetch ONLY current year members with projection
+        const teamData = await Team.find(
+            { academicYear: currentYear },
+            {
+                name: 1,
+                role: 1,
+                position: 1,
+                email: 1,
+                linkedin: 1,
+                github: 1,
+                image: 1,
+                order: 1,
+                academicYear: 1,
+                quote: 1,
+            }
+        )
+            .sort({ order: 1 })
+            .lean();
+
+        const members = teamData.map(doc => {
             const serialized = {
                 ...doc,
                 id: doc._id?.toString() || doc._id,
                 _id: doc._id?.toString() || doc._id,
-                createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : (doc.createdAt || null),
             };
             return JSON.parse(JSON.stringify(serialized));
         });
+
+        return { members, currentYear, allYears };
     } catch (error) {
         console.error('Error fetching team members:', error);
-        return [];
+        return { members: [], currentYear: '2025-2026', allYears: ['2025-2026'] };
     }
 }
 
 export default async function TeamPage() {
-    const members = await getTeamMembers();
-    return <TeamClient members={members} />;
+    const { members, currentYear, allYears } = await getTeamData();
+    return <TeamClient initialMembers={members} currentYear={currentYear} allYears={allYears} />;
 }

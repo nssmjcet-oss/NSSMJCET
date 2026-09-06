@@ -7,20 +7,31 @@ import { useLanguage, getText } from '@/contexts/LanguageContext';
 import { formatDate } from '@/utils/formatters';
 import styles from './EventModal.module.css';
 
-export default function EventModal({ event, onClose }) {
+import { fetchWithCache } from '@/utils/client-cache';
 
+export default function EventModal({ event, onClose }) {
     const { language } = useLanguage();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [fullEvent, setFullEvent] = useState(null);
 
     useEffect(() => {
         setCurrentImageIndex(0);
+        setFullEvent(null);
+        if (event?.id || event?._id) {
+            fetchWithCache(`/api/events?id=${event.id || event._id}`)
+                .then(data => {
+                    if (data?.event) setFullEvent(data.event);
+                })
+                .catch(() => {});
+        }
     }, [event]);
 
     if (!event) return null;
 
-    const title = getText(event.title, language);
-    const description = getText(event.description, language);
-    const images = event.images && event.images.length > 0 ? event.images : ['/placeholder-event.jpg'];
+    const displayEvent = fullEvent || event;
+    const title = getText(displayEvent.title, language);
+    const description = getText(displayEvent.description, language);
+    const images = displayEvent.images && displayEvent.images.length > 0 ? displayEvent.images : ['/placeholder-event.jpg'];
 
     const nextImage = (e) => {
         e.stopPropagation();

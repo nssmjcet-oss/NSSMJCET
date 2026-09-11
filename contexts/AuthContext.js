@@ -5,7 +5,6 @@ import {
     onAuthStateChanged,
     GoogleAuthProvider,
     signInWithPopup,
-    signInWithEmailAndPassword,
     signOut as firebaseSignOut
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -111,23 +110,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Legacy Email/Password Login (Preserved for migration)
-    const login = async (email, password) => {
-        setLoading(true);
-        setAuthError(null);
-        try {
-            const result = await signInWithEmailAndPassword(auth, email, password);
-            const verification = await verifyServerSession(result.user);
-            setLoading(false);
-            return verification;
-        } catch (err) {
-            setLoading(false);
-            console.error('[AuthContext] Email login error:', err);
-            setAuthError(err.message || 'Login failed.');
-            throw err;
-        }
-    };
-
     const logout = async () => {
         setLoading(true);
         try {
@@ -153,7 +135,6 @@ export const AuthProvider = ({ children }) => {
             authError,
             loading,
             loginWithGoogle,
-            login,
             logout,
             refreshSession: () => auth.currentUser ? verifyServerSession(auth.currentUser) : null
         }}>

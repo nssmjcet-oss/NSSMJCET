@@ -58,6 +58,22 @@ async function runTests() {
     // -------------------------------------------------------------
     // Test 2: Approved Admin (zuhair@gmail.com)
     // -------------------------------------------------------------
+    await adminUsers.updateOne(
+        { email: 'zuhair@gmail.com' },
+        {
+            $set: {
+                role: 'ADMIN',
+                status: 'ACTIVE',
+                is_primary: false,
+                name: 'Zuhair'
+            },
+            $setOnInsert: {
+                _id: new mongoose.Types.ObjectId().toString(),
+                created_at: new Date()
+            }
+        },
+        { upsert: true }
+    );
     const approvedAdminDoc = await adminUsers.findOne({ email: 'zuhair@gmail.com' });
     assert(
         approvedAdminDoc !== null,

@@ -8,39 +8,21 @@ import styles from './portal.module.css';
 export default function AdminPortalGate() {
     const {
         user,
-        role,
         authStatus,
         authError,
         loading,
         loginWithGoogle,
-        login,
         logout
     } = useAuth();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showLegacy, setShowLegacy] = useState(false);
-    const [legacyForm, setLegacyForm] = useState({ email: '', password: '' });
-    const [legacyError, setLegacyError] = useState('');
 
     const handleGoogleSignIn = async () => {
         setIsSubmitting(true);
         try {
             await loginWithGoogle();
         } catch (err) {
-            console.error('Google sign-in caught:', err);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const handleLegacySubmit = async (e) => {
-        e.preventDefault();
-        setLegacyError('');
-        setIsSubmitting(true);
-        try {
-            await login(legacyForm.email, legacyForm.password);
-        } catch (err) {
-            setLegacyError(err.message || 'Login failed. Check credentials.');
+            console.error('Google sign-in error:', err);
         } finally {
             setIsSubmitting(false);
         }
@@ -75,7 +57,7 @@ export default function AdminPortalGate() {
                     <p className={styles.errorDescription}>
                         Your Google account is not authorized to access the NSS MJCET Admin Portal.
                         <br /><br />
-                        Please contact the NSS MJCET Super Admin.
+                        Access is restricted. Contact GB if you need admin rights.
                     </p>
 
                     <div className={styles.actionStack}>
@@ -121,7 +103,7 @@ export default function AdminPortalGate() {
                     <p className={styles.errorDescription}>
                         Your NSS MJCET administrator access has been deactivated.
                         <br /><br />
-                        Please contact the Super Admin.
+                        Access is restricted. Contact GB if you need admin rights.
                     </p>
 
                     <div className={styles.actionStack}>
@@ -142,7 +124,7 @@ export default function AdminPortalGate() {
         );
     }
 
-    // Unauthenticated: NSS MJCET Admin Portal Login Gate
+    // Primary NSS MJCET Admin Portal: Google Authentication Only
     return (
         <div className={styles.portalContainer}>
             <div className={styles.portalCard}>
@@ -154,7 +136,7 @@ export default function AdminPortalGate() {
 
                 <div className={styles.portalOrg}>NSS MJCET</div>
                 <h1 className={styles.portalTitle}>ADMIN PORTAL</h1>
-                <p className={styles.portalSubtitle}>Manage the official NSS MJCET website</p>
+                <p className={styles.portalSubtitle}>Sign in with an authorized Google account to manage the NSS MJCET website.</p>
 
                 {authError && (
                     <div style={{
@@ -176,7 +158,7 @@ export default function AdminPortalGate() {
                     onClick={handleGoogleSignIn}
                     disabled={isSubmitting || loading}
                     className={styles.googleBtn}
-                    aria-label="Continue with Google"
+                    aria-label="Sign in with Google"
                 >
                     <svg className={styles.googleIcon} viewBox="0 0 24 24">
                         <path
@@ -196,62 +178,12 @@ export default function AdminPortalGate() {
                             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                         />
                     </svg>
-                    <span>{isSubmitting ? 'Authenticating...' : 'Continue with Google'}</span>
+                    <span>{isSubmitting ? 'Connecting...' : 'Sign in with Google'}</span>
                 </button>
 
                 <p className={styles.noticeText}>
-                    Authorized administrators only.
+                    Access is restricted. Contact GB if you need admin rights.
                 </p>
-
-                {/* Optional Collapsible Legacy Login for existing admin accounts */}
-                <div style={{ marginTop: '16px' }}>
-                    <button
-                        type="button"
-                        onClick={() => setShowLegacy(!showLegacy)}
-                        className={styles.legacyToggle}
-                    >
-                        {showLegacy ? 'Hide email sign in' : 'Sign in with email & password'}
-                    </button>
-
-                    {showLegacy && (
-                        <form onSubmit={handleLegacySubmit} className={styles.legacyForm}>
-                            {legacyError && (
-                                <div style={{ color: '#dc2626', fontSize: '12px', marginBottom: '8px' }}>
-                                    {legacyError}
-                                </div>
-                            )}
-                            <div className={styles.formGroup}>
-                                <label className={styles.formLabel}>Email</label>
-                                <input
-                                    type="email"
-                                    required
-                                    value={legacyForm.email}
-                                    onChange={e => setLegacyForm({ ...legacyForm, email: e.target.value })}
-                                    className={styles.formInput}
-                                    placeholder="admin@example.com"
-                                />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label className={styles.formLabel}>Password</label>
-                                <input
-                                    type="password"
-                                    required
-                                    value={legacyForm.password}
-                                    onChange={e => setLegacyForm({ ...legacyForm, password: e.target.value })}
-                                    className={styles.formInput}
-                                    placeholder="••••••••"
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className={styles.legacySubmitBtn}
-                            >
-                                {isSubmitting ? 'Signing in...' : 'Sign In with Email'}
-                            </button>
-                        </form>
-                    )}
-                </div>
 
                 <div className={styles.portalFooter}>
                     <Link href="/" className={styles.backLink}>

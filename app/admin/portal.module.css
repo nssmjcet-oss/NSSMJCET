@@ -118,11 +118,15 @@
 }
 
 .noticeText {
-    margin-top: 18px;
-    font-size: 12px;
-    color: #9ca3af;
+    margin-top: 20px;
+    font-size: 12.5px;
+    color: #6b7280;
     font-weight: 500;
-    letter-spacing: 0.3px;
+    line-height: 1.5;
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 8px;
+    padding: 10px 14px;
 }
 
 .portalFooter {
@@ -244,71 +248,6 @@
     border-color: #d1d5db;
 }
 
-/* Legacy toggle */
-.legacyToggle {
-    background: none;
-    border: none;
-    color: #9ca3af;
-    font-size: 12px;
-    cursor: pointer;
-    text-decoration: underline;
-    margin-top: 10px;
-}
-
-.legacyToggle:hover {
-    color: #6b7280;
-}
-
-.legacyForm {
-    margin-top: 18px;
-    padding-top: 18px;
-    border-top: 1px dashed #e5e7eb;
-    text-align: left;
-}
-
-.formGroup {
-    margin-bottom: 12px;
-}
-
-.formLabel {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: #4b5563;
-    margin-bottom: 4px;
-}
-
-.formInput {
-    width: 100%;
-    padding: 9px 12px;
-    font-size: 13px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    outline: none;
-    transition: border-color 0.2s ease;
-}
-
-.formInput:focus {
-    border-color: #FF9933;
-    box-shadow: 0 0 0 2px rgba(255, 153, 51, 0.2);
-}
-
-.legacySubmitBtn {
-    width: 100%;
-    padding: 10px;
-    background: #374151;
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 6px;
-}
-
-.legacySubmitBtn:hover:not(:disabled) {
-    background: #1f2937;
-}
 
 /* Top bar badge */
 .primarySuperAdminBadge {

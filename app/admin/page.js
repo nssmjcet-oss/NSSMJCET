@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { Icons } from '@/components/Icons';
 import styles from './dashboard.module.css';
 import { adminFetch } from '@/utils/api-client';
+import { isSuperAdmin as checkSuperAdmin } from '@/lib/rbac';
 
 const translations = {
     en: {
@@ -46,7 +47,7 @@ const translations = {
 };
 
 export default function AdminDashboard() {
-    const { user, role } = useAuth();
+    const { user, adminProfile, role } = useAuth();
     const { language } = useLanguage();
     const t = translations[language];
 
@@ -71,7 +72,8 @@ export default function AdminDashboard() {
         fetchStats();
     }, []);
 
-    const isSuperAdmin = role === 'superadmin';
+    const userContext = user ? { ...user, role: adminProfile?.role || role, is_primary: adminProfile?.is_primary } : null;
+    const isSuperAdmin = checkSuperAdmin(userContext);
 
     const cardVariants = {
         initial: { opacity: 0, y: 20 },
@@ -149,6 +151,18 @@ export default function AdminDashboard() {
             <div className={styles.quickActionsSection}>
                 <h3 className={styles.sectionTitle}>{t.quickActions}</h3>
                 <div className={styles.actionsBento}>
+                    {isSuperAdmin && (
+                        <motion.a
+                            href="/admin/users"
+                            className={styles.actionBentoCard}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <div className={styles.actionIconWrapper}><Icons.Users size={20} /></div>
+                            <span>Admin Management</span>
+                        </motion.a>
+                    )}
+
                     <motion.a
                         href="/admin/events"
                         className={styles.actionBentoCard}

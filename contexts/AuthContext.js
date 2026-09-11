@@ -1,115 +1,162 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut as firebaseSignOut } from 'firebase/auth';
-import { auth, db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import {
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signInWithEmailAndPassword,
+    signOut as firebaseSignOut
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 const AuthContext = createContext({});
 
-const isDev = process.env.NODE_ENV !== 'production';
-const devLog = (...args) => { if (isDev) console.log(...args); };
-
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [adminProfile, setAdminProfile] = useState(null);
     const [role, setRole] = useState(null);
+    const [authStatus, setAuthStatus] = useState('loading'); // 'authenticated' | 'unauthorized' | 'deactivated' | 'unauthenticated' | 'loading'
+    const [authError, setAuthError] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        devLog('[AuthContext] Setting up onAuthStateChanged listener');
-        const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-            devLog('[AuthContext] Auth State Updated:', authUser ? 'User Logged In' : 'User Logged Out');
+    const verifyServerSession = useCallback(async (authUser) => {
+        try {
+            const token = await authUser.getIdToken(true);
+            const res = await fetch(`/api/auth/session?t=${Date.now()}`, {
+                headers: { 'Authorization': `Bearer ${token}` },
+                cache: 'no-store'
+            });
 
-            if (authUser) {
-                let userRole = null;
-                try {
-                    // Safety timeout for role resolution (5 seconds)
-                    const rolePromise = (async () => {
-                        // Fast-track for Super Admin UID
-                        if (authUser.uid === 'z3VKS1U11ETzBiPw5VtojR2Zmvd2') {
-                            console.log('[AuthContext] Primary SuperAdmin detected via UID');
-                            return 'superadmin';
-                        }
+            const data = await res.json();
 
-                        console.log('[AuthContext] Resolving role for:', authUser.uid);
-                        // Check both user collections
-                        const collections = ['users', 'user'];
-                        for (const coll of collections) {
-                            try {
-                                console.log(`[AuthContext] Checking collection: ${coll}...`);
-                                const userDoc = await getDoc(doc(db, coll, authUser.uid));
-                                if (userDoc.exists() && userDoc.data()?.role) {
-                                    const r = userDoc.data().role;
-                                    console.log(`[AuthContext] Role found in '${coll}':`, r);
-                                    return r;
-                                }
-                            } catch (e) {
-                                console.warn(`[AuthContext] Firestore fetch from '${coll}' failed:`, e.message);
-                            }
-                        }
-
-                        // Server-side fallback if still no role
-                        console.log('[AuthContext] Falling back to server-side role check');
-                        try {
-                            const token = await authUser.getIdToken();
-                            const res = await fetch('/api/auth/role', {
-                                headers: { 'Authorization': `Bearer ${token}` }
-                            });
-                            if (res.ok) {
-                                const data = await res.json();
-                                if (data.role && data.role !== 'NONE') {
-                                    console.log('[AuthContext] Role found via API:', data.role);
-                                    return data.role;
-                                }
-                            }
-                        } catch (e) {
-                            console.warn('[AuthContext] API role check failed:', e.message);
-                        }
-
-                        return 'user';
-                    })();
-
-                    // Race against a 2-second timeout
-                    const timeoutPromise = new Promise(resolve => setTimeout(() => {
-                        console.warn('[AuthContext] Role resolution timed out - defaulting to user');
-                        resolve('user');
-                    }, 2000));
-
-                    userRole = await Promise.race([rolePromise, timeoutPromise]);
-
-                } catch (err) {
-                    console.error('[AuthContext] Unexpected error during role resolution:', err);
-                    userRole = 'user';
-                }
-
-                setRole(userRole);
+            if (res.ok && data.user) {
+                setUser({
+                    uid: authUser.uid,
+                    email: authUser.email,
+                    displayName: data.user.name || authUser.displayName || authUser.email.split('@')[0],
+                    photoURL: data.user.photo_url || authUser.photoURL || ''
+                });
+                setAdminProfile(data.user);
+                setRole(data.user.role);
+                setAuthStatus('authenticated');
+                setAuthError(null);
+                return { success: true, user: data.user };
+            } else {
+                const code = data.code || 'UNAUTHORIZED';
                 setUser({
                     uid: authUser.uid,
                     email: authUser.email,
                     displayName: authUser.displayName,
+                    photoURL: authUser.photoURL
                 });
+                setAdminProfile(null);
+                setRole(null);
+
+                if (code === 'ACCOUNT_DEACTIVATED') {
+                    setAuthStatus('deactivated');
+                    setAuthError(data.error || 'Your NSS MJCET administrator access has been deactivated. Please contact the Super Admin.');
+                } else {
+                    setAuthStatus('unauthorized');
+                    setAuthError(data.error || 'Your Google account is not authorized to access the NSS MJCET Admin Portal. Please contact the NSS MJCET Super Admin.');
+                }
+                return { success: false, code, error: data.error };
+            }
+        } catch (err) {
+            console.error('[AuthContext] Session verification failed:', err);
+            setAuthStatus('unauthorized');
+            setAuthError('Connection error: Failed to verify administrator authorization.');
+            setRole(null);
+            setAdminProfile(null);
+            return { success: false, code: 'NETWORK_ERROR', error: err.message };
+        }
+    }, []);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+            if (authUser) {
+                await verifyServerSession(authUser);
             } else {
                 setUser(null);
+                setAdminProfile(null);
                 setRole(null);
+                setAuthStatus('unauthenticated');
+                setAuthError(null);
             }
-
-            console.log('[AuthContext] Initialization Complete');
             setLoading(false);
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [verifyServerSession]);
 
-    const login = (email, password) => {
-        return signInWithEmailAndPassword(auth, email, password);
+    // Google Sign-In (Primary Authentication)
+    const loginWithGoogle = async () => {
+        setLoading(true);
+        setAuthError(null);
+        try {
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            const result = await signInWithPopup(auth, provider);
+            const verification = await verifyServerSession(result.user);
+            setLoading(false);
+            return verification;
+        } catch (err) {
+            setLoading(false);
+            console.error('[AuthContext] Google Sign-In error:', err);
+            // Ignore popup closed by user errors
+            if (err.code !== 'auth/popup-closed-by-user') {
+                setAuthError(err.message || 'Google Sign-In failed.');
+            }
+            throw err;
+        }
     };
 
-    const logout = () => {
-        return firebaseSignOut(auth);
+    // Legacy Email/Password Login (Preserved for migration)
+    const login = async (email, password) => {
+        setLoading(true);
+        setAuthError(null);
+        try {
+            const result = await signInWithEmailAndPassword(auth, email, password);
+            const verification = await verifyServerSession(result.user);
+            setLoading(false);
+            return verification;
+        } catch (err) {
+            setLoading(false);
+            console.error('[AuthContext] Email login error:', err);
+            setAuthError(err.message || 'Login failed.');
+            throw err;
+        }
+    };
+
+    const logout = async () => {
+        setLoading(true);
+        try {
+            await firebaseSignOut(auth);
+            setUser(null);
+            setAdminProfile(null);
+            setRole(null);
+            setAuthStatus('unauthenticated');
+            setAuthError(null);
+        } catch (err) {
+            console.error('[AuthContext] Logout error:', err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <AuthContext.Provider value={{ user, role, login, logout, loading }}>
+        <AuthContext.Provider value={{
+            user,
+            adminProfile,
+            role,
+            authStatus,
+            authError,
+            loading,
+            loginWithGoogle,
+            login,
+            logout,
+            refreshSession: () => auth.currentUser ? verifyServerSession(auth.currentUser) : null
+        }}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,43 +1,33 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
-import { adminAuth } from '@/lib/firebase-admin';
-import connectToDatabase from '@/lib/mongodb';
-import { User } from '@/lib/models';
+import { getAuthUser } from '@/lib/server-auth';
 
+/**
+ * GET /api/auth/role
+ * Legacy/compatibility role check endpoint.
+ */
 export async function GET(req) {
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-        return NextResponse.json({ error: 'Missing token' }, { status: 401 });
-    }
-
-    const idToken = authHeader.split('Bearer ')[1];
     try {
-        const decodedToken = await adminAuth.verifyIdToken(idToken);
-        const uid = decodedToken.uid;
+        const { user, error, status, code } = await getAuthUser(req);
 
-        await connectToDatabase();
-
-        // Check the users collection in MongoDB
-        const userDoc = await User.findOne({ uid }).lean();
-
-        if (userDoc) {
-            return NextResponse.json({
-                uid,
-                email: decodedToken.email,
-                role: userDoc.role,
-                database: 'VERIFIED SERVER-SIDE (MongoDB)',
-                source: 'users'
-            });
+        if (error) {
+            return NextResponse.json(
+                { error, code: code || 'UNAUTHORIZED', role: 'NONE' },
+                { status: status || 401 }
+            );
         }
 
         return NextResponse.json({
-            uid,
-            role: 'NONE',
-            error: 'No user document found in MongoDB'
+            uid: user.uid,
+            email: user.email,
+            role: user.role,
+            status: user.status,
+            is_primary: user.is_primary === true,
+            database: 'VERIFIED SERVER-SIDE (MongoDB AdminUser)'
         });
 
     } catch (error) {
-        console.error('Server Role Check Error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error('Role Check Error:', error);
+        return NextResponse.json({ error: error.message, role: 'NONE' }, { status: 500 });
     }
 }

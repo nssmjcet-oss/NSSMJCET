@@ -1,0 +1,336 @@
+/* Institutional NSS MJCET Admin Portal Styles */
+
+.portalContainer {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: #fdfaf6;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(255, 153, 51, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(19, 136, 8, 0.08) 0px, transparent 50%);
+    color: #1a1a1a;
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+}
+
+.portalCard {
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 153, 51, 0.25);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.06), 0 20px 40px -15px rgba(255, 153, 51, 0.1);
+    padding: 40px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.cardTopAccent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF9933 0%, #FFB347 50%, #138808 100%);
+}
+
+.logoWrapper {
+    margin: 0 auto 20px;
+    width: 84px;
+    height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 8px;
+}
+
+.logoImg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.portalOrg {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #FF9933;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.portalTitle {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.portalSubtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 32px;
+    line-height: 1.5;
+}
+
+.googleBtn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 13px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+    background: #ffffff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.googleBtn:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+}
+
+.googleBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.googleIcon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.noticeText {
+    margin-top: 18px;
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.portalFooter {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.backLink {
+    color: #4b5563;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.backLink:hover {
+    color: #FF9933;
+}
+
+/* Restricted & Deactivated states */
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.badgeRestricted {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.badgeDeactivated {
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.userEmailPill {
+    display: inline-block;
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 12px;
+    font-family: monospace;
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.errorHeading {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 12px;
+}
+
+.errorDescription {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+.actionStack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.btnPrimary {
+    width: 100%;
+    padding: 12px 20px;
+    background: #FF9933;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btnPrimary:hover {
+    background: #e07800;
+    transform: translateY(-1px);
+}
+
+.btnSecondary {
+    width: 100%;
+    padding: 12px 20px;
+    background: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.btnSecondary:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+/* Legacy toggle */
+.legacyToggle {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-top: 10px;
+}
+
+.legacyToggle:hover {
+    color: #6b7280;
+}
+
+.legacyForm {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px dashed #e5e7eb;
+    text-align: left;
+}
+
+.formGroup {
+    margin-bottom: 12px;
+}
+
+.formLabel {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 4px;
+}
+
+.formInput {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.formInput:focus {
+    border-color: #FF9933;
+    box-shadow: 0 0 0 2px rgba(255, 153, 51, 0.2);
+}
+
+.legacySubmitBtn {
+    width: 100%;
+    padding: 10px;
+    background: #374151;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 6px;
+}
+
+.legacySubmitBtn:hover:not(:disabled) {
+    background: #1f2937;
+}
+
+/* Top bar badge */
+.primarySuperAdminBadge {
+    background: linear-gradient(135deg, #FFF7ED 0%, #FEF3C7 100%);
+    color: #B45309;
+    border: 1px solid #FCD34D;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.adminBadge {
+    background: #EFF6FF;
+    color: #1D4ED8;
+    border: 1px solid #BFDBFE;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+}

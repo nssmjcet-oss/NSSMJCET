@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
-import { User, Event, Volunteer } from '@/lib/models';
+import { AdminUser, Event, Volunteer } from '@/lib/models';
 import { getAuthUser, requireAdmin } from '@/lib/server-auth';
 
 export const dynamic = 'force-dynamic';
@@ -16,7 +16,7 @@ export async function GET(request) {
         await connectToDatabase();
 
         const [usersCount, eventsCount, pendingVolunteersCount] = await Promise.all([
-            User.countDocuments({}),
+            AdminUser.countDocuments({ status: 'ACTIVE' }),
             Event.countDocuments({}),
             Volunteer.countDocuments({ status: 'pending' })
         ]);

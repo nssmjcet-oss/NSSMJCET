@@ -70,14 +70,15 @@ const translations = {
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function AdminSidebar() {
-    const { user, logout, role, loading } = useAuth();
+    const { user, adminProfile, logout, role, loading } = useAuth();
     const pathname = usePathname();
     const { language } = useLanguage();
     const t = translations[language];
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    const isSuperAdmin = role === 'superadmin' || user?.uid === 'z3VKS1U11ETzBiPw5VtojR2Zmvd2';
-    const isAdminUser = role === 'admin' || isSuperAdmin;
+    const userContext = user ? { ...user, role: adminProfile?.role || role, is_primary: adminProfile?.is_primary, status: adminProfile?.status } : null;
+    const isSuperAdminUser = canAccessPage(userContext, 'users');
+    const isAdminUser = canAccessAdminPanel(userContext);
 
     // Lock body scroll when mobile menu is open
     useEffect(() => {
@@ -93,7 +94,7 @@ export default function AdminSidebar() {
 
     const menuItems = [
         { href: '/admin', label: t.dashboard, icon: Icons.Dashboard, show: isAdminUser },
-        { href: '/admin/users', label: t.users, icon: Icons.Users, show: isSuperAdmin },
+        { href: '/admin/users', label: 'Admin Management', icon: Icons.Users, show: isSuperAdminUser },
         { href: '/admin/events', label: t.events, icon: Icons.Events, show: isAdminUser },
         { href: '/admin/announcements', label: t.announcements, icon: Icons.Announcements, show: isAdminUser },
         { href: '/admin/content', label: t.content, icon: Icons.Content, show: isAdminUser },

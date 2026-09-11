@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './AdminSidebar.module.css';
 import { Icons } from '@/components/Icons';
-import { canAccessPage } from '@/lib/rbac';
+import { canAccessPage, canAccessAdminPanel } from '@/lib/rbac';
 
 const translations = {
     en: {

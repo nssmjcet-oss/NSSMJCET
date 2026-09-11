@@ -6,7 +6,10 @@ export const metadata = {
     alternates: {
         canonical: '/',
     },
-    title: 'NSS MJCET | National Service Scheme – Muffakham Jah College of Engineering & Technology',
+    title: {
+        default: 'NSS MJCET | National Service Scheme – Muffakham Jah College of Engineering & Technology',
+        template: '%s | NSS MJCET',
+    },
     description: 'Official website of NSS MJCET – National Service Scheme Muffakham Jah College of Engineering & Technology. Explore events, volunteer initiatives, social activities and student engagement programs.',
     applicationName: 'NSS MJCET',
     appleWebApp: {
@@ -56,7 +59,11 @@ const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "NSS MJCET",
-    "alternateName": "National Service Scheme MJCET",
+    "alternateName": [
+        "NSSMJCET",
+        "National Service Scheme MJCET",
+        "NSS MJCET Unit"
+    ],
     "url": "https://www.nssmjcet.in/"
 };
 

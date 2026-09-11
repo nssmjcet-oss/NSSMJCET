@@ -7,13 +7,7 @@ export default function sitemap() {
             url: baseUrl,
             lastModified,
             changeFrequency: 'weekly',
-            priority: 1,
-        },
-        {
-            url: `${baseUrl}/about`,
-            lastModified,
-            changeFrequency: 'monthly',
-            priority: 0.8,
+            priority: 1.0,
         },
         {
             url: `${baseUrl}/events`,
@@ -22,7 +16,31 @@ export default function sitemap() {
             priority: 0.9,
         },
         {
+            url: `${baseUrl}/volunteer`,
+            lastModified,
+            changeFrequency: 'weekly',
+            priority: 0.9,
+        },
+        {
             url: `${baseUrl}/team`,
+            lastModified,
+            changeFrequency: 'monthly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/about`,
+            lastModified,
+            changeFrequency: 'monthly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/announcements`,
+            lastModified,
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/unit`,
             lastModified,
             changeFrequency: 'monthly',
             priority: 0.7,
@@ -30,8 +48,8 @@ export default function sitemap() {
         {
             url: `${baseUrl}/contact`,
             lastModified,
-            changeFrequency: 'yearly',
-            priority: 0.6,
+            changeFrequency: 'monthly',
+            priority: 0.7,
         },
     ];
 }

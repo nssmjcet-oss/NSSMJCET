@@ -172,16 +172,6 @@ export default function AdminDashboard() {
                         <div className={styles.actionIconWrapper}><Icons.Events size={20} /></div>
                         <span>Manage Events</span>
                     </motion.a>
-                    
-                    <motion.a
-                        href="/admin/governing-body"
-                        className={styles.actionBentoCard}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
-                        <div className={styles.actionIconWrapper}><Icons.Users size={20} /></div>
-                        <span>Governing Body</span>
-                    </motion.a>
 
                     <motion.a
                         href="/admin/volunteers"

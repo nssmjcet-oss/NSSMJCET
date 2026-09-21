@@ -355,18 +355,61 @@
 @media (max-width: 992px) {
     .hero {
         min-height: auto;
-        padding: clamp(92px, 12vw, 115px) 0 45px;
+        padding: clamp(78px, 10vw, 92px) 0 30px;
     }
 
     .heroGrid {
         grid-template-columns: 1fr;
         text-align: center;
-        gap: 2.5rem;
+        gap: 1.5rem;
+    }
+
+    /* Image comes FIRST on mobile/tablet */
+    .heroCardCol {
+        order: -1;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .heroCardFrame {
+        max-width: 520px;
+        width: 100%;
+        padding: 8px;
+        border-radius: 20px;
+        box-shadow: 0 16px 36px -10px rgba(15, 23, 42, 0.12);
+    }
+
+    .heroCardImgWrap {
+        aspect-ratio: 16 / 9;
+        border-radius: 14px;
+    }
+
+    .heroCardImg {
+        border-radius: 14px;
+    }
+
+    /* Keep NSS emblem badge visible, scaled and neatly placed on the top-right corner of the image card */
+    .heroEmblemFloat {
+        display: flex !important;
+        width: 56px;
+        height: 56px;
+        top: -10px;
+        right: 8px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+        border: 2.5px solid #ffffff;
+    }
+
+    .heroEmblemFloat img {
+        width: 46px !important;
+        height: 46px !important;
+        object-fit: contain;
     }
 
     .heroTextCol {
         align-items: center;
         text-align: center;
+        width: 100%;
     }
 
     .heroDescText {
@@ -381,205 +424,256 @@
     .heroTrustStrip {
         justify-content: center;
     }
-
-    .heroCardCol {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-
-    .heroCardFrame {
-        max-width: 560px;
-        width: 100%;
-    }
-
-    /* Hide floating emblem badge on tablet & mobile to avoid screen-edge collision and duplicate navbar logo */
-    .heroEmblemFloat {
-        display: none !important;
-    }
 }
 
 @media (max-width: 768px) {
     .hero {
-        padding: 92px 0 36px;
+        padding: 78px 0 24px;
         min-height: auto;
     }
 
     .heroGrid {
-        gap: 1.75rem;
+        gap: 1.25rem;
     }
 
+    .heroCardFrame {
+        max-width: 440px;
+        padding: 6px;
+        border-radius: 18px;
+    }
+
+    .heroCardImgWrap {
+        aspect-ratio: 16 / 9;
+        border-radius: 13px;
+    }
+
+    .heroCardImg {
+        border-radius: 13px;
+    }
+
+    .heroEmblemFloat {
+        width: 50px;
+        height: 50px;
+        top: -8px;
+        right: 8px;
+        border: 2px solid #ffffff;
+    }
+
+    .heroEmblemFloat img {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    /* Reduced, comfortable text on phone */
     .heroBadge {
-        padding: 6px 14px;
+        padding: 4px 12px;
+        border-radius: 9999px;
         max-width: 100%;
-        margin-bottom: 1rem;
+        margin-bottom: 0.55rem;
+        gap: 6px;
+    }
+
+    .heroBadgeDot {
+        width: 5px;
+        height: 5px;
     }
 
     .heroBadgeText {
-        font-size: 0.68rem;
-        letter-spacing: 0.08em;
-        line-height: 1.4;
+        font-size: 0.62rem;
+        letter-spacing: 0.05em;
+        line-height: 1.3;
         text-align: center;
     }
 
+    .heroHeading {
+        margin-bottom: 0.45rem;
+    }
+
     .heroHeadingSub {
-        font-size: 0.88rem;
-        letter-spacing: 0.18em;
-        margin-bottom: 0.35rem;
+        font-size: 0.74rem;
+        letter-spacing: 0.14em;
+        margin-bottom: 0.15rem;
     }
 
     .heroHeadingMain {
-        font-size: clamp(2.3rem, 8.5vw, 3.4rem);
-        line-height: 1.08;
-        margin-bottom: 0.9rem;
+        font-size: clamp(1.85rem, 7.5vw, 2.3rem);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
     }
 
     .heroMottoBanner {
-        padding: 5px 12px;
-        margin-bottom: 1rem;
+        padding: 3px 10px;
+        margin-bottom: 0.55rem;
+        gap: 6px;
+        border-left-width: 3px;
+        border-radius: 6px;
+    }
+
+    .heroMottoQuote {
+        font-size: 0.95rem;
     }
 
     .heroMottoText {
-        font-size: 0.88rem;
-        letter-spacing: 0.12em;
+        font-size: 0.74rem;
+        letter-spacing: 0.08em;
     }
 
     .heroDescText {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-        max-width: 480px;
-        padding: 0 8px;
+        font-size: 0.84rem;
+        line-height: 1.5;
+        margin-bottom: 0.9rem;
+        max-width: 380px;
+        padding: 0 4px;
     }
 
     .heroActionButtons {
-        gap: 0.75rem;
-        margin-bottom: 1.75rem;
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        width: 100%;
+        max-width: 360px;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .heroActionButtons > * {
+        flex: 1;
+        padding: 8px 12px !important;
+        font-size: 0.75rem !important;
+        min-height: 38px !important;
+        border-radius: 9999px !important;
+        letter-spacing: 0.3px !important;
+        white-space: nowrap !important;
+        text-align: center !important;
+        justify-content: center !important;
     }
 
     .heroTrustStrip {
         width: 100%;
-        max-width: 420px;
-        padding: 10px 16px;
-        gap: 1rem;
+        max-width: 360px;
+        padding: 6px 12px;
+        gap: 0.5rem;
         justify-content: space-around;
-        margin-bottom: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
     }
 
     .heroTrustItem strong {
-        font-size: 1.15rem;
+        font-size: 0.98rem;
+        line-height: 1.1;
     }
 
     .heroTrustItem span {
-        font-size: 0.68rem;
+        font-size: 0.58rem;
+        letter-spacing: 0.03em;
     }
 
-    .heroCardFrame {
-        max-width: 480px;
-        border-radius: 20px;
-        padding: 8px;
-        box-shadow: 0 16px 36px -10px rgba(15, 23, 42, 0.12);
-    }
-
-    .heroCardImgWrap {
-        aspect-ratio: 16 / 10;
-        border-radius: 14px;
-    }
-
-    .heroCardImg {
-        border-radius: 14px;
+    .heroTrustDivider {
+        height: 20px;
     }
 }
 
 @media (max-width: 480px) {
     .hero {
-        padding: 84px 0 28px;
+        padding: 72px 0 20px;
         min-height: auto;
     }
 
     .heroGrid {
-        gap: 1.5rem;
-    }
-
-    .heroBadge {
-        padding: 5px 10px;
-        border-radius: 12px;
-        margin-bottom: 0.85rem;
-    }
-
-    .heroBadgeText {
-        font-size: 0.62rem;
-        letter-spacing: 0.04em;
-        line-height: 1.35;
-    }
-
-    .heroHeadingSub {
-        font-size: 0.78rem;
-        letter-spacing: 0.14em;
-    }
-
-    .heroHeadingMain {
-        font-size: clamp(2rem, 9.5vw, 2.7rem);
-        line-height: 1.1;
-    }
-
-    .heroMottoBanner {
-        padding: 4px 10px;
-        margin-bottom: 0.85rem;
-    }
-
-    .heroMottoText {
-        font-size: 0.8rem;
-        letter-spacing: 0.1em;
-    }
-
-    .heroDescText {
-        font-size: 0.92rem;
-        line-height: 1.55;
-        margin-bottom: 1.25rem;
-        padding: 0 4px;
-    }
-
-    .heroActionButtons {
-        flex-direction: column;
-        width: 100%;
-        max-width: 320px;
-        gap: 0.6rem;
-        margin-bottom: 1.4rem;
-    }
-
-    .heroActionButtons > * {
-        width: 100%;
-        text-align: center;
-        justify-content: center;
-    }
-
-    .heroTrustStrip {
-        padding: 8px 12px;
-        gap: 0.5rem;
-        border-radius: 14px;
-    }
-
-    .heroTrustItem strong {
-        font-size: 1.05rem;
-    }
-
-    .heroTrustItem span {
-        font-size: 0.62rem;
+        gap: 1rem;
     }
 
     .heroCardFrame {
-        padding: 6px;
+        max-width: 100%;
+        padding: 5px;
         border-radius: 16px;
     }
 
     .heroCardImgWrap {
-        aspect-ratio: 16 / 10;
+        aspect-ratio: 16 / 9;
         border-radius: 12px;
     }
 
     .heroCardImg {
         border-radius: 12px;
+    }
+
+    .heroEmblemFloat {
+        width: 46px;
+        height: 46px;
+        top: -8px;
+        right: 6px;
+        border: 2px solid #ffffff;
+    }
+
+    .heroEmblemFloat img {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .heroBadge {
+        padding: 3px 8px;
+        margin-bottom: 0.45rem;
+    }
+
+    .heroBadgeText {
+        font-size: 0.58rem;
+        letter-spacing: 0.03em;
+    }
+
+    .heroHeadingSub {
+        font-size: 0.68rem;
+        letter-spacing: 0.11em;
+    }
+
+    .heroHeadingMain {
+        font-size: clamp(1.65rem, 7vw, 1.95rem);
+        line-height: 1.05;
+    }
+
+    .heroMottoBanner {
+        padding: 2px 8px;
+        margin-bottom: 0.45rem;
+    }
+
+    .heroMottoQuote {
+        font-size: 0.85rem;
+    }
+
+    .heroMottoText {
+        font-size: 0.68rem;
+    }
+
+    .heroDescText {
+        font-size: 0.8rem;
+        line-height: 1.42;
+        margin-bottom: 0.8rem;
+        max-width: 330px;
+    }
+
+    .heroActionButtons {
+        gap: 0.4rem;
+        max-width: 320px;
+        margin-bottom: 0.85rem;
+    }
+
+    .heroActionButtons > * {
+        padding: 7px 10px !important;
+        font-size: 0.72rem !important;
+        min-height: 36px !important;
+    }
+
+    .heroTrustStrip {
+        max-width: 320px;
+        padding: 5px 10px;
+    }
+
+    .heroTrustItem strong {
+        font-size: 0.92rem;
+    }
+
+    .heroTrustItem span {
+        font-size: 0.55rem;
     }
 }
 

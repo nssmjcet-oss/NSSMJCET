@@ -1,7 +1,7 @@
 .eventsPage {
     min-height: 100vh;
     padding-top: var(--space-12);
-    background: var(--marvel-bg);
+    background: transparent;
     color: var(--marvel-text);
 }
 

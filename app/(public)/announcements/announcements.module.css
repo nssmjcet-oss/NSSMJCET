@@ -2,7 +2,7 @@
     min-height: 100vh;
     padding-top: clamp(100px, 12vw, 140px);
     padding-bottom: clamp(60px, 8vw, 100px);
-    background-color: var(--color-warm-cream, #F7F3E9);
+    background-color: transparent;
     color: var(--color-navy-primary, #17233D);
     position: relative;
 }

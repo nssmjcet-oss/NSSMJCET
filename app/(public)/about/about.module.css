@@ -6,7 +6,7 @@
 .aboutPage {
     min-height: 100vh;
     padding-top: var(--space-12, 3rem);
-    background: var(--color-cream-bg, #F7F3E9);
+    background: transparent;
     color: var(--color-navy-primary, #17233D);
     overflow-x: hidden;
 }
@@ -16,7 +16,7 @@
     padding: clamp(48px, 7vw, 84px) 0 clamp(32px, 5vw, 60px);
     text-align: center;
     position: relative;
-    background: var(--color-cream-bg, #F7F3E9);
+    background: transparent;
     border-bottom: 1px solid var(--color-border-subtle, #DCD3C2);
 }
 
@@ -66,7 +66,7 @@
 /* === 2. OBJECTIVES & PRINCIPLES SECTION === */
 .objectivesSection {
     padding: clamp(60px, 8vw, 96px) 0;
-    background: var(--color-beige-section, #EFE4D0);
+    background: rgba(239, 228, 208, 0.75);
     border-top: 1px solid var(--color-border-subtle, #DCD3C2);
     border-bottom: 1px solid var(--color-border-subtle, #DCD3C2);
 }

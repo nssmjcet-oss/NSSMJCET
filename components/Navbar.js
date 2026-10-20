@@ -9,6 +9,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import LanguageToggle from './LanguageToggle';
 import styles from './Navbar.module.css';
 import { useAuth } from '@/contexts/AuthContext';
+import { fetchWithCache } from '@/utils/client-cache';
 
 const translations = {
     en: {

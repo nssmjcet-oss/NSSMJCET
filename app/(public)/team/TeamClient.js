@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import styles from './team.module.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { Quote } from 'lucide-react';
 import { fetchWithCache } from '@/utils/client-cache';
 
 const translations = {
@@ -278,9 +279,15 @@ export default function TeamClient({ initialMembers = [], currentYear = '2025-20
    ============================================================ */
 function MemberCard({ member, tier = 'core', priority = false }) {
     const { language } = useLanguage();
+    const [isFlipped, setIsFlipped] = useState(false);
 
     const nameStr = typeof member.name === 'object' ? (member.name[language] || member.name.en || '') : (member.name || '');
     const positionStr = typeof member.position === 'object' ? (member.position[language] || member.position.en || '') : (member.position || '');
+
+    const isGb = tier === 'gb';
+    const rawQuote = typeof member.quote === 'object' ? (member.quote?.[language] || member.quote?.en || '') : (member.quote || '');
+    const defaultGbQuote = 'Leadership through selfless service, integrity, and dedication to social transformation.';
+    const quote = (rawQuote ? rawQuote.replace(/^["'\u201C\u201D]+|["'\u201C\u201D]+$/g, '').trim() : defaultGbQuote);
 
     const initials = nameStr
         .split(' ')
@@ -305,6 +312,9 @@ function MemberCard({ member, tier = 'core', priority = false }) {
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
             whileHover="hover"
+            onClick={() => {
+                if (isGb) setIsFlipped(prev => !prev);
+            }}
         >
             {/* Full portrait image */}
             <div className={styles.cardImageWrap}>
@@ -338,6 +348,23 @@ function MemberCard({ member, tier = 'core', priority = false }) {
                 {(tier === 'gb' || tier === 'execom') && (
                     <div className={styles.cardRoleBadge}>
                         {tier === 'gb' ? 'GOVERNING BODY' : 'EXEC'}
+                    </div>
+                )}
+
+                {/* Hover / Tap Quote Overlay — FOR GOVERNING BODY ONLY */}
+                {isGb && (
+                    <div className={`${styles.quoteOverlay} ${isFlipped ? styles.quoteOverlayActive : ''}`}>
+                        <div className={styles.quoteIconCircle}>
+                            <Quote size={24} className={styles.quoteIcon} />
+                        </div>
+                        <blockquote className={styles.quoteMessage}>
+                            &ldquo;{quote}&rdquo;
+                        </blockquote>
+                        <div className={styles.quoteDivider} />
+                        <div className={styles.quoteAuthor}>
+                            <strong>{nameStr}</strong>
+                            <span>{positionStr || 'GOVERNING BODY'}</span>
+                        </div>
                     </div>
                 )}
             </div>

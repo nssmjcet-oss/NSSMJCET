@@ -6,7 +6,7 @@ import styles from '../admin-content.module.css';
 import { translateText } from '@/utils/translation';
 import { compressImageToDataURL, validateImageFile, compressMemberPhoto } from '@/utils/image-compression';
 import { adminFetch } from '@/utils/api-client';
-import { Award, Check, Plus, ShieldCheck, Crop } from 'lucide-react';
+import { Award, Check, Plus, ShieldCheck, Crop, Sparkles, Quote } from 'lucide-react';
 import ImageCropperModal from '@/components/ImageCropperModal';
 
 export default function TeamPage() {
@@ -461,7 +461,14 @@ All previous teams will remain completely preserved in the Historical Archive.`;
                                                 {member.role}
                                             </span>
                                         </td>
-                                        <td className={styles.td}>{typeof member.position === 'object' ? member.position.en : (member.position || '-')}</td>
+                                        <td className={styles.td}>
+                                            <div>{typeof member.position === 'object' ? member.position.en : (member.position || '-')}</div>
+                                            {member.role === 'GB' && member.quote?.en && (
+                                                <div style={{ fontSize: '11px', color: '#ffb366', fontStyle: 'italic', marginTop: '3px', maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                    &ldquo;{member.quote.en}&rdquo;
+                                                </div>
+                                            )}
+                                        </td>
                                         <td className={styles.td}>{member.academicYear || '2025-2026'}</td>
                                         <td className={styles.td}>
                                             <button
@@ -598,11 +605,35 @@ All previous teams will remain completely preserved in the Historical Archive.`;
                                         />
                                     </div>
 
+                                    {formData.role === 'GB' && (
+                                        <div style={{
+                                            gridColumn: '1 / -1',
+                                            background: 'rgba(255, 153, 51, 0.12)',
+                                            border: '1px solid rgba(255, 153, 51, 0.35)',
+                                            borderRadius: '10px',
+                                            padding: '12px 16px',
+                                            color: '#ffb366',
+                                            fontSize: '13px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '10px',
+                                            marginTop: '6px',
+                                            marginBottom: '6px'
+                                        }}>
+                                            <Sparkles size={18} style={{ flexShrink: 0, color: '#FF9933' }} />
+                                            <span>
+                                                <strong>Governing Body Animated Quote:</strong> This quote displays with the animated quote overlay (identical to Chairman &amp; Programme Officer) when hovering over or tapping this member&apos;s card on the public website.
+                                            </span>
+                                        </div>
+                                    )}
+
                                     <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                                        <label className={styles.label}>Quote (English - Will Auto-Translate)</label>
+                                        <label className={styles.label}>
+                                            {formData.role === 'GB' ? 'Quote / Motto (Revealed on Hover / Tap) *' : 'Quote (English - Will Auto-Translate)'}
+                                        </label>
                                         <textarea
                                             className={styles.input}
-                                            placeholder="Member's custom quote/phrase..."
+                                            placeholder={formData.role === 'GB' ? 'e.g. Leadership through selfless service, integrity, and dedication...' : "Member's custom quote/phrase..."}
                                             value={formData.quote?.en || ''}
                                             onChange={(e) => setFormData({ ...formData, quote: { ...formData.quote, en: e.target.value } })}
                                             onBlur={(e) => handleAutoTranslate('quote', e.target.value)}

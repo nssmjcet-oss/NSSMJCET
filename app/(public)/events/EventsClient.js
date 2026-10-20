@@ -340,69 +340,92 @@ export default function EventsClient({ events }) {
                                 {filteredEvents.map((event) => {
                                     const eventDate = new Date(event.date);
                                     const isUpcoming = event.eventType ? event.eventType === 'upcoming' : eventDate >= now;
+                                    const title = typeof event.title === 'object' ? (event.title[language] || event.title.en) : (event.title || '');
+                                    const desc = typeof event.description === 'object' ? (event.description[language] || event.description.en) : (event.description || '');
+                                    const coverImg = (event.images && event.images.length > 0) ? event.images[0] : '/placeholder-event.jpg';
+
+                                    // Date parts for editorial badge
+                                    const day = isNaN(eventDate.getTime()) ? '--' : (() => {
+                                        const startD = eventDate.getDate();
+                                        if (event.endDate && event.endDate !== event.date) {
+                                            const endD = new Date(event.endDate);
+                                            if (!isNaN(endD.getTime()) && endD.getMonth() === eventDate.getMonth()) {
+                                                return `${startD}–${endD.getDate()}`;
+                                            }
+                                        }
+                                        return String(startD).padStart(2, '0');
+                                    })();
+                                    const monthYear = isNaN(eventDate.getTime()) ? '' : eventDate.toLocaleString('en-US', { month: 'short' }).toUpperCase() + ' ' + eventDate.getFullYear();
+                                    const weekday = isNaN(eventDate.getTime()) ? '' : eventDate.toLocaleString('en-US', { weekday: 'short' }).toUpperCase();
+
+                                    const statusLabel = event.eventType === 'ongoing' ? '● LIVE NOW'
+                                        : (event.eventType === 'completed' || (!isUpcoming && !event.eventType)) ? 'COMPLETED'
+                                        : event.eventType === 'archived' ? 'ARCHIVED'
+                                        : t.upcoming;
 
                                     return (
                                         <motion.div
                                             key={event._id}
-                                            className={styles.eventBox}
+                                            className={styles.editorialCard}
                                             layout
-                                            initial={{ opacity: 0, scale: 0.9 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            exit={{ opacity: 0, scale: 0.9 }}
-                                            transition={{ duration: 0.3 }}
-                                            whileHover="hover"
-                                            onClick={() => setSelectedEvent(event)}
+                                            initial={{ opacity: 0, y: 25 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.95 }}
+                                            transition={{ duration: 0.4 }}
+                                            whileHover={{ y: -5 }}
                                         >
-                                            <div className={styles.imageWrapper}>
-                                                <motion.div
-                                                    style={{ width: '100%', height: '100%', position: 'relative' }}
-                                                    variants={{
-                                                        rest: { scale: 1 },
-                                                        hover: { scale: 1.05 }
-                                                    }}
-                                                    initial="rest"
-                                                >
-                                                    <Image
-                                                        src={(event.images && event.images.length > 0) ? event.images[0] : '/placeholder-event.jpg'}
-                                                        alt={event.title[language] || event.title.en}
-                                                        className={styles.eventImage}
-                                                        fill
-                                                        sizes="(max-width: 768px) 100vw, 33vw"
-                                                        style={{ objectFit: 'cover' }}
-                                                        unoptimized={typeof event.images?.[0] === 'string' && event.images[0].startsWith('data:')}
-                                                        onError={(e) => {
-                                                            if (e.target) e.target.src = '/placeholder-event.jpg';
-                                                        }}
-                                                    />
-                                                </motion.div>
-                                                <div className={`${styles.eventStatus} ${
+                                            {/* Event Photo */}
+                                            <div className={styles.editorialImgWrap}>
+                                                <Image
+                                                    src={coverImg}
+                                                    alt={title}
+                                                    fill
+                                                    sizes="(max-width: 768px) 100vw, 33vw"
+                                                    className={styles.editorialImg}
+                                                    unoptimized={typeof event.images?.[0] === 'string' && event.images[0].startsWith('data:')}
+                                                    onError={(e) => { if (e.target) e.target.src = '/placeholder-event.jpg'; }}
+                                                />
+                                                {event.category && (
+                                                    <span className={styles.editorialCategoryBadge}>{event.category}</span>
+                                                )}
+                                                <span className={`${styles.editorialStatusBadge} ${
                                                     event.eventType === 'ongoing' ? styles.statusOngoing :
                                                     (event.eventType === 'completed' || (!isUpcoming && !event.eventType)) ? styles.statusPast :
                                                     styles.statusUpcoming
-                                                }`}>
-                                                    {event.eventType === 'ongoing' ? '● LIVE NOW' :
-                                                     (event.eventType === 'completed' || (!isUpcoming && !event.eventType)) ? 'COMPLETED' :
-                                                     event.eventType === 'archived' ? 'ARCHIVED' :
-                                                     t.upcoming}
-                                                </div>
+                                                }`}>{statusLabel}</span>
                                             </div>
-                                            <div className={styles.eventContent}>
-                                                <div className={styles.dateRow}>
-                                                    <Calendar size={14} className={styles.dateIcon} />
-                                                    <span>
-                                                        {event.endDate && event.endDate !== event.date
-                                                            ? `${formatDate(event.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')} - ${formatDate(event.endDate, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}`.toUpperCase()
-                                                            : formatDate(event.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN').toUpperCase()}
-                                                    </span>
-                                                </div>
-                                                <h3>{event.title[language] || event.title.en}</h3>
-                                                <p className={styles.eventDescription}>
-                                                    {(event.description[language] || event.description.en).substring(0, 120)}...
+
+                                            {/* Card Body */}
+                                            <div className={styles.editorialCardBody}>
+                                                <h3 className={styles.editorialCardTitle}>{title}</h3>
+                                                <p className={styles.editorialCardDesc}>
+                                                    {desc.substring(0, 110)}{desc.length > 110 ? '…' : ''}
                                                 </p>
-                                                <div className={styles.cardAction}>
-                                                    <span>VIEW EVENT</span>
-                                                    <ArrowRight size={14} className={styles.actionArrow} />
+
+                                                {/* Date + Venue Row */}
+                                                <div className={styles.editorialDateRow}>
+                                                    <div className={styles.editorialDayCol}>
+                                                        <span className={styles.editorialDayNumber}>{day}</span>
+                                                        <div className={styles.editorialDayMeta}>
+                                                            <span className={styles.editorialWeekday}>{weekday}</span>
+                                                            <span className={styles.editorialMonthYear}>{monthYear}</span>
+                                                        </div>
+                                                    </div>
+                                                    {event.location && (
+                                                        <div className={styles.editorialVenueCol}>
+                                                            <MapPin size={13} className={styles.editorialVenueIcon} />
+                                                            <span className={styles.editorialVenueText}>{event.location}</span>
+                                                        </div>
+                                                    )}
                                                 </div>
+
+                                                <button
+                                                    type="button"
+                                                    className={styles.editorialRsvpBtn}
+                                                    onClick={() => setSelectedEvent(event)}
+                                                >
+                                                    View Details / RSVP
+                                                </button>
                                             </div>
                                         </motion.div>
                                     );

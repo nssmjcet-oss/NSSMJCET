@@ -6,10 +6,6 @@ import { useLanguage, getText } from '@/contexts/LanguageContext';
 import styles from './page.module.css';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import AboutUsSection from '@/components/AboutUsSection';
-import UpcomingEventsSection from '@/components/UpcomingEventsSection';
-import GallerySection from '@/components/GallerySection';
-import NewsletterSection from '@/components/NewsletterSection';
 import LeadershipSection from '@/components/LeadershipSection';
 import FlagshipSection from '@/components/FlagshipSection';
 import EventSlider from '@/components/EventSlider';
@@ -310,16 +306,10 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* 2. About Us Section with Official Logo, Who We Are & Activity Cycle */}
-            <AboutUsSection language={language} />
+            {/* 2. Events Slider — original animated horizontal slider */}
+            <EventSlider onViewDetails={setSelectedEvent} />
 
-            {/* 3. Upcoming Events Section matching reference card grid */}
-            <UpcomingEventsSection onSelectEvent={setSelectedEvent} />
-
-            {/* 4. Dedicated Gallery Section with authentic photos */}
-            <GallerySection />
-
-            {/* 5. Inspiration Section (Gandhi, Vivekananda, Ambedkar + NSS Motto) */}
+            {/* 3. Inspiration Section (Gandhi, Vivekananda, Ambedkar + NSS Motto) */}
             <MottoSection language={language} variants={dreamyReveal} />
 
             {/* Featured Spotlight / Live Event Section */}
@@ -378,17 +368,17 @@ export default function Home() {
                 </section>
             )}
 
-            {/* 6. Flagship Initiatives */}
+            {/* 4. Flagship Initiatives */}
             <FlagshipSection
                 flagships={flagships}
                 allEvents={allEvents}
                 onSelectEvent={setSelectedEvent}
             />
 
-            {/* 7. Leadership Section (Chairman & Program Officer) */}
+            {/* 5. Leadership Section (Chairman & Program Officer) */}
             <LeadershipSection />
 
-            {/* 8. Our Impact (Dynamic Stats Counter) */}
+            {/* 6. Our Impact (Dynamic Stats Counter) */}
             <section className={styles.stats}>
                 <div className="container">
                     <motion.div
@@ -435,10 +425,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* 9. Newsletter & Stay Connected Banner */}
-            <NewsletterSection />
-
-            {/* 10. Meet The Developers */}
+            {/* 7. Meet The Developers */}
             <DevelopersSection />
 
             {/* Event Details Modal */}

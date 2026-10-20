@@ -145,7 +145,7 @@ export default function Navbar() {
         { label: t.about, href: '/about' },
         { label: t.unit, href: '/unit' },
         { label: t.events, href: '/events' },
-        { label: language === 'te' ? 'గ్యాలరీ' : language === 'hi' ? 'गैलरी' : 'Gallery', href: '/#gallery' },
+        { label: language === 'te' ? 'గ్యాలరీ' : language === 'hi' ? 'गैलरी' : 'Gallery', href: '/gallery' },
         { label: t.team, href: '/team' },
         { label: t.announcements, href: '/announcements' },
         { label: t.contact, href: '/contact' },

@@ -5,7 +5,7 @@ import styles from './about.module.css';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { useRef, useState, useEffect } from 'react';
-
+import AboutUsSection from '@/components/AboutUsSection';
 import { fetchWithCache } from '@/utils/client-cache';
 
 const translations = {
@@ -371,6 +371,9 @@ export default function AboutPage() {
                     </section>
                 )}
             </div>
+
+            {/* 6. WHO WE ARE + ACTIVITY CYCLE — Editorial Section */}
+            <AboutUsSection language={language} />
         </div>
     );
 }

@@ -18,13 +18,13 @@ const defaultPhotos = [
     { id: 'd7', title: 'NSS Student Volunteers', category: 'Campus Activities', src: '/uploads/events/1772212567799-NSS01-1.jpg' },
 ];
 
-const CATEGORIES = ['All', 'Community Service', 'Special Events', 'Campus Activities', 'Awareness Programmes', 'Volunteer Activities'];
+const CATEGORIES = ['All Moments', 'Community Service', 'Health & Awareness', 'Campus Activities', 'Youth Parliament & MUN', 'Volunteer Life'];
 
 export default function GalleryPage() {
     const { language } = useLanguage();
     const [photos, setPhotos] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [activeCategory, setActiveCategory] = useState('All');
+    const [activeCategory, setActiveCategory] = useState('All Moments');
     const [lightboxPhoto, setLightboxPhoto] = useState(null);
 
     useEffect(() => {
@@ -72,52 +72,60 @@ export default function GalleryPage() {
         });
     }, [language]);
 
-    const filtered = activeCategory === 'All' ? photos : photos.filter(p => p.category === activeCategory);
+    const normalizeCategory = (cat) => {
+        if (!cat) return 'Community Service';
+        if (cat === 'Awareness Programmes') return 'Health & Awareness';
+        if (cat === 'Volunteer Activities') return 'Volunteer Life';
+        if (cat === 'Special Events') return 'Youth Parliament & MUN';
+        return cat;
+    };
 
-    // Determine which categories actually have photos
-    const usedCategories = CATEGORIES.filter(cat => cat === 'All' || photos.some(p => p.category === cat));
+    const filtered = activeCategory === 'All Moments'
+        ? photos
+        : photos.filter(p => normalizeCategory(p.category) === activeCategory || p.category === activeCategory);
 
     return (
         <div className={styles.galleryPage}>
-            {/* Hero Header */}
+            {/* Hero Header matching Image 2 */}
             <section className={styles.hero}>
                 <div className="container">
-                    <motion.span
-                        className={styles.eyebrow}
+                    <motion.div
+                        className={styles.eyebrowWrap}
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        NSS MJCET
-                    </motion.span>
+                        <span className={styles.eyebrowLine} />
+                        <span className={styles.eyebrowText}>NSS MJCET · MOMENTS THAT MATTER</span>
+                    </motion.div>
                     <motion.h1
                         className={styles.heroTitle}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.1 }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
                     >
-                        Gallery
+                        Stories of <em>Service</em>
                     </motion.h1>
                     <motion.p
                         className={styles.heroSubtitle}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ duration: 0.7, delay: 0.25 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
                     >
-                        Moments of service, leadership, and community impact captured through the lens.
+                        A collection of moments that reflect our commitment to community, leadership, and meaningful change.
                     </motion.p>
                 </div>
             </section>
 
             <div className="container">
-                {/* Category Filter Tabs */}
+                {/* Category Filter Tabs matching Image 2 */}
                 <motion.div
                     className={styles.filterRow}
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.35 }}
+                    transition={{ delay: 0.3 }}
                 >
-                    {usedCategories.map(cat => (
+                    {CATEGORIES.map(cat => (
                         <button
                             key={cat}
                             className={`${styles.filterBtn} ${activeCategory === cat ? styles.filterBtnActive : ''}`}
@@ -127,6 +135,18 @@ export default function GalleryPage() {
                         </button>
                     ))}
                 </motion.div>
+
+                {/* Photo Count matching Image 2 */}
+                {!loading && (
+                    <motion.div
+                        className={styles.countRow}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.35 }}
+                    >
+                        <span className={styles.photoCount}>{filtered.length} PHOTOGRAPHS</span>
+                    </motion.div>
+                )}
 
                 {/* Loading State */}
                 {loading && (

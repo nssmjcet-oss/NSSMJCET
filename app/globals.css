@@ -16,12 +16,12 @@ body {
     overflow-x: hidden;
     font-family: var(--font-sans);
     color: var(--marvel-text);
-    background-color: var(--marvel-bg);
+    background-color: transparent;
     line-height: 1.6;
 }
 
 body.marvelous-theme {
-    background: var(--marvel-bg);
+    background: transparent !important;
     color: var(--marvel-text);
     font-family: var(--font-sans);
 }
@@ -32,10 +32,10 @@ body.marvelous-theme {
 }
 
 .marvelous-theme {
-    background: var(--marvel-bg) !important;
+    background: transparent !important;
     color: var(--marvel-text);
     font-family: var(--font-sans);
-    transition: background-color var(--transition-slow), color var(--transition-slow);
+    transition: color var(--transition-slow);
 }
 
 /* Premium Animation Tokens */

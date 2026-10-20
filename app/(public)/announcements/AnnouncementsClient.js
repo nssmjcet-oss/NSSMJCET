@@ -5,7 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { getRelativeTime, formatDate } from '@/utils/formatters';
 import styles from './announcements.module.css';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, ArrowRight, Calendar, Tag } from 'lucide-react';
+import { X, ExternalLink, ArrowRight, Calendar, Tag, Maximize2 } from 'lucide-react';
 
 const translations = {
     en: {
@@ -181,7 +181,19 @@ export default function AnnouncementsClient({ initialAnnouncements = [] }) {
                                         src={selectedAnnouncement.imageUrl}
                                         alt={selectedAnnouncement.title?.[language] || selectedAnnouncement.title?.en || ''}
                                         className={styles.modalImage}
+                                        onClick={() => window.open(selectedAnnouncement.imageUrl, '_blank')}
+                                        title="Click to open full image"
                                     />
+                                    <a
+                                        href={selectedAnnouncement.imageUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={styles.modalImageZoomBtn}
+                                        title="Open full image in new tab"
+                                    >
+                                        <Maximize2 size={12} />
+                                        <span>Full Image</span>
+                                    </a>
                                 </div>
                             )}
 

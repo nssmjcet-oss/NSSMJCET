@@ -24,7 +24,7 @@
     height: 100%;
     background: url('/uploads/nss-bg.png') no-repeat center center;
     background-size: cover;
-    z-index: -10;
+    z-index: 1;
     transform: translate3d(0, 0, 0);
     will-change: transform;
 }

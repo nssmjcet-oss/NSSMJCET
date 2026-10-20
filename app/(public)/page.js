@@ -229,8 +229,8 @@ export default function Home() {
 
                             {/* Main Title with NSS Identity */}
                             <motion.h1 className={styles.heroHeading} variants={dreamyReveal}>
-                                <span className={styles.heroHeadingSub}>NATIONAL SERVICE SCHEME · MJCET</span>
-                                <span className={styles.heroHeadingMain}>Not Me, But You.</span>
+                                <span className={styles.heroHeadingSub}>NSS MJCET CHAPTER · STUDENT VOLUNTEER CORPS</span>
+                                <span className={styles.heroHeadingMain}>National Service Scheme</span>
                             </motion.h1>
 
                             {/* Official Motto Callout */}

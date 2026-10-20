@@ -28,9 +28,9 @@ export default function GalleryPage() {
     const [lightboxPhoto, setLightboxPhoto] = useState(null);
 
     useEffect(() => {
-        // Fetch from /api/gallery first, then /api/events as supplementary source
+        // Fetch fresh gallery items from /api/gallery (bypassing stale cache)
         Promise.allSettled([
-            fetchWithCache('/api/gallery'),
+            fetch('/api/gallery', { cache: 'no-store' }).then(r => r.json()),
             fetchWithCache('/api/events'),
         ]).then(([galleryRes, eventsRes]) => {
             const galleryItems = (galleryRes.status === 'fulfilled' && galleryRes.value?.items) ? galleryRes.value.items : [];
@@ -38,33 +38,26 @@ export default function GalleryPage() {
 
             const mapped = [];
 
-            // Map gallery items
+            // Map gallery items from admin/database
             galleryItems.forEach((item, idx) => {
-                if (item.imageUrl || item.url) {
+                const src = item.image || item.imageUrl || item.url || item.src;
+                if (src) {
                     mapped.push({
                         id: item._id || item.id || `g-${idx}`,
                         title: typeof item.title === 'object' ? (item.title?.en || Object.values(item.title)[0]) : (item.title || 'NSS Initiative'),
                         category: item.category || 'Community Service',
-                        src: item.imageUrl || item.url,
+                        caption: item.caption || '',
+                        src: src,
                     });
                 }
             });
 
-            // Supplement with event cover images if gallery is sparse
-            if (mapped.length < 6) {
-                eventItems.forEach((ev, idx) => {
-                    if (ev.images && ev.images[0]) {
-                        mapped.push({
-                            id: `ev-${ev._id || idx}`,
-                            title: typeof ev.title === 'object' ? (ev.title?.[language] || ev.title?.en || 'NSS Event') : (ev.title || 'NSS Event'),
-                            category: ev.category || 'Campus Activities',
-                            src: ev.images[0],
-                        });
-                    }
-                });
+            // If gallery has items from DB/admin, use them; otherwise use default authentic photos
+            if (mapped.length > 0) {
+                setPhotos(mapped);
+            } else {
+                setPhotos(defaultPhotos);
             }
-
-            setPhotos(mapped.length >= 4 ? mapped : defaultPhotos);
             setLoading(false);
         }).catch(() => {
             setPhotos(defaultPhotos);
@@ -74,9 +67,11 @@ export default function GalleryPage() {
 
     const normalizeCategory = (cat) => {
         if (!cat) return 'Community Service';
-        if (cat === 'Awareness Programmes') return 'Health & Awareness';
-        if (cat === 'Volunteer Activities') return 'Volunteer Life';
-        if (cat === 'Special Events') return 'Youth Parliament & MUN';
+        if (cat === 'Awareness Programmes' || cat === 'Health & Sanitation') return 'Health & Awareness';
+        if (cat === 'Volunteer Activities' || cat === 'Volunteer Drives') return 'Volunteer Life';
+        if (cat === 'Special Events' || cat === 'MUN / Diplomacy' || cat === 'Youth Parliament') return 'Youth Parliament & MUN';
+        if (cat === 'Blood Donation' || cat === 'Flagship Drives' || cat === 'Community Outreach') return 'Community Service';
+        if (cat === 'General' || cat === 'General Activities') return 'Community Service';
         return cat;
     };
 

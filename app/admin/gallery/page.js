@@ -58,8 +58,8 @@ export default function AdminGalleryPage() {
                 <div className={styles.grid}>
                     {items.map((item) => (
                         <div key={item.id} className={styles.gridItem}>
-                            {item.image && (
-                                <img src={item.image} alt={item.title || ''} className={styles.gridImage} style={{ height: '220px', objectFit: 'cover' }} />
+                            {(item.image || item.imageUrl || item.url) && (
+                                <img src={item.image || item.imageUrl || item.url} alt={item.title || ''} className={styles.gridImage} style={{ height: '220px', objectFit: 'cover' }} />
                             )}
                             <div className={styles.gridContent}>
                                 <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
@@ -192,12 +192,12 @@ function GalleryModal({ item, onClose, onSuccess }) {
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>Category</label>
                                 <select className={styles.select} value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))}>
-                                    <option value="General">General Activities</option>
-                                    <option value="Blood Donation">Blood Donation</option>
-                                    <option value="Flagship Drives">Flagship Drives</option>
-                                    <option value="Youth Parliament">Youth Parliament</option>
-                                    <option value="MUN / Diplomacy">MUN / Diplomacy</option>
-                                    <option value="Community Outreach">Community Outreach</option>
+                                    <option value="Community Service">Community Service</option>
+                                    <option value="Health & Awareness">Health & Awareness</option>
+                                    <option value="Campus Activities">Campus Activities</option>
+                                    <option value="Youth Parliament & MUN">Youth Parliament & MUN</option>
+                                    <option value="Volunteer Life">Volunteer Life</option>
+                                    <option value="General Activities">General Activities</option>
                                 </select>
                             </div>
 

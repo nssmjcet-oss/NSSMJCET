@@ -66,39 +66,38 @@ export default function AnnouncementsClient({ initialAnnouncements = [] }) {
                                 <div
                                     key={announcement.id || announcement._id}
                                     className={styles.announcementBox}
-                                    style={{ borderLeft: `4px solid ${cat.color}` }}
                                 >
-                                    <div className={styles.announcementHeader}>
-                                        <h3>{announcement.title?.[language] || announcement.title?.en || 'Untitled'}</h3>
-                                        <div className={styles.badges}>
-                                            <span
-                                                className={styles.priorityBadge}
-                                                style={{
-                                                    backgroundColor: cat.bg,
-                                                    color: cat.color,
-                                                    borderColor: `${cat.color}44`,
-                                                    fontWeight: '700',
-                                                    letterSpacing: '0.5px'
-                                                }}
-                                            >
-                                                {cat.label}
-                                            </span>
-                                            <span className={styles.timeBadge}>
-                                                {getRelativeTime(announcement.createdAt)}
-                                            </span>
-                                        </div>
-                                    </div>
                                     {announcement.imageUrl && (
                                         <div className={styles.announcementImage}>
                                             <img src={announcement.imageUrl} alt={announcement.title?.[language] || announcement.title?.en} />
                                         </div>
                                     )}
-                                    <div
-                                        className={styles.announcementContent}
-                                        dangerouslySetInnerHTML={{
-                                            __html: ((announcement.content?.[language] || announcement.content?.en) || '').replace(/\n/g, '<br />')
-                                        }}
-                                    />
+                                    <div className={styles.cardBody}>
+                                        <div className={styles.announcementHeader}>
+                                            <h3>{announcement.title?.[language] || announcement.title?.en || 'Untitled'}</h3>
+                                            <div className={styles.badges}>
+                                                <span
+                                                    className={styles.priorityBadge}
+                                                    style={{
+                                                        backgroundColor: cat.bg,
+                                                        color: cat.color,
+                                                        borderColor: `${cat.color}44`,
+                                                    }}
+                                                >
+                                                    {cat.label}
+                                                </span>
+                                                <span className={styles.timeBadge}>
+                                                    {getRelativeTime(announcement.createdAt)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div
+                                            className={styles.announcementContent}
+                                            dangerouslySetInnerHTML={{
+                                                __html: ((announcement.content?.[language] || announcement.content?.en) || '').replace(/\n/g, '<br />')
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             );
                         })}

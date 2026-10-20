@@ -1,129 +1,82 @@
 .announcementsPage {
     min-height: 100vh;
-    padding-top: var(--space-24);
-    background: var(--marvel-bg);
-    color: var(--marvel-text);
+    padding-top: clamp(100px, 12vw, 140px);
+    padding-bottom: clamp(60px, 8vw, 100px);
+    background-color: var(--color-warm-cream, #F7F3E9);
+    color: var(--color-navy-primary, #17233D);
+    position: relative;
 }
 
 .hero {
-    padding: var(--space-8) 0;
+    padding: clamp(24px, 4vw, 48px) 0 clamp(32px, 5vw, 56px);
     text-align: center;
     position: relative;
     z-index: 1;
 }
 
 .hero h1 {
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    font-weight: 800;
-    margin-bottom: var(--space-2);
-    background: var(--marvel-title-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -2px;
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--color-navy-primary, #17233D);
+    letter-spacing: -0.02em;
 }
 
 .hero p {
-    font-size: var(--text-xl);
+    font-size: 0.95rem;
     text-transform: uppercase;
-    letter-spacing: 4px;
-    font-weight: 700;
-    color: var(--color-primary-light);
+    letter-spacing: 2.5px;
+    font-weight: 600;
+    color: var(--color-navy-secondary, #5F625F);
 }
 
 .noAnnouncements {
-    padding: var(--space-20);
+    padding: clamp(40px, 6vw, 80px) 20px;
     text-align: center;
-    background: var(--marvel-surface);
-    backdrop-filter: var(--marvel-glass);
-    border: 1px solid var(--marvel-border);
-    border-radius: 30px;
-    color: var(--marvel-text-dim);
+    background: var(--color-ivory-card, #FFFCF5);
+    border: 1px solid var(--color-border-subtle, #DCD3C2);
+    border-radius: 8px;
+    color: var(--color-navy-secondary, #5F625F);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .announcementsList {
-    max-width: 900px;
+    max-width: 1240px;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-8);
-    padding-bottom: var(--space-24);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(20px, 3vw, 32px);
+    padding-bottom: 40px;
 }
 
 .announcementBox {
-    background: var(--marvel-surface);
-    backdrop-filter: var(--marvel-glass);
-    border: 1px solid var(--marvel-border);
-    border-radius: 30px;
-    padding: var(--space-8);
-    transition: all var(--transition-slow);
-    position: relative;
+    background: var(--color-ivory-card, #FFFCF5);
+    border: 1px solid var(--color-border-subtle, #DCD3C2);
+    border-radius: 6px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(23, 35, 61, 0.04);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+    position: relative;
 }
 
 .announcementBox:hover {
-    transform: translateX(10px);
-    border-color: var(--marvel-border-hover);
-    background: var(--marvel-surface-hover);
-    box-shadow: var(--marvel-glow-blue);
-}
-
-.announcementHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: var(--space-6);
-    gap: var(--space-4);
-}
-
-.announcementHeader h3 {
-    color: var(--marvel-text);
-    margin: 0;
-    flex: 1;
-    font-size: var(--text-2xl);
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-.badges {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    align-items: flex-end;
-}
-
-.priorityBadge {
-    display: inline-block;
-    padding: 2px 12px;
-    border-radius: var(--radius-full);
-    font-size: 10px;
-    font-weight: 800;
-    color: var(--marvel-text);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border: 1px solid var(--marvel-border);
-}
-
-.timeBadge {
-    font-size: 11px;
-    color: var(--marvel-text-dim);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.announcementContent {
-    color: var(--marvel-text-dim);
-    line-height: 1.8;
-    font-size: var(--text-base);
+    transform: translateY(-5px);
+    border-color: var(--color-accent-gold, #C69A43);
+    box-shadow: 0 12px 32px rgba(23, 35, 61, 0.08);
 }
 
 .announcementImage {
-    margin-bottom: var(--space-6);
-    border-radius: 20px;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: #E8E1D3;
     overflow: hidden;
-    border: 1px solid var(--marvel-border);
-    max-height: 400px;
+    flex-shrink: 0;
 }
 
 .announcementImage img {
@@ -131,24 +84,91 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.5s ease;
 }
 
-@media (max-width: 768px) {
+.announcementBox:hover .announcementImage img {
+    transform: scale(1.05);
+}
+
+.cardBody {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.announcementHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.announcementHeader h3 {
+    color: var(--color-navy-primary, #17233D);
+    margin: 0;
+    flex: 1;
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+}
+
+.badges {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.priorityBadge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.timeBadge {
+    font-size: 11px;
+    color: var(--color-navy-secondary, #5F625F);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.announcementContent {
+    color: var(--color-navy-secondary, #5F625F);
+    line-height: 1.6;
+    font-size: 0.95rem;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@media (max-width: 1024px) {
     .announcementsList {
-        gap: var(--space-6);
+        grid-template-columns: repeat(2, 1fr);
     }
+}
 
-    .hero h1 {
-        letter-spacing: -1px;
-    }
-
-    .announcementCard {
-        padding: var(--space-6);
+@media (max-width: 640px) {
+    .announcementsList {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
 
     .announcementHeader {
         flex-direction: column;
-        gap: var(--space-3);
+        align-items: flex-start;
     }
 
     .badges {

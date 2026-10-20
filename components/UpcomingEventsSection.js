@@ -142,7 +142,7 @@ export default function UpcomingEventsSection({ onSelectEvent }) {
                                             onClick={() => onSelectEvent && onSelectEvent(event)}
                                             className={styles.rsvpBtn}
                                         >
-                                            View Details / RSVP
+                                            View Details
                                         </button>
                                     </div>
                                 </motion.div>

@@ -424,7 +424,7 @@ export default function EventsClient({ events }) {
                                                     className={styles.editorialRsvpBtn}
                                                     onClick={() => setSelectedEvent(event)}
                                                 >
-                                                    View Details / RSVP
+                                                    View Details
                                                 </button>
                                             </div>
                                         </motion.div>

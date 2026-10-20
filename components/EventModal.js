@@ -71,14 +71,15 @@ export default function EventModal({ event, onClose }) {
                     <div className={styles.contentGrid}>
                         <div className={styles.imageSection}>
                             <div className={styles.mainImageWrapper}>
-                                <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+                                <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', background: '#0a0f1d' }}>
                                     <Image
                                         src={images[currentImageIndex]}
                                         alt={`${title} image ${currentImageIndex + 1}`}
                                         fill
-                                        style={{ objectFit: 'cover' }}
+                                        style={{ objectFit: 'contain' }}
                                         className={styles.mainImage}
-                                        sizes="(max-width: 768px) 100vw, 50vw"
+                                        sizes="(max-width: 900px) 100vw, 820px"
+                                        priority
                                         unoptimized={typeof images[currentImageIndex] === 'string' && images[currentImageIndex].startsWith('data:')}
                                         onError={(e) => {
                                             if (e.target) e.target.src = '/placeholder-event.jpg';

@@ -24,15 +24,22 @@ export default function SplashScreen({ onComplete }) {
             return;
         }
 
-        const timer = setTimeout(() => {
+        const dismiss = () => {
             setVisible(false);
-            setTimeout(() => {
-                if (onComplete) onComplete();
-            }, 500); // exit animation
-        }, 1600); // Crisp 1.6s intro for first-time visitors
+            if (onComplete) onComplete();
+        };
+
+        const timer = setTimeout(() => {
+            dismiss();
+        }, 850); // Fast 850ms intro for first-time visitors
 
         return () => clearTimeout(timer);
     }, [onComplete]);
+
+    const handleDismiss = () => {
+        setVisible(false);
+        if (onComplete) onComplete();
+    };
 
     return (
         <AnimatePresence>
@@ -40,8 +47,10 @@ export default function SplashScreen({ onComplete }) {
                 <motion.div
                     className={styles.splash}
                     initial={{ opacity: 1 }}
-                    exit={{ opacity: 0, scale: 1.04, filter: 'blur(8px)' }}
-                    transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+                    exit={{ opacity: 0, scale: 1.02 }}
+                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                    onClick={handleDismiss}
+                    style={{ cursor: 'pointer' }}
                 >
                     {/* Simplified focused view */}
 

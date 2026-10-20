@@ -165,45 +165,51 @@
     background: #22c55e;
 }
 
-/* Default Bottom Info Bar (visible when not hovered) */
+/* Default Bottom Info Bar with frosted container for guaranteed legibility */
 .bottomInfoBar {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 22px 24px;
-    z-index: 2;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 3;
+    padding: 14px 16px;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .infoTextGroup {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
 }
 
 .leaderName {
     font-family: var(--font-heading, 'Lora', serif);
-    font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+    font-size: clamp(1.15rem, 2vw, 1.35rem);
     font-weight: 700;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
     margin: 0;
-    letter-spacing: -0.3px;
+    letter-spacing: 0.2px;
     line-height: 1.25;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
 }
 
 .leaderDesignation {
-    font-size: 0.86rem;
-    font-weight: 600;
-    color: #C69A43;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #FCD34D !important;
     margin: 0;
     letter-spacing: 0.5px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .leaderCollege {
-    font-size: 0.74rem;
-    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.88) !important;
     margin: 0;
     white-space: nowrap;
     overflow: hidden;

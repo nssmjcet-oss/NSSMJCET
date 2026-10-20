@@ -164,6 +164,7 @@ export default function VolunteerPortal() {
     const threadScale = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
     // Service in Motion Gallery Items (Configured in Admin or fallback)
+    const [heroImage, setHeroImage] = useState('/uploads/nss-team-hero.jpg');
     const [galleryItems, setGalleryItems] = useState([
         { title: 'Campus Induction & Assemblies', subtitle: 'Welcoming 250+ engineering student volunteers', image: '/uploads/nss-team-hero.jpg' },
         { title: 'Mega Blood Donation Drives', subtitle: '300+ units collected for Red Cross', image: '/uploads/events/1772212213205-20251110130725.jpg' },
@@ -184,6 +185,14 @@ export default function VolunteerPortal() {
                         beneficiaries: data.beneficiaries || 50000,
                     });
                 }
+            })
+            .catch(() => {});
+
+        // Fetch dynamic Hero image from admin content
+        fetch('/api/content?pageId=hero', { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (data?.content?.image) setHeroImage(data.content.image);
             })
             .catch(() => {});
 
@@ -339,10 +348,11 @@ export default function VolunteerPortal() {
                             <div className={styles.heroPhotoFrame}>
                                 <div className={styles.heroPhotoWrap}>
                                     <Image
-                                        src="/uploads/nss-team-hero.jpg"
+                                        src={heroImage || "/uploads/nss-team-hero.jpg"}
                                         alt="NSS MJCET Volunteers in Action"
                                         fill
                                         priority
+                                        unoptimized={typeof heroImage === 'string' && heroImage.startsWith('data:')}
                                         className={styles.heroPhotoImg}
                                         style={{ objectFit: 'cover', objectPosition: 'center center' }}
                                     />

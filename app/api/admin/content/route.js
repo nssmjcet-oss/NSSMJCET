@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import fs from 'fs';
+import path from 'path';
 import connectToDatabase from '@/lib/mongodb';
 import { Content, Stat } from '@/lib/models';
 import { getAuthUser, requireAdmin } from '@/lib/server-auth';
@@ -81,6 +83,21 @@ export async function PUT(request) {
             return NextResponse.json({ error: 'Page ID is required' }, { status: 400 });
         }
 
+        let savedImage = image;
+        if (pageId === 'hero' && image && typeof image === 'string' && image.startsWith('data:image/')) {
+            try {
+                const matches = image.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
+                if (matches && matches[2]) {
+                    const buffer = Buffer.from(matches[2], 'base64');
+                    const targetPath = path.join(process.cwd(), 'public', 'uploads', 'nss-team-hero.jpg');
+                    fs.writeFileSync(targetPath, buffer);
+                    savedImage = '/uploads/nss-team-hero.jpg';
+                }
+            } catch (fsErr) {
+                console.error('Error writing hero image to disk:', fsErr);
+            }
+        }
+
         // Using findOneAndUpdate with _id: pageId to avoid CastError for custom string IDs like 'about'
         const updateData = {
             _id: pageId,
@@ -91,7 +108,7 @@ export async function PUT(request) {
             motto,
             btnText,
             btnLink,
-            image,
+            image: savedImage,
             isActive,
             ...(volunteers !== undefined && { volunteers: Number(volunteers) }),
             ...(events !== undefined && { events: Number(events) }),

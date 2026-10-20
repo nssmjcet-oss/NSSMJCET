@@ -35,6 +35,7 @@ export default function ContentPage() {
         title: { en: '', te: '', hi: '' },
         content: { en: '', te: '', hi: '' },
         subtitle: { en: '', te: '', hi: '' },
+        motto: { en: 'NOT ME BUT YOU', te: 'నేను కాదు మీరు', hi: 'मैं नहीं बल्कि आप' },
         btnText: { en: '', te: '', hi: '' },
         btnLink: '',
         image: '',
@@ -260,6 +261,7 @@ export default function ContentPage() {
                         title: data.content.title || { en: '', te: '', hi: '' },
                         content: data.content.content || { en: '', te: '', hi: '' },
                         subtitle: data.content.subtitle || { en: '', te: '', hi: '' },
+                        motto: data.content.motto || { en: 'NOT ME BUT YOU', te: 'నేను కాదు మీరు', hi: 'मैं नहीं बल्कि आप' },
                         btnText: data.content.btnText || { en: '', te: '', hi: '' },
                         btnLink: data.content.btnLink || '',
                         image: data.content.image || '',
@@ -353,7 +355,22 @@ export default function ContentPage() {
                 }),
             ]).catch(err => console.log('Revalidation error:', err));
 
-            alert('Saved successfully');
+            // Clear client-side sessionStorage cache so public pages fetch fresh data immediately
+            if (typeof window !== 'undefined' && window.sessionStorage) {
+                try {
+                    const keysToRemove = [
+                        'nss_cache_/api/content?pageId=hero',
+                        'nss_cache_/api/content?pageId=live_event',
+                        'nss_cache_/api/content?pageId=about',
+                        'nss_cache_/api/content?pageId=volunteer_gallery',
+                        'nss_cache_/api/stats',
+                        'nss_cache_/api/flagship',
+                    ];
+                    keysToRemove.forEach(k => { try { sessionStorage.removeItem(k); } catch (_) {} });
+                } catch (_) {}
+            }
+
+            alert('✅ Saved successfully! Changes are now live on the website.');
         } catch (error) {
             console.error('Error saving', error);
             alert('Error saving');
@@ -621,6 +638,38 @@ export default function ContentPage() {
                                                 />
                                                 <small style={{ color: '#888', fontSize: '11px' }}>Displays as <strong>{formData.serviceHours || 10000}+ Service Hrs</strong></small>
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    {/* 3. Hero Text Fields */}
+                                    <div className={`${styles.formGroup} ${styles.fullWidth}`} style={{ background: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.25)', padding: '24px', borderRadius: '20px', marginBottom: '24px' }}>
+                                        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#818cf8', marginBottom: '8px' }}>
+                                            Hero Heading &amp; Description
+                                        </h3>
+                                        <p style={{ color: 'var(--marvel-text-dim)', fontSize: '13px', marginBottom: '20px' }}>
+                                            Edit the main title, subtitle line, official motto, and the description paragraph shown in the homepage hero section.
+                                        </p>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px', marginBottom: '18px' }}>
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.label}>Main Title (English)</label>
+                                                <input type="text" className={styles.input} value={formData.title?.en || ''} onChange={(e) => setFormData({ ...formData, title: { ...formData.title, en: e.target.value } })} placeholder="National Service Scheme" />
+                                                <small style={{ color: '#888', fontSize: '11px' }}>Shown as the large main heading</small>
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label className={styles.label}>Subtitle / Chapter Line (English)</label>
+                                                <input type="text" className={styles.input} value={formData.subtitle?.en || ''} onChange={(e) => setFormData({ ...formData, subtitle: { ...formData.subtitle, en: e.target.value } })} placeholder="NSS MJCET CHAPTER · STUDENT VOLUNTEER CORPS" />
+                                                <small style={{ color: '#888', fontSize: '11px' }}>Shown above the main title in smaller text</small>
+                                            </div>
+                                        </div>
+                                        <div className={styles.formGroup} style={{ marginBottom: '18px' }}>
+                                            <label className={styles.label}>Official Motto (English)</label>
+                                            <input type="text" className={styles.input} value={formData.motto?.en || 'NOT ME BUT YOU'} onChange={(e) => setFormData({ ...formData, motto: { ...formData.motto, en: e.target.value } })} placeholder="NOT ME BUT YOU" />
+                                            <small style={{ color: '#888', fontSize: '11px' }}>Shown in the prominent motto banner below the title</small>
+                                        </div>
+                                        <div className={styles.formGroup}>
+                                            <label className={styles.label}>Description Paragraph (English)</label>
+                                            <textarea className={styles.textarea} rows={3} value={formData.content?.en || ''} onChange={(e) => setFormData({ ...formData, content: { ...formData.content, en: e.target.value } })} placeholder="Building responsible citizens through service..." />
+                                            <small style={{ color: '#888', fontSize: '11px' }}>Short mission statement shown below the motto</small>
                                         </div>
                                     </div>
                                 </div>

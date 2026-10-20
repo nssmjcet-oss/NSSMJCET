@@ -155,12 +155,11 @@ export default function Home() {
             })
             .catch(console.error);
 
-        // Fetch dynamic Hero content (photo + quick stats)
-        fetchWithCache('/api/content?pageId=hero')
+        // Fetch dynamic Hero content — always fresh, bypass sessionStorage cache
+        fetch('/api/content?pageId=hero', { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
             .then(data => {
-                if (data?.content) {
-                    setHeroData(data.content);
-                }
+                if (data?.content) setHeroData(data.content);
             })
             .catch(console.error);
 
@@ -183,12 +182,11 @@ export default function Home() {
             })
             .catch(console.error);
 
-        // Fetch live spotlight event from Content model
-        fetchWithCache('/api/content?pageId=live_event')
+        // Fetch live spotlight event — always fresh, bypass sessionStorage cache
+        fetch('/api/content?pageId=live_event', { cache: 'no-store' })
+            .then(r => r.ok ? r.json() : null)
             .then(data => {
-                if (data?.content) {
-                    setLiveEvent(data.content);
-                }
+                if (data?.content) setLiveEvent(data.content);
             })
             .catch(console.error);
     }, []);
@@ -229,20 +227,20 @@ export default function Home() {
 
                             {/* Main Title with NSS Identity */}
                             <motion.h1 className={styles.heroHeading} variants={dreamyReveal}>
-                                <span className={styles.heroHeadingSub}>NSS MJCET CHAPTER · STUDENT VOLUNTEER CORPS</span>
-                                <span className={styles.heroHeadingMain}>National Service Scheme</span>
+                                <span className={styles.heroHeadingSub}>{heroData?.subtitle?.[language] || heroData?.subtitle?.en || 'NSS MJCET CHAPTER · STUDENT VOLUNTEER CORPS'}</span>
+                                <span className={styles.heroHeadingMain}>{heroData?.title?.[language] || heroData?.title?.en || 'National Service Scheme'}</span>
                             </motion.h1>
 
                             {/* Official Motto Callout */}
                             <motion.div className={styles.heroMottoBanner} variants={dreamyReveal}>
                                 <span className={styles.heroMottoQuote}>“</span>
-                                <span className={styles.heroMottoText}>NOT ME BUT YOU</span>
+                                <span className={styles.heroMottoText}>{heroData?.motto?.[language] || heroData?.motto?.en || 'NOT ME BUT YOU'}</span>
                                 <span className={styles.heroMottoQuote}>”</span>
                             </motion.div>
 
                             {/* Mission description */}
                             <motion.p className={styles.heroDescText} variants={dreamyReveal}>
-                                Building responsible citizens through service, leadership, and meaningful community impact across society.
+                                {heroData?.content?.[language] || heroData?.content?.en || 'Building responsible citizens through service, leadership, and meaningful community impact across society.'}
                             </motion.p>
 
                             {/* Action Buttons */}

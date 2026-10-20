@@ -76,7 +76,7 @@ export async function PUT(request) {
             return NextResponse.json({ message: 'Settings updated' }, { status: 200 });
         }
 
-        const { pageId, title, content, sections, subtitle, btnText, btnLink, image, isActive, volunteers, events, serviceHours } = body;
+        const { pageId, title, content, sections, subtitle, motto, btnText, btnLink, image, isActive, volunteers, events, serviceHours } = body;
         if (!pageId) {
             return NextResponse.json({ error: 'Page ID is required' }, { status: 400 });
         }
@@ -88,6 +88,7 @@ export async function PUT(request) {
             content,
             sections,
             subtitle,
+            motto,
             btnText,
             btnLink,
             image,

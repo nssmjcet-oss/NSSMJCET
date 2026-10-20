@@ -63,33 +63,24 @@ export default function Navbar() {
     const router = useRouter();
     const t = translations[language] || translations['en'] || translations.en;
 
-    // Intelligent route & data prefetch on hover/focus/touch
+    const [pendingPath, setPendingPath] = useState(null);
+
+    // Reset optimistic pending state when pathname changes
+    useEffect(() => {
+        setPendingPath(null);
+    }, [pathname]);
+
+    const activePath = pendingPath || pathname;
+
+    // Fast route prefetch using Next.js native router without flooding the server
     const prefetchedRoutes = useRef(new Set());
     const handlePrefetchRoute = (href) => {
         if (!href || prefetchedRoutes.current.has(href)) return;
         prefetchedRoutes.current.add(href);
 
-        // 1. Next.js router prefetch code & flight data
         try {
             router.prefetch(href);
         } catch (e) {}
-
-        // 2. Pre-warm data cache for the target route
-        if (href === '/team') {
-            fetchWithCache('/api/stats');
-        } else if (href === '/events') {
-            fetchWithCache('/api/events');
-        } else if (href === '/about') {
-            fetchWithCache('/api/content?pageId=about');
-        } else if (href === '/unit') {
-            fetchWithCache('/api/stats');
-            fetchWithCache('/api/content?pageId=unit');
-        } else if (href === '/volunteer') {
-            fetchWithCache('/api/stats');
-            fetchWithCache('/api/content?pageId=volunteer_gallery');
-        } else if (href === '/announcements') {
-            fetchWithCache('/api/announcements');
-        }
     };
 
     // Magnetic Button Coordinates using Ref + Transform to avoid rerendering Navbar
@@ -220,10 +211,13 @@ export default function Navbar() {
                                         onMouseEnter={() => handlePrefetchRoute(item.href)}
                                         onFocus={() => handlePrefetchRoute(item.href)}
                                         onTouchStart={() => handlePrefetchRoute(item.href)}
-                                        className={pathname === item.href ? styles.active : ''}
+                                        onClick={() => {
+                                            if (item.href !== pathname) setPendingPath(item.href);
+                                        }}
+                                        className={activePath === item.href ? styles.active : ''}
                                     >
                                         {item.label}
-                                        {pathname === item.href && (
+                                        {activePath === item.href && (
                                             <motion.span 
                                                 layoutId="navActiveUnderline"
                                                 className={styles.activeUnderline}
@@ -248,7 +242,14 @@ export default function Navbar() {
                                         onTouchStart={() => handlePrefetchRoute('/volunteer')}
                                         style={{ display: 'inline-block' }}
                                     >
-                                        <Link href="/volunteer" prefetch={true} className={`${styles.volunteerLink} ${pathname === '/volunteer' ? styles.active : ''}`}>
+                                        <Link
+                                            href="/volunteer"
+                                            prefetch={true}
+                                            onClick={() => {
+                                                if ('/volunteer' !== pathname) setPendingPath('/volunteer');
+                                            }}
+                                            className={`${styles.volunteerLink} ${activePath === '/volunteer' ? styles.active : ''}`}
+                                        >
                                             {t.volunteer}
                                         </Link>
                                     </div>
@@ -304,8 +305,11 @@ export default function Navbar() {
                                         href={item.href} 
                                         prefetch={true} 
                                         onTouchStart={() => handlePrefetchRoute(item.href)}
-                                        className={`${styles.mobileMenuItem} ${pathname === item.href ? styles.mobileMenuItemActive : ''}`} 
-                                        onClick={closeMenu}
+                                        className={`${styles.mobileMenuItem} ${activePath === item.href ? styles.mobileMenuItemActive : ''}`} 
+                                        onClick={() => {
+                                            if (item.href !== pathname) setPendingPath(item.href);
+                                            closeMenu();
+                                        }}
                                     >
                                         {item.label}
                                     </Link>

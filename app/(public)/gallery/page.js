@@ -28,15 +28,12 @@ export default function GalleryPage() {
     const [lightboxPhoto, setLightboxPhoto] = useState(null);
 
     useEffect(() => {
-        // Fetch fresh gallery items from /api/gallery (bypassing stale cache)
-        Promise.allSettled([
-            fetch('/api/gallery', { cache: 'no-store' }).then(r => r.json()),
-            fetchWithCache('/api/events'),
-        ]).then(([galleryRes, eventsRes]) => {
-            const galleryItems = (galleryRes.status === 'fulfilled' && galleryRes.value?.items) ? galleryRes.value.items : [];
-            const eventItems = (eventsRes.status === 'fulfilled') ? (eventsRes.value?.events || (Array.isArray(eventsRes.value) ? eventsRes.value : [])) : [];
-
-            const mapped = [];
+        // Fetch fresh gallery items from /api/gallery
+        fetch('/api/gallery', { cache: 'no-store' })
+            .then(r => r.json())
+            .then(data => {
+                const galleryItems = data?.items || [];
+                const mapped = [];
 
             // Map gallery items from admin/database
             galleryItems.forEach((item, idx) => {

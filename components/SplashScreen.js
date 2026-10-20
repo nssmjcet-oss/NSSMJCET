@@ -1,101 +1,91 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
 import styles from './SplashScreen.module.css';
 
 export default function SplashScreen({ onComplete }) {
     const [visible, setVisible] = useState(false);
+    const [exiting, setExiting] = useState(false);
+    const dismissedRef = useRef(false);
+    const onCompleteRef = useRef(onComplete);
+    onCompleteRef.current = onComplete;
 
     useEffect(() => {
-        // Only show once per session so navigating between pages feels instant
+        // Check if already seen this session
+        let alreadySeen = false;
         try {
-            const hasSeen = sessionStorage.getItem('nss_splash_shown');
-            if (hasSeen) {
-                if (onComplete) onComplete();
-                return;
-            }
-            sessionStorage.setItem('nss_splash_shown', 'true');
-            setVisible(true);
-        } catch (e) {
-            // If storage disabled, show once and skip
-            if (onComplete) onComplete();
+            alreadySeen = !!sessionStorage.getItem('nss_splash_shown');
+        } catch (_) { /* private mode */ }
+
+        if (alreadySeen) {
+            if (onCompleteRef.current) onCompleteRef.current();
             return;
         }
 
+        // Mark seen immediately
+        try { sessionStorage.setItem('nss_splash_shown', 'true'); } catch (_) {}
+
+        setVisible(true);
+
         const dismiss = () => {
-            setVisible(false);
-            if (onComplete) onComplete();
+            if (dismissedRef.current) return;
+            dismissedRef.current = true;
+            setExiting(true);
+            // Let the fade-out CSS animation play (300ms), then remove and call onComplete
+            setTimeout(() => {
+                setVisible(false);
+                if (onCompleteRef.current) onCompleteRef.current();
+            }, 320);
         };
 
-        const timer = setTimeout(() => {
-            dismiss();
-        }, 850); // Fast 850ms intro for first-time visitors
+        // Auto-dismiss after 1.8s (enough for logo + text to appear nicely)
+        const timer = setTimeout(dismiss, 1800);
 
         return () => clearTimeout(timer);
-    }, [onComplete]);
+    }, []); // ← empty deps: run ONCE on mount only
 
-    const handleDismiss = () => {
-        setVisible(false);
-        if (onComplete) onComplete();
+    const handleClick = () => {
+        if (dismissedRef.current) return;
+        dismissedRef.current = true;
+        setExiting(true);
+        setTimeout(() => {
+            setVisible(false);
+            if (onCompleteRef.current) onCompleteRef.current();
+        }, 320);
     };
 
+    if (!visible) return null;
+
     return (
-        <AnimatePresence>
-            {visible && (
-                <motion.div
-                    className={styles.splash}
-                    initial={{ opacity: 1 }}
-                    exit={{ opacity: 0, scale: 1.02 }}
-                    transition={{ duration: 0.35, ease: 'easeOut' }}
-                    onClick={handleDismiss}
-                    style={{ cursor: 'pointer' }}
-                >
-                    {/* Simplified focused view */}
+        <div
+            className={`${styles.splash} ${exiting ? styles.splashExit : ''}`}
+            onClick={handleClick}
+            style={{ cursor: 'pointer' }}
+        >
+            <div className={styles.content}>
+                {/* Logo */}
+                <div className={`${styles.logoWrap} ${styles.fadeUp}`}>
+                    <Image
+                        src="/uploads/nss-logo.png"
+                        alt="NSS Logo"
+                        width={180}
+                        height={180}
+                        className={styles.logo}
+                        priority
+                    />
+                </div>
 
-                    {/* Center content */}
-                    <div className={styles.content}>
-                        {/* Logo */}
-                        <motion.div
-                            className={styles.logoWrap}
-                            initial={{ opacity: 0, scale: 0.8, filter: 'blur(10px)' }}
-                            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                        >
-                            <Image
-                                src="/uploads/nss-logo.png"
-                                alt="NSS Logo"
-                                width={180}
-                                height={180}
-                                className={styles.logo}
-                                priority
-                            />
-                        </motion.div>
+                {/* NSS MJCET title */}
+                <h1 className={`${styles.title} ${styles.fadeUpDelay1}`}>
+                    NSS MJCET
+                </h1>
 
-                        {/* NSS MJCET text */}
-                        <motion.h1
-                            className={styles.title}
-                            initial={{ opacity: 0, y: 15, letterSpacing: '0.1em' }}
-                            animate={{ opacity: 1, y: 0, letterSpacing: '0.2em' }}
-                            transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                        >
-                            NSS MJCET
-                        </motion.h1>
-
-                        {/* Subtitle */}
-                        <motion.p
-                            className={styles.subtitle}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.8, duration: 1.2, ease: "easeInOut" }}
-                        >
-                            &quot;Not Me But You&quot;
-                        </motion.p>
-                    </div>
-
-                </motion.div>
-            )}
-        </AnimatePresence>
+                {/* Subtitle */}
+                <p className={`${styles.subtitle} ${styles.fadeUpDelay2}`}>
+                    &quot;Not Me But You&quot;
+                </p>
+            </div>
+        </div>
     );
 }

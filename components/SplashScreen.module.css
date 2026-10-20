@@ -7,17 +7,19 @@
     justify-content: center;
     overflow: hidden;
     background: url('/uploads/nss-bg.jpg') center/cover no-repeat;
+    /* Fallback gradient matching tricolor palette */
+    background-color: #f7f3e9;
+    opacity: 1;
+    transition: opacity 0.32s ease-out;
 }
 
-.splash::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    z-index: 0;
+/* Exit state — triggered by JS adding .splashExit */
+.splashExit {
+    opacity: 0;
+    pointer-events: none;
 }
 
-/* ─── Center content ───────────────────────────────────── */
+/* ─── Center content ─────────────────────────────────── */
 .content {
     position: relative;
     z-index: 2;
@@ -76,7 +78,33 @@
     margin: 0;
 }
 
-/* ─── Mobile adjustments ───────────────────────────────── */
+/* ─── Pure CSS entrance animations ─────────────────────── */
+@keyframes fadeUpIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+        filter: blur(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0px);
+    }
+}
+
+.fadeUp {
+    animation: fadeUpIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.fadeUpDelay1 {
+    animation: fadeUpIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
+.fadeUpDelay2 {
+    animation: fadeUpIn 0.9s ease-in-out 0.7s both;
+}
+
+/* ─── Mobile adjustments ─────────────────────────────── */
 @media (max-width: 480px) {
     .logoWrap {
         width: 130px;

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -9,26 +8,24 @@ import SplashScreen from '@/components/SplashScreen';
 import CustomCursor from '@/components/CustomCursor';
 
 export default function Providers({ children }) {
-    const [splashDone, setSplashDone] = useState(false);
-
     return (
         <AuthProvider>
             <LanguageProvider>
                 <ThemeProvider>
-                    {/* Custom cursor — always present, auto-hidden on mobile */}
+                    {/* Custom cursor — auto-hidden on mobile */}
                     <CustomCursor />
 
-                    {/* Splash screen — overlay shown on first load */}
-                    <SplashScreen onComplete={() => setSplashDone(true)} />
+                    {/* Splash screen — fixed overlay, self-dismisses after 1.8s.
+                        Content underneath is always rendered — splash just covers it. */}
+                    <SplashScreen />
 
-                    {/* Main app — instantly interactive and rendered */}
-                    <div style={{ position: 'relative', width: '100%', minHeight: '100vh' }}>
-                        <MeshGradient />
-                        {children}
-                    </div>
+                    {/* Ambient bg layer */}
+                    <MeshGradient />
+
+                    {/* Main app content */}
+                    {children}
                 </ThemeProvider>
             </LanguageProvider>
         </AuthProvider>
     );
 }
-

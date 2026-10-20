@@ -1,75 +1,89 @@
 :root {
     /* Fonts */
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-heading: 'Inter', 'Outfit', sans-serif;
-    --font-futuristic: 'Inter', 'Outfit', sans-serif;
+    --font-heading: 'Lora', 'Playfair Display', Georgia, serif;
+    --font-serif: 'Lora', 'Playfair Display', Georgia, serif;
+    --font-futuristic: 'Inter', 'Plus Jakarta Sans', sans-serif;
 
-    /* NSS Brand Colors — Source of Truth */
-    --color-nss-saffron: #FF9933;
-    --color-nss-saffron-dark: #e07800;
-    --color-nss-saffron-light: #FFB347;
-    --color-nss-green: #138808;
-    --color-nss-green-dark: #0d5e06;
-    --color-nss-green-light: #1db811;
+    /* Editorial Theme Colors — Source of Truth */
+    --color-cream-bg: #F7F3E9;
+    --color-beige-section: #EFE4D0;
+    --color-ivory-card: #FFFCF5;
+    --color-navy-primary: #17233D;
+    --color-navy-dark: #0f172a;
+    --color-navy-light: #24355a;
+    --color-text-secondary: #5F625F;
+    --color-accent-gold: #C69A43;
+    --color-accent-gold-hover: #b58934;
+    --color-border-subtle: #DCD3C2;
+    --color-border-light: #E8E1D3;
 
-    /* Base Colors — Primary is NSS Saffron */
-    --color-primary: #FF9933;
-    --color-primary-light: #FFB347;
-    --color-primary-dark: #e07800;
-    --color-secondary: #138808;
-    --color-secondary-dark: #0d5e06;
-    --color-secondary-light: #1db811;
+    /* Base Colors */
+    --color-primary: #17233D;
+    --color-primary-light: #24355a;
+    --color-primary-dark: #0f172a;
+    --color-secondary: #C69A43;
+    --color-secondary-dark: #b58934;
+    --color-secondary-light: #d8af5c;
     --color-error: #ef4444;
     --color-error-dark: #dc2626;
     --color-white: #ffffff;
 
     /* Gray Scale */
-    --color-gray-50: #f9fafb;
-    --color-gray-100: #f3f4f6;
-    --color-gray-200: #e5e7eb;
-    --color-gray-300: #d1d5db;
-    --color-gray-400: #9ca3af;
-    --color-gray-500: #6b7280;
-    --color-gray-600: #4b5563;
+    --color-gray-50: #FAF8F5;
+    --color-gray-100: #F3EFE6;
+    --color-gray-200: #E8E1D3;
+    --color-gray-300: #DCD3C2;
+    --color-gray-400: #9CA09D;
+    --color-gray-500: #6B7280;
+    --color-gray-600: #5F625F;
     --color-gray-700: #374151;
-    --color-gray-800: #1f2937;
-    --color-gray-900: #111827;
+    --color-gray-800: #1F2937;
+    --color-gray-900: #17233D;
 
-    /* Premier Indian Colors (legacy aliases) */
-    --color-saffron: #FF9933;
-    --color-green: #138808;
-    --color-saffron-light: #FFB347;
-    --color-green-light: #1db811;
+    /* Legacy aliases mapped safely to new palette */
+    --color-saffron: #C69A43;
+    --color-green: #17233D;
+    --color-saffron-light: #d8af5c;
+    --color-green-light: #24355a;
+    --color-nss-saffron: #C69A43;
+    --color-nss-saffron-dark: #b58934;
+    --color-nss-saffron-light: #d8af5c;
+    --color-nss-green: #17233D;
+    --color-nss-green-dark: #0f172a;
+    --color-nss-green-light: #24355a;
 
-    /* Marvelous Theme Tokens - Light Mode Defaults (warm, not navy) */
-    --marvel-bg: #fdfaf6;
-    --marvel-bg-alt: #ffffff;
-    --marvel-text: #1a1a1a;
-    --marvel-text-dim: #6b7280;
-    --marvel-surface: rgba(255, 153, 51, 0.04);
-    --marvel-surface-hover: rgba(255, 153, 51, 0.08);
-    --marvel-border: rgba(255, 153, 51, 0.15);
-    --marvel-border-hover: rgba(255, 153, 51, 0.35);
+    /* Marvelous Theme Tokens - Editorial Cream & Navy Defaults */
+    --marvel-bg: #F7F3E9;
+    --marvel-bg-alt: #EFE4D0;
+    --marvel-text: #17233D;
+    --marvel-text-dim: #5F625F;
+    --marvel-surface: #FFFCF5;
+    --marvel-surface-hover: #F3EFE6;
+    --marvel-border: #DCD3C2;
+    --marvel-border-hover: #C69A43;
 
-    /* Gradients */
-    --gradient-saffron: linear-gradient(135deg, #FF9933 0%, #FFB347 50%, #FF9933 100%);
-    --gradient-green: linear-gradient(135deg, #138808 0%, #1db811 50%, #138808 100%);
-    --gradient-saffron-premium: linear-gradient(135deg, #FF8C00 0%, #FF9933 100%);
-    --gradient-green-premium: linear-gradient(135deg, #0d5e06 0%, #138808 100%);
+    /* Editorial Gradients & Accents */
+    --gradient-gold: linear-gradient(135deg, #C69A43 0%, #d8af5c 50%, #C69A43 100%);
+    --gradient-navy: linear-gradient(135deg, #17233D 0%, #24355a 100%);
+    --gradient-saffron: var(--gradient-gold);
+    --gradient-green: var(--gradient-navy);
+    --gradient-saffron-premium: var(--gradient-gold);
+    --gradient-green-premium: var(--gradient-navy);
 
-    --marvel-accent-gradient: linear-gradient(135deg, #FF9933 0%, #e07800 100%);
-    --marvel-secondary-gradient: var(--gradient-green-premium);
-    --marvel-title-gradient: linear-gradient(135deg, #1a1a1a 0%, #374151 100%);
-    --marvel-glass-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+    --marvel-accent-gradient: linear-gradient(135deg, #17233D 0%, #24355a 100%);
+    --marvel-secondary-gradient: var(--gradient-gold);
+    --marvel-title-gradient: linear-gradient(135deg, #17233D 0%, #24355a 100%);
+    --marvel-glass-gradient: linear-gradient(135deg, rgba(255, 252, 245, 0.95) 0%, rgba(247, 243, 233, 0.85) 100%);
     --marvel-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 
     /* Glows & Shadows */
-    --marvel-glow-saffron: 0 0 20px rgba(255, 153, 51, 0.35);
-    --marvel-glow-green: 0 0 20px rgba(19, 136, 8, 0.35);
-    --marvel-glow-orange: 0 0 20px rgba(255, 153, 51, 0.4);
-    --marvel-shadow-glow: 0 0 30px rgba(255, 153, 51, 0.15);
-    --marvel-shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.18);
-    --marvel-shadow-soft: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    --marvel-glow-saffron: 0 4px 20px rgba(198, 154, 67, 0.2);
+    --marvel-glow-green: 0 4px 20px rgba(23, 35, 61, 0.15);
+    --marvel-glow-orange: 0 4px 20px rgba(198, 154, 67, 0.2);
+    --marvel-shadow-glow: 0 10px 30px rgba(23, 35, 61, 0.08);
+    --marvel-shadow-premium: 0 20px 40px -15px rgba(23, 35, 61, 0.12);
+    --marvel-shadow-soft: 0 8px 24px -4px rgba(23, 35, 61, 0.06);
 
     /* Glassmorphism Tokens */
     --glass-blur: blur(20px);

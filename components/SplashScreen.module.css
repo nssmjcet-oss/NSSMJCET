@@ -6,17 +6,16 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: url('/uploads/nss-bg.jpg') center/cover no-repeat;
+    background: radial-gradient(circle at center, #FFFCF5 0%, #F7F3E9 70%, #EFE4D0 100%);
 }
 
 .splash::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: transparent; /* Removed brightness overlay as requested */
+    background: transparent;
     z-index: 0;
 }
-
 
 /* ─── Center content ───────────────────────────────────── */
 .content {
@@ -27,64 +26,96 @@
     align-items: center;
     gap: 0;
     text-align: center;
+    padding: 2rem;
 }
 
 .logoWrap {
     position: relative;
-    width: 280px; /* Increased back to a substantial size */
-    height: 280px;
+    width: 190px;
+    height: 190px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .logoWrap::after {
     content: '';
     position: absolute;
-    inset: -30%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+    inset: -20%;
+    background: radial-gradient(circle, rgba(198, 154, 67, 0.15) 0%, rgba(247, 243, 233, 0) 70%);
     z-index: -1;
-    filter: blur(20px);
+    filter: blur(16px);
 }
 
 .logo {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 10px 25px rgba(23, 35, 61, 0.12));
 }
+
 .title {
-    font-size: clamp(2rem, 6vw, 4rem);
-    font-weight: 800;
-    letter-spacing: 0.2em; /* Wide spacing for premium look */
-    color: #111111; /* Changed back to dark */
-    text-shadow: 0 4px 20px rgba(255, 255, 255, 0.8);
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #17233D;
     margin: 0;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     text-transform: uppercase;
 }
 
 .subtitle {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(0.9rem, 2vw, 1.2rem);
-    font-weight: 700;
-    letter-spacing: 0.3em;
-    text-transform: uppercase; 
-    color: #000000; /* Switched to black as requested earlier */
+    font-family: var(--font-heading, 'Lora', serif);
+    font-style: italic;
+    font-size: clamp(0.95rem, 2vw, 1.2rem);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: #5F625F;
     margin: 0;
 }
 
+.loaderBar {
+    position: relative;
+    height: 3px;
+    background: #E8E1D3;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 28px;
+}
 
+.loaderGlow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #17233D 0%, #C69A43 50%, #17233D 100%);
+    background-size: 200% 100%;
+    animation: loaderSlide 1.5s infinite linear;
+}
+
+@keyframes loaderSlide {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
 
 /* ─── Mobile adjustments ───────────────────────────────── */
 @media (max-width: 480px) {
     .logoWrap {
-        width: 100px;
-        height: 100px;
+        width: 140px;
+        height: 140px;
+        margin-bottom: 16px;
     }
-    .chakraWrap {
-        width: 240px;
-        height: 240px;
+    .title {
+        font-size: 1.85rem;
+    }
+    .subtitle {
+        font-size: 0.9rem;
     }
 }

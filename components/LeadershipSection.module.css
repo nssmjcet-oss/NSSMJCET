@@ -24,29 +24,30 @@
     align-items: center;
     gap: 8px;
     padding: 6px 18px;
-    background: rgba(255, 153, 51, 0.1);
-    border: 1px solid rgba(255, 153, 51, 0.3);
+    background: rgba(198, 154, 67, 0.1);
+    border: 1px solid rgba(198, 154, 67, 0.3);
     border-radius: 9999px;
-    color: #FF9933;
+    color: #C69A43;
     font-size: 11px;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-bottom: 14px;
 }
 
 .sectionHeading {
+    font-family: var(--font-heading, 'Lora', serif);
     font-size: clamp(2rem, 4.5vw, 3.2rem);
-    font-weight: 900;
-    color: #0f172a;
-    letter-spacing: -1px;
+    font-weight: 700;
+    color: #17233D;
+    letter-spacing: -0.5px;
     line-height: 1.15;
     margin: 0 0 12px 0;
 }
 
 .sectionSubtext {
     font-size: clamp(0.95rem, 1.8vw, 1.1rem);
-    color: #64748b;
+    color: #5F625F;
     line-height: 1.6;
     margin: 0;
     font-weight: 400;
@@ -63,10 +64,10 @@
 
 /* === EXECUTIVE CARD === */
 .executiveCard {
-    background: #ffffff;
-    border-radius: 28px;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #FFFCF5;
+    border-radius: 12px;
+    box-shadow: 0 12px 36px rgba(23, 35, 61, 0.05);
+    border: 1px solid #DCD3C2;
     overflow: hidden;
     position: relative;
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
@@ -74,29 +75,19 @@
 
 .executiveCard:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.09);
+    box-shadow: 0 20px 48px rgba(23, 35, 61, 0.08);
 }
 
-.cardSaffron:hover {
-    border-color: rgba(255, 153, 51, 0.45);
-}
-
+.cardSaffron:hover,
 .cardGreen:hover {
-    border-color: rgba(19, 136, 8, 0.45);
+    border-color: #C69A43;
 }
 
 /* Top Accent Line */
 .cardTopAccent {
-    height: 5px;
+    height: 4px;
     width: 100%;
-}
-
-.cardSaffron .cardTopAccent {
-    background: linear-gradient(90deg, #FF9933 0%, #FFA844 100%);
-}
-
-.cardGreen .cardTopAccent {
-    background: linear-gradient(90deg, #138808 0%, #10b981 100%);
+    background: linear-gradient(90deg, #17233D 0%, #C69A43 50%, #17233D 100%);
 }
 
 /* Inside Layout: 2 Columns on Desktop */
@@ -181,38 +172,32 @@
     margin-bottom: 8px;
 }
 
-.cardSaffron .roleTag {
-    background: rgba(255, 153, 51, 0.12);
-    color: #d97706;
-    border: 1px solid rgba(255, 153, 51, 0.25);
-}
-
+.cardSaffron .roleTag,
 .cardGreen .roleTag {
-    background: rgba(19, 136, 8, 0.1);
-    color: #138808;
-    border: 1px solid rgba(19, 136, 8, 0.25);
+    background: #F7F3E9;
+    color: #17233D;
+    border: 1px solid #DCD3C2;
 }
 
 .roleDot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
+    background: #C69A43;
 }
 
-.cardSaffron .roleDot {
-    background: #FF9933;
-}
-
+.cardSaffron .roleDot,
 .cardGreen .roleDot {
-    background: #138808;
+    background: #C69A43;
 }
 
 /* Executive Full Name */
 .executiveName {
+    font-family: var(--font-heading, 'Lora', serif);
     font-size: clamp(1.6rem, 2.8vw, 2.2rem);
-    font-weight: 900;
-    color: #0f172a;
-    letter-spacing: -0.6px;
+    font-weight: 700;
+    color: #17233D;
+    letter-spacing: -0.3px;
     line-height: 1.2;
     margin: 0 0 14px 0;
     transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -220,40 +205,33 @@
 }
 
 .cardSaffron:hover .executiveName,
-.cardSaffron .executiveName:hover {
-    color: #FF9933;
-    transform: translateX(4px);
-}
-
+.cardSaffron .executiveName:hover,
 .cardGreen:hover .executiveName,
 .cardGreen .executiveName:hover {
-    color: #138808;
+    color: #C69A43;
     transform: translateX(4px);
 }
 
-/* Designation & Institution Box (CSI MJCET style) */
+/* Designation & Institution Box */
 .designationBox {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
+    background: #F7F3E9;
+    border: 1px solid #DCD3C2;
+    border-radius: 8px;
     padding: 10px 16px;
     margin-bottom: 16px;
 }
 
 .boxIcon {
-    color: #64748b;
+    color: #17233D;
     flex-shrink: 0;
 }
 
-.cardSaffron .boxIcon {
-    color: #FF9933;
-}
-
+.cardSaffron .boxIcon,
 .cardGreen .boxIcon {
-    color: #138808;
+    color: #17233D;
 }
 
 .boxTextGroup {
@@ -265,56 +243,52 @@
 
 .boxPrimaryText {
     font-size: 13.5px;
-    font-weight: 700;
-    color: #1e293b;
+    font-weight: 600;
+    color: #17233D;
     line-height: 1.35;
 }
 
 .boxSecondaryText {
     font-size: 12px;
-    font-weight: 500;
-    color: #64748b;
+    font-weight: 400;
+    color: #5F625F;
     line-height: 1.3;
 }
 
-/* Quotation Block (CSI MJCET style) */
+/* Quotation Block */
 .quoteBlock {
     position: relative;
     padding: 14px 18px 14px 40px;
-    border-radius: 0 14px 14px 0;
-    background: #f8fafc;
+    border-radius: 0 8px 8px 0;
+    background: #FAF8F5;
+    border-left: 3px solid #C69A43;
 }
 
-.cardSaffron .quoteBlock {
-    background: rgba(255, 153, 51, 0.04);
-    border-left: 3px solid #FF9933;
-}
-
+.cardSaffron .quoteBlock,
 .cardGreen .quoteBlock {
-    background: rgba(19, 136, 8, 0.04);
-    border-left: 3px solid #138808;
+    background: #FAF8F5;
+    border-left: 3px solid #C69A43;
 }
 
 .quoteIcon {
     position: absolute;
     top: 14px;
     left: 12px;
+    color: #C69A43;
 }
 
-.cardSaffron .quoteIcon {
-    color: rgba(255, 153, 51, 0.45);
-}
-
+.cardSaffron .quoteIcon,
 .cardGreen .quoteIcon {
-    color: rgba(19, 136, 8, 0.45);
+    color: #C69A43;
 }
 
 .quoteText {
+    font-family: var(--font-heading, 'Lora', serif);
     font-size: 13.5px;
     line-height: 1.65;
-    color: #334155;
+    color: #5F625F;
     font-style: italic;
-    font-weight: 500;
+    font-weight: 400;
     margin: 0;
 }
 

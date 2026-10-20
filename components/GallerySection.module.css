@@ -1,0 +1,149 @@
+.gallerySection {
+    padding: clamp(60px, 8vw, 100px) 0;
+    background-color: var(--color-cream-bg, #F7F3E9);
+    position: relative;
+    border-top: 1px solid var(--color-border-subtle, #DCD3C2);
+}
+
+.sectionHeader {
+    text-align: left;
+    margin-bottom: clamp(32px, 5vw, 48px);
+}
+
+.sectionTitle {
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+    font-weight: 700;
+    color: var(--color-navy-primary, #17233D);
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+/* === Editorial Asymmetric Image Grid === */
+.editorialGalleryGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 240px;
+    gap: 16px;
+    margin-bottom: clamp(36px, 5vw, 56px);
+}
+
+.galleryItem {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--color-border-subtle, #DCD3C2);
+    box-shadow: 0 4px 16px rgba(23, 35, 61, 0.04);
+    background: #E8E1D3;
+}
+
+.colSpan1 {
+    grid-column: span 1;
+}
+
+.colSpan2 {
+    grid-column: span 2;
+}
+
+.imageWrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.galleryImage {
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.galleryItem:hover .galleryImage {
+    transform: scale(1.06);
+}
+
+/* Subtle editorial overlay on hover */
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(23, 35, 61, 0) 40%, rgba(23, 35, 61, 0.85) 100%);
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 18px;
+    transition: opacity 0.3s ease;
+}
+
+.galleryItem:hover .overlay {
+    opacity: 1;
+}
+
+.photoCategory {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--color-accent-gold, #C69A43);
+    margin-bottom: 4px;
+}
+
+.photoTitle {
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* View All Button matching reference */
+.actionRow {
+    display: flex;
+    justify-content: center;
+}
+
+.viewAllBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border: 1px solid var(--color-navy-primary, #17233D);
+    border-radius: 9999px;
+    background: transparent;
+    color: var(--color-navy-primary, #17233D);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.viewAllBtn:hover {
+    background: var(--color-navy-primary, #17233D);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(23, 35, 61, 0.15);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .editorialGalleryGrid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 220px;
+    }
+    .colSpan2 {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .editorialGalleryGrid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 240px;
+    }
+    .colSpan1,
+    .colSpan2 {
+        grid-column: span 1;
+    }
+}

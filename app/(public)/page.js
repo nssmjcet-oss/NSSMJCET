@@ -6,6 +6,10 @@ import { useLanguage, getText } from '@/contexts/LanguageContext';
 import styles from './page.module.css';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import AboutUsSection from '@/components/AboutUsSection';
+import UpcomingEventsSection from '@/components/UpcomingEventsSection';
+import GallerySection from '@/components/GallerySection';
+import NewsletterSection from '@/components/NewsletterSection';
 import LeadershipSection from '@/components/LeadershipSection';
 import FlagshipSection from '@/components/FlagshipSection';
 import EventSlider from '@/components/EventSlider';
@@ -199,12 +203,11 @@ export default function Home() {
 
     return (
         <div className={styles.home} data-language={language}>
-            {/* 1. Hero Section — Original NSS MJCET Signature Design */}
+            {/* 1. Hero Section — Editorial Campus & Service Hero */}
             <section className={styles.hero}>
-                {/* Clean, authentic light background with subtle tricolor atmosphere */}
                 <div className={styles.heroBackdrop}>
-                    <div className={styles.heroGlowSaffron} />
-                    <div className={styles.heroGlowGreen} />
+                    <div className={styles.heroGlowWarm} />
+                    <div className={styles.heroGlowNavy} />
                 </div>
 
                 <div className={`container ${styles.heroContainer}`} style={{ position: 'relative', zIndex: 2 }}>
@@ -222,16 +225,16 @@ export default function Home() {
                     >
                         {/* Left Column: Authentic Brand Narrative */}
                         <div className={styles.heroTextCol}>
-                            {/* Mission Pill */}
+                            {/* Eyebrow Pill */}
                             <motion.div className={styles.heroBadge} variants={dreamyReveal}>
                                 <span className={styles.heroBadgeDot} />
-                                <span className={styles.heroBadgeText}>MUFFAKHAM JAH COLLEGE OF ENGINEERING & TECHNOLOGY</span>
+                                <span className={styles.heroBadgeText}>MUFFAKHAM JAH COLLEGE OF ENGINEERING &amp; TECHNOLOGY</span>
                             </motion.div>
 
                             {/* Main Title with NSS Identity */}
                             <motion.h1 className={styles.heroHeading} variants={dreamyReveal}>
-                                <span className={styles.heroHeadingSub}>NATIONAL SERVICE SCHEME</span>
-                                <span className={styles.heroHeadingMain}>NSS MJCET</span>
+                                <span className={styles.heroHeadingSub}>NATIONAL SERVICE SCHEME · MJCET</span>
+                                <span className={styles.heroHeadingMain}>Not Me, But You.</span>
                             </motion.h1>
 
                             {/* Official Motto Callout */}
@@ -243,17 +246,16 @@ export default function Home() {
 
                             {/* Mission description */}
                             <motion.p className={styles.heroDescText} variants={dreamyReveal}>
-                                Empowering students through selfless community service, leadership development,
-                                and impactful social initiatives across society.
+                                Building responsible citizens through service, leadership, and meaningful community impact across society.
                             </motion.p>
 
                             {/* Action Buttons */}
                             <motion.div className={styles.heroActionButtons} variants={dreamyReveal}>
-                                <Link href="/volunteer" className="marvelous-btn marvelous-btn-primary marvelous-btn-lg">
-                                    Become a Volunteer
+                                <Link href="#events" className="marvelous-btn marvelous-btn-primary marvelous-btn-lg">
+                                    Explore Our Activities
                                 </Link>
-                                <Link href="/about" className="marvelous-btn marvelous-btn-outline marvelous-btn-lg">
-                                    Explore NSS
+                                <Link href="/volunteer" className="marvelous-btn marvelous-btn-outline marvelous-btn-lg">
+                                    Become a Volunteer
                                 </Link>
                             </motion.div>
 
@@ -276,7 +278,7 @@ export default function Home() {
                             </motion.div>
                         </div>
 
-                        {/* Right Column: Hero Team Visual Card (Original, No Dark Veil) */}
+                        {/* Right Column: Hero Visual Showcase */}
                         <motion.div className={styles.heroCardCol} variants={dreamyReveal}>
                             <div className={styles.heroCardFrame}>
                                 <div className={styles.heroCardImgWrap}>
@@ -292,24 +294,32 @@ export default function Home() {
                                     <div className={styles.heroCardImgGlow} />
                                 </div>
 
-                                {/* Floating Authentic NSS Emblem Badge */}
+                                {/* Floating Official NSS Emblem Badge */}
                                 <div className={styles.heroEmblemFloat}>
                                     <Image
                                         src="/uploads/nss-logo.png"
                                         alt="NSS Emblem"
-                                        width={68}
-                                        height={68}
+                                        width={60}
+                                        height={60}
                                         priority
                                     />
                                 </div>
-
                             </div>
                         </motion.div>
                     </motion.div>
                 </div>
             </section>
 
-            {/* 2. Inspiration Section (Gandhi, Vivekananda, Ambedkar + NSS Motto) */}
+            {/* 2. About Us Section with Official Logo, Who We Are & Activity Cycle */}
+            <AboutUsSection language={language} />
+
+            {/* 3. Upcoming Events Section matching reference card grid */}
+            <UpcomingEventsSection onSelectEvent={setSelectedEvent} />
+
+            {/* 4. Dedicated Gallery Section with authentic photos */}
+            <GallerySection />
+
+            {/* 5. Inspiration Section (Gandhi, Vivekananda, Ambedkar + NSS Motto) */}
             <MottoSection language={language} variants={dreamyReveal} />
 
             {/* Featured Spotlight / Live Event Section */}
@@ -368,24 +378,17 @@ export default function Home() {
                 </section>
             )}
 
-            {/* Flagship Campaigns — DB-driven portrait cards */}
-            {/* 3. Flagship Initiatives — E-Cell inspired letterform hero, dynamic multi-initiative support */}
+            {/* 6. Flagship Initiatives */}
             <FlagshipSection
                 flagships={flagships}
                 allEvents={allEvents}
                 onSelectEvent={setSelectedEvent}
             />
 
-            {/* 4. Leadership Section (Chairman & Program Officer) */}
+            {/* 7. Leadership Section (Chairman & Program Officer) */}
             <LeadershipSection />
 
-            {/* 5. Flagship Events Portal Banner */}
-            <EventsPortalBanner />
-
-            {/* 6. EVENTS (Slider) */}
-            <EventSlider onViewDetails={setSelectedEvent} />
-
-            {/* 6. Our Impact (Stats) */}
+            {/* 8. Our Impact (Dynamic Stats Counter) */}
             <section className={styles.stats}>
                 <div className="container">
                     <motion.div
@@ -432,45 +435,11 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Meet The Developers */}
-            <DevelopersSection />
+            {/* 9. Newsletter & Stay Connected Banner */}
+            <NewsletterSection />
 
-            {/* CTA Section */}
-            <section className={styles.cta}>
-                <div className="container">
-                    <motion.div
-                        className={styles.ctaContent}
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <h2>
-                            {getText({
-                                en: 'Ready to Make a Difference?',
-                                te: 'మార్పు తీసుకురావడానికి సిద్ధంగా ఉన్నారా?',
-                                hi: 'क्या आप बदलाव लाने के लिए तैयार हैं?'
-                            }, language)}
-                        </h2>
-                        <p>
-                            {getText({
-                                en: 'Join NSS MJCET and be part of a community dedicated to social service and development.',
-                                te: 'NSS MJCET లో చేరండి మరియు సామాజిక సేవ మరియు అభివృద్ధికి అంకితమైన సమాజంలో భాగం అవ్వండి.',
-                                hi: 'एनएसएस एमजेसीईटी में शामिल हों और समाज सेवा और विकास के लिए समर्पित समुदाय का हिस्सा बनें।'
-                            }, language)}
-                        </p>
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            style={{ marginTop: '2.5rem' }}
-                        >
-                            <Link href="/volunteer" className="marvelous-btn marvelous-btn-primary marvelous-btn-lg">
-                                {getText(translations.hero.joinBtn, language)}
-                            </Link>
-                        </motion.div>
-                    </motion.div>
-                </div>
-            </section>
+            {/* 10. Meet The Developers */}
+            <DevelopersSection />
 
             {/* Event Details Modal */}
             {selectedEvent && (

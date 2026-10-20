@@ -2,52 +2,41 @@
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+    background-color: var(--color-cream-bg, #F7F3E9);
 }
 
-/* The rest of the page (below hero) uses the NSS bg */
-.home::after {
+/* Very subtle warm ambient lighting */
+.home::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: url('/uploads/nss-bg.jpg') no-repeat center center;
-    background-size: cover;
-    z-index: -1;
-    pointer-events: none;
-}
-
-/* Very subtle tint on page body sections */
-.home::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.08);
+    background: radial-gradient(circle at 15% 15%, rgba(239, 228, 208, 0.5) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(255, 252, 245, 0.8) 0%, transparent 40%);
     z-index: 0;
     pointer-events: none;
 }
 
-/* Ornaments removed to prevent fading/obstruction of nss-bg.jpg */
 .ornament1,
 .ornament2,
 .ornament3 {
     display: none;
 }
 
-
-
 /* =============================================
-   HERO SECTION — Original NSS MJCET Signature Design
+   HERO SECTION — Premium Editorial Design
    ============================================= */
 .hero {
     position: relative;
-    min-height: 92vh;
+    min-height: 88vh;
     display: flex;
     align-items: center;
-    padding: clamp(90px, 12vw, 130px) 0 clamp(40px, 6vw, 70px);
+    padding: clamp(100px, 14vw, 150px) 0 clamp(40px, 6vw, 70px);
     overflow: hidden;
     z-index: 1;
+    background: transparent;
 }
 
-/* Subtle atmosphere backdrop — NO black screen */
+/* Subtle atmosphere backdrop */
 .heroBackdrop {
     position: absolute;
     inset: 0;
@@ -55,7 +44,7 @@
     z-index: 0;
 }
 
-.heroGlowSaffron {
+.heroGlowWarm {
     position: absolute;
     top: -10%;
     left: -5%;
@@ -63,12 +52,12 @@
     height: 48vw;
     max-width: 650px;
     max-height: 650px;
-    background: radial-gradient(circle, rgba(255, 153, 51, 0.12) 0%, rgba(255, 153, 51, 0) 70%);
+    background: radial-gradient(circle, rgba(198, 154, 67, 0.08) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(40px);
+    filter: blur(50px);
 }
 
-.heroGlowGreen {
+.heroGlowNavy {
     position: absolute;
     bottom: -15%;
     right: -5%;
@@ -76,9 +65,9 @@
     height: 45vw;
     max-width: 600px;
     max-height: 600px;
-    background: radial-gradient(circle, rgba(19, 136, 8, 0.09) 0%, rgba(19, 136, 8, 0) 70%);
+    background: radial-gradient(circle, rgba(23, 35, 61, 0.05) 0%, transparent 70%);
     border-radius: 50%;
-    filter: blur(40px);
+    filter: blur(50px);
 }
 
 /* Wider Hero Container to allow full team photo presentation */
@@ -109,27 +98,26 @@
     align-items: center;
     gap: 8px;
     padding: 6px 16px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(255, 153, 51, 0.35);
+    background: #FFFCF5;
+    border: 1px solid #DCD3C2;
     border-radius: 9999px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 14px rgba(23, 35, 61, 0.04);
     margin-bottom: 1.25rem;
 }
 
 .heroBadgeDot {
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: #FF9933;
-    box-shadow: 0 0 8px #FF9933;
+    background: #C69A43;
     flex-shrink: 0;
 }
 
 .heroBadgeText {
     font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    color: #1e293b;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: #17233D;
     text-transform: uppercase;
 }
 
@@ -138,63 +126,65 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 1.25rem;
-    line-height: 1;
+    line-height: 1.1;
 }
 
 .heroHeadingSub {
-    font-size: clamp(0.95rem, 1.8vw, 1.3rem);
-    font-weight: 800;
+    font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+    font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #2563eb; /* NSS Royal Blue */
-    margin-bottom: 0.4rem;
+    color: #C69A43;
+    margin-bottom: 0.6rem;
 }
 
 .heroHeadingMain {
-    font-size: clamp(3rem, 6.5vw, 5.2rem);
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    color: #0f172a;
-    line-height: 1.05;
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: clamp(2.8rem, 6vw, 4.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #17233D;
+    line-height: 1.1;
 }
 
-/* Official Motto Callout Banner — Clean & Refined (No Glow) */
+/* Official Motto Callout Banner */
 .heroMottoBanner {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 6px 14px;
-    background: #ffffff;
-    border: 1.5px solid #e2e8f0;
-    border-left: 4px solid #FF9933;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    background: #FFFCF5;
+    border: 1px solid #DCD3C2;
+    border-left: 3px solid #C69A43;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(23, 35, 61, 0.04);
     margin-bottom: 1.25rem;
 }
 
 .heroMottoQuote {
+    font-family: var(--font-heading, 'Lora', serif);
     font-size: 1.15rem;
-    font-weight: 800;
-    color: #FF9933;
+    font-weight: 700;
+    color: #C69A43;
     line-height: 1;
 }
 
 .heroMottoText {
-    font-size: clamp(0.85rem, 1.2vw, 1.02rem);
-    font-weight: 800;
-    letter-spacing: 0.14em;
+    font-size: clamp(0.82rem, 1.1vw, 0.95rem);
+    font-weight: 700;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #1e293b;
+    color: #17233D;
 }
 
 /* Description paragraph */
 .heroDescText {
-    font-size: clamp(0.98rem, 1.5vw, 1.12rem);
-    color: #475569;
-    line-height: 1.7;
-    margin-bottom: 1.8rem;
+    font-size: clamp(0.98rem, 1.4vw, 1.12rem);
+    color: #5F625F;
+    line-height: 1.75;
+    margin-bottom: 2rem;
     max-width: 540px;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 /* Action Buttons */
@@ -211,11 +201,11 @@
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    padding: 12px 20px;
-    background: rgba(255, 255, 255, 0.85);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    padding: 12px 22px;
+    background: #FFFCF5;
+    border: 1px solid #DCD3C2;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(23, 35, 61, 0.04);
 }
 
 .heroTrustItem {
@@ -224,24 +214,25 @@
 }
 
 .heroTrustItem strong {
-    font-size: 1.3rem;
-    font-weight: 900;
-    color: #0f172a;
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #17233D;
     line-height: 1.1;
 }
 
 .heroTrustItem span {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    color: #64748b;
+    color: #5F625F;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
 }
 
 .heroTrustDivider {
     width: 1px;
     height: 28px;
-    background: rgba(0, 0, 0, 0.1);
+    background: #DCD3C2;
 }
 
 /* --- Right Column: Team Visual Showcase Card --- */
@@ -255,70 +246,71 @@
     position: relative;
     width: 100%;
     max-width: 780px;
-    border-radius: 28px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    padding: 8px;
+    background: #FFFCF5;
+    border: 1px solid #DCD3C2;
     box-shadow: 
-        0 28px 60px -15px rgba(15, 23, 42, 0.14),
-        0 10px 28px -5px rgba(0, 0, 0, 0.05);
+        0 24px 50px -15px rgba(23, 35, 61, 0.1),
+        0 8px 24px -5px rgba(23, 35, 61, 0.04);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
 }
 
 .heroCardFrame:hover {
     transform: translateY(-4px);
     box-shadow: 
-        0 34px 70px -15px rgba(15, 23, 42, 0.18),
-        0 14px 32px -5px rgba(0, 0, 0, 0.07);
+        0 30px 60px -15px rgba(23, 35, 61, 0.14),
+        0 12px 28px -5px rgba(23, 35, 61, 0.06);
 }
 
 .heroCardImgWrap {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 3;
-    max-height: 560px;
-    border-radius: 22px;
+    aspect-ratio: 16 / 10;
+    max-height: 540px;
+    border-radius: 6px;
     overflow: hidden;
+    background: #EFE4D0;
 }
 
 .heroCardImg {
-    border-radius: 20px;
+    border-radius: 6px;
     transition: transform 0.5s ease;
 }
 
 .heroCardFrame:hover .heroCardImg {
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
 .heroCardImgGlow {
     position: absolute;
     inset: 0;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     pointer-events: none;
 }
 
 /* Floating Official Emblem Badge */
 .heroEmblemFloat {
     position: absolute;
-    top: -18px;
-    right: -14px;
-    width: 78px;
-    height: 78px;
-    background: #ffffff;
+    top: -16px;
+    right: -12px;
+    width: 72px;
+    height: 72px;
+    background: #FFFCF5;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    border: 3px solid #ffffff;
+    box-shadow: 0 8px 24px rgba(23, 35, 61, 0.12);
+    border: 1px solid #DCD3C2;
     z-index: 3;
     animation: floatBadge 4s ease-in-out infinite alternate;
 }
 
 @keyframes floatBadge {
     0% { transform: translateY(0px); }
-    100% { transform: translateY(-6px); }
+    100% { transform: translateY(-5px); }
 }
 
 /* Floating Caption Pill */
@@ -706,24 +698,30 @@
     display: block;
     height: 1px;
     width: 60px;
-    background: linear-gradient(90deg, transparent, #FF9933);
+    background: #DCD3C2;
 }
 
-.statsSectionLabel::after {
-    background: linear-gradient(90deg, #FF9933, transparent);
+.statsSectionLabel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #C69A43;
+    margin-bottom: 8px;
 }
 
 .sectionTitle {
-    font-size: var(--text-5xl);
-    font-weight: 900;
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 700;
     margin-bottom: var(--space-12);
     text-align: center;
-    letter-spacing: -2px;
-    background: var(--marvel-title-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: #17233D;
 }
 
 .statsGrid {
@@ -735,14 +733,13 @@
 .statCard {
     position: relative;
     overflow: hidden;
-    background: white;
+    background: #FFFCF5;
     padding: var(--space-10) var(--space-6);
-    border-radius: 28px;
+    border-radius: 8px;
     text-align: center;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 153, 51, 0.1);
-    will-change: transform;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+    box-shadow: 0 4px 20px rgba(23, 35, 61, 0.04);
+    border: 1px solid #DCD3C2;
 }
 
 .statCard::before {
@@ -751,62 +748,32 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #FF9933, #138808);
-    border-radius: 28px 28px 0 0;
-}
-
-.statCard:nth-child(2)::before {
-    background: linear-gradient(90deg, #138808, #0070c0);
-}
-
-.statCard:nth-child(3)::before {
-    background: linear-gradient(90deg, #0070c0, #FF9933);
-}
-
-.statCard:nth-child(4)::before {
-    background: linear-gradient(90deg, #FF9933, #138808);
+    height: 3px;
+    background: #C69A43;
 }
 
 .statCard:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 48px rgba(255, 153, 51, 0.15), 0 4px 12px rgba(0, 0, 0, 0.06);
-    border-color: rgba(255, 153, 51, 0.3);
+    transform: translateY(-6px);
+    box-shadow: 0 16px 36px rgba(23, 35, 61, 0.08);
+    border-color: #C69A43;
 }
 
 .statNumber {
-    font-size: var(--text-6xl);
-    font-weight: 900;
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    font-weight: 700;
     margin-bottom: var(--space-2);
     display: block;
-    letter-spacing: -1px;
-    /* Increased from -3px to prevent collision */
-    background: linear-gradient(135deg, #FF9933 0%, #e07b00 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.statCard:nth-child(2) .statNumber {
-    background: linear-gradient(135deg, #138808, #0a5c05);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.statCard:nth-child(3) .statNumber {
-    background: linear-gradient(135deg, #0070c0, #004a8f);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+    color: #17233D;
 }
 
 .statLabel {
-    font-size: var(--text-xs);
-    color: #64748b;
-    font-weight: 800;
+    font-size: 0.75rem;
+    color: #5F625F;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
 }
 
 /* Motto / Inspiration Section */
@@ -815,6 +782,9 @@
     position: relative;
     z-index: 1;
     overflow: hidden;
+    background: #FAF8F5;
+    border-top: 1px solid #DCD3C2;
+    border-bottom: 1px solid #DCD3C2;
 }
 
 /* 3 inspiration portrait cards */
@@ -830,27 +800,28 @@
 .inspireCard {
     flex: 1 1 260px;
     max-width: 300px;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 153, 51, 0.15);
-    border-radius: 24px;
+    background: #FFFCF5;
+    border: 1px solid #DCD3C2;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(23, 35, 61, 0.05);
     cursor: pointer;
-    transition: box-shadow 0.3s ease;
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
     display: flex;
     flex-direction: column;
 }
 
 .inspireCard:hover {
-    box-shadow: 0 16px 48px rgba(255, 153, 51, 0.18);
+    transform: translateY(-5px);
+    border-color: #C69A43;
+    box-shadow: 0 16px 36px rgba(23, 35, 61, 0.1);
 }
 
 .inspireImgWrap {
     width: 100%;
     aspect-ratio: 3 / 4;
     overflow: hidden;
+    background: #E8E1D3;
 }
 
 .inspireImg {
@@ -871,19 +842,20 @@
 }
 
 .inspireName {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: #1a1a1a;
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #17233D;
     margin: 0 0 0.25rem;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
 }
 
 .inspireTitle {
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.72rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #FF9933;
+    letter-spacing: 1.5px;
+    color: #C69A43;
     margin: 0;
 }
 
@@ -896,10 +868,11 @@
 }
 
 .mottoText {
-    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: clamp(1.1rem, 2.2vw, 1.35rem);
     line-height: 1.75;
-    color: #2d2d2d;
-    font-weight: 700;
+    color: #17233D;
+    font-weight: 500;
     margin: 0;
     font-style: italic;
 }

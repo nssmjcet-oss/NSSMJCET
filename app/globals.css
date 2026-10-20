@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Semi+Condensed:wght@600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..800;1,400..800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
 @import "../styles/variables.css";
 
 
@@ -15,27 +15,26 @@ body {
     max-width: 100vw;
     overflow-x: hidden;
     font-family: var(--font-sans);
-    color: var(--color-gray-900);
-    background-color: var(--color-white);
+    color: var(--marvel-text);
+    background-color: var(--marvel-bg);
     line-height: 1.6;
 }
 
 body.marvelous-theme {
-    background: #f8fafc;
-    color: #1a1a1a;
-    font-family: var(--font-futuristic);
+    background: var(--marvel-bg);
+    color: var(--marvel-text);
+    font-family: var(--font-sans);
 }
 
 [data-theme='dark'] body.marvelous-theme {
-    background: #020617;
-    color: #ffffff;
+    background: #0f172a;
+    color: #f8fafc;
 }
 
 .marvelous-theme {
-    background: url('/uploads/nss-bg.jpg') fixed center center !important;
-    background-size: cover !important;
+    background: var(--marvel-bg) !important;
     color: var(--marvel-text);
-    font-family: var(--font-futuristic);
+    font-family: var(--font-sans);
     transition: background-color var(--transition-slow), color var(--transition-slow);
 }
 
@@ -122,10 +121,9 @@ body.marvelous-theme {
 }
 
 .marvelous-theme {
-    background: url('/uploads/nss-bg.jpg') fixed center center !important;
-    background-size: cover !important;
+    background: var(--marvel-bg) !important;
     color: var(--marvel-text);
-    font-family: var(--font-futuristic);
+    font-family: var(--font-sans);
     transition: background-color var(--transition-slow), color var(--transition-slow);
 }
 
@@ -141,12 +139,6 @@ body.marvelous-theme {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.marvelous-theme {
-    background: url('/uploads/nss-bg.jpg') fixed center center !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
 }
 
 /* Explicitly protect the footer - White for Light, Dark for Dark */
@@ -320,8 +312,8 @@ button {
 /* Marvelous Button Styles - Refined Premium NSS Style */
 .marvelous-btn {
     padding: 12px 28px;
-    border-radius: 9999px;
-    font-weight: 700;
+    border-radius: 4px;
+    font-weight: 600;
     font-size: 0.95rem;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
@@ -338,55 +330,57 @@ button {
 }
 
 .marvelous-btn-primary {
-    background: #2563eb;
-    color: white !important;
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: #17233D;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 14px rgba(23, 35, 61, 0.2);
+    border: 1px solid #17233D;
 }
 
 .marvelous-btn-primary:hover {
-    background: #1d4ed8;
+    background: #24355a;
+    border-color: #24355a;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 6px 20px rgba(23, 35, 61, 0.3);
 }
 
 .marvelous-btn-secondary {
-    background: #138808;
-    color: white !important;
-    box-shadow: 0 4px 14px rgba(19, 136, 8, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #C69A43;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 14px rgba(198, 154, 67, 0.25);
+    border: 1px solid #C69A43;
 }
 
 .marvelous-btn-secondary:hover {
-    background: #0d5e06;
+    background: #b58934;
+    border-color: #b58934;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(19, 136, 8, 0.4);
+    box-shadow: 0 6px 20px rgba(198, 154, 67, 0.35);
 }
 
 .marvelous-btn-outline {
-    background: #ffffff;
-    border: 1.5px solid #2563eb;
-    color: #2563eb !important;
+    background: #FFFCF5;
+    border: 1.5px solid #17233D;
+    color: #17233D !important;
 }
 
 .marvelous-btn-outline:hover {
-    background: rgba(37, 99, 235, 0.06);
-    border-color: #1d4ed8;
-    color: #1d4ed8 !important;
+    background: #F3EFE6;
+    border-color: #17233D;
+    color: #17233D !important;
     transform: translateY(-2px);
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 4px 14px rgba(23, 35, 61, 0.1);
 }
 
 [data-theme='light'] .marvelous-btn-outline {
-    background: #ffffff;
-    border-color: #2563eb;
-    color: #2563eb !important;
+    background: #FFFCF5;
+    border-color: #17233D;
+    color: #17233D !important;
 }
 
 [data-theme='light'] .marvelous-btn-outline:hover {
-    background: rgba(37, 99, 235, 0.06);
-    border-color: #1d4ed8;
-    color: #1d4ed8 !important;
+    background: #F3EFE6;
+    border-color: #17233D;
+    color: #17233D !important;
 }
 
 .marvelous-btn-lg {

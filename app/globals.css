@@ -13,12 +13,8 @@
 html {
     max-width: 100vw;
     overflow-x: hidden;
-    /* ─── TRICOLOR WATERCOLOR BACKGROUND ─────────────────────────────
-       Attached to <html> with fixed so it stays put while content scrolls.
-       All transparent page/section backgrounds reveal this through them.
-    ──────────────────────────────────────────────────────────────────── */
-    background: url('/uploads/nss-bg.png') fixed center center / cover no-repeat;
-    background-color: #f7f3e9; /* cream fallback while image loads */
+    background: url('/uploads/nss-bg.png') center center / cover no-repeat fixed !important;
+    background-color: #f7f3e9;
 }
 
 body {
@@ -26,23 +22,27 @@ body {
     overflow-x: hidden;
     font-family: var(--font-sans);
     color: var(--marvel-text);
-    background: transparent !important; /* let html background show through */
+    background: url('/uploads/nss-bg.png') center center / cover no-repeat fixed !important;
     line-height: 1.6;
 }
 
 body.marvelous-theme {
-    background: transparent !important;
+    background: url('/uploads/nss-bg.png') center center / cover no-repeat fixed !important;
     color: var(--marvel-text);
     font-family: var(--font-sans);
 }
 
+[data-theme='dark'] html,
+[data-theme='dark'] body,
 [data-theme='dark'] body.marvelous-theme {
-    background: #0f172a;
+    background: linear-gradient(rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.92)), url('/uploads/nss-bg.png') center center / cover no-repeat fixed !important;
     color: #f8fafc;
 }
 
+main.marvelous-theme,
 .marvelous-theme {
     background: transparent !important;
+    background-color: transparent !important;
     color: var(--marvel-text);
     font-family: var(--font-sans);
     transition: color var(--transition-slow);
@@ -131,10 +131,11 @@ body.marvelous-theme {
 }
 
 .marvelous-theme {
-    background: var(--marvel-bg) !important;
+    background: transparent !important;
+    background-color: transparent !important;
     color: var(--marvel-text);
     font-family: var(--font-sans);
-    transition: background-color var(--transition-slow), color var(--transition-slow);
+    transition: color var(--transition-slow);
 }
 
 /* Global Transition & Reveal — fast so navigation feels instant */

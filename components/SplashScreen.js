@@ -1,58 +1,37 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import styles from './SplashScreen.module.css';
 
 export default function SplashScreen({ onComplete }) {
-    const [visible, setVisible] = useState(false);
+    const [visible, setVisible] = useState(true);
     const [exiting, setExiting] = useState(false);
-    const dismissedRef = useRef(false);
-    const onCompleteRef = useRef(onComplete);
-    onCompleteRef.current = onComplete;
 
     useEffect(() => {
-        // Check if already seen this session
-        let alreadySeen = false;
-        try {
-            alreadySeen = !!sessionStorage.getItem('nss_splash_shown');
-        } catch (_) { /* private mode */ }
-
-        if (alreadySeen) {
-            if (onCompleteRef.current) onCompleteRef.current();
-            return;
-        }
-
-        // Mark seen immediately
-        try { sessionStorage.setItem('nss_splash_shown', 'true'); } catch (_) {}
-
-        setVisible(true);
-
-        const dismiss = () => {
-            if (dismissedRef.current) return;
-            dismissedRef.current = true;
+        // Start fade-out at 1100ms
+        const exitTimer = setTimeout(() => {
             setExiting(true);
-            // Let the fade-out CSS animation play (300ms), then remove and call onComplete
-            setTimeout(() => {
-                setVisible(false);
-                if (onCompleteRef.current) onCompleteRef.current();
-            }, 320);
+        }, 1100);
+
+        // Completely remove from DOM at 1450ms
+        const removeTimer = setTimeout(() => {
+            setVisible(false);
+            if (onComplete) onComplete();
+        }, 1450);
+
+        return () => {
+            clearTimeout(exitTimer);
+            clearTimeout(removeTimer);
         };
+    }, [onComplete]);
 
-        // Auto-dismiss after 1.8s (enough for logo + text to appear nicely)
-        const timer = setTimeout(dismiss, 1800);
-
-        return () => clearTimeout(timer);
-    }, []); // ← empty deps: run ONCE on mount only
-
-    const handleClick = () => {
-        if (dismissedRef.current) return;
-        dismissedRef.current = true;
+    const handleDismiss = () => {
         setExiting(true);
         setTimeout(() => {
             setVisible(false);
-            if (onCompleteRef.current) onCompleteRef.current();
-        }, 320);
+            if (onComplete) onComplete();
+        }, 250);
     };
 
     if (!visible) return null;
@@ -60,7 +39,7 @@ export default function SplashScreen({ onComplete }) {
     return (
         <div
             className={`${styles.splash} ${exiting ? styles.splashExit : ''}`}
-            onClick={handleClick}
+            onClick={handleDismiss}
             style={{ cursor: 'pointer' }}
         >
             <div className={styles.content}>

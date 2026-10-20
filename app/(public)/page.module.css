@@ -772,7 +772,7 @@
     position: relative;
     z-index: 1;
     overflow: hidden;
-    background: rgba(250, 248, 245, 0.82);
+    background: transparent;
     border-top: 1px solid #DCD3C2;
     border-bottom: 1px solid #DCD3C2;
 }

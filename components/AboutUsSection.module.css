@@ -1,6 +1,6 @@
 .aboutSection {
     padding: clamp(60px, 8vw, 100px) 0 clamp(40px, 6vw, 80px);
-    background-color: rgba(247, 243, 233, 0.78);
+    background-color: transparent;
     position: relative;
     border-top: 1px solid var(--color-border-subtle, #DCD3C2);
 }

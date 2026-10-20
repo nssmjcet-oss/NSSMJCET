@@ -2,74 +2,77 @@
 
 import { useLanguage } from '../../../contexts/LanguageContext';
 import styles from './about.module.css';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import AboutUsSection from '@/components/AboutUsSection';
 import { fetchWithCache } from '@/utils/client-cache';
 
 const translations = {
-// ... (rest same)
     en: {
         title: 'About NSS',
-        subtitle: 'National Service Scheme',
-        motto: 'Not Me But You',
+        subtitle: 'National Service Scheme · MJCET',
+        motto: 'Not Me, But You',
         intro: {
-            title: 'Our Identity',
+            title: 'Our Identity & Symbolism',
             text: 'The National Service Scheme (NSS) is an Indian government-sponsored public service program conducted by the Ministry of Youth Affairs and Sports. Launched in 1969, its primary objective is to develop the personality and character of student youth through voluntary community service.',
-            symbol: 'The NSS symbol is based on the Wheel of the Konark Sun Temple, Odisha. It depicts the cycle of creation, preservation, and release, signifying movement in life across time and space. The wheel stands for the progressive cycle of life and service.',
+            symbol: 'The NSS symbol is based on the Wheel of the Konark Sun Temple, Odisha. It depicts the cycle of creation, preservation, and release, signifying movement in life across time and space. The 24 spokes represent 24 hours of the day, reminding volunteers to be perpetually ready in the service of the nation.',
         },
         objectives: {
+            eyebrow: 'Guiding Principles',
             title: 'Strategic Objectives',
+            subtext: 'Core objectives established by the Ministry of Youth Affairs & Sports to shape youth through civic action.',
             items: [
                 {
                     id: '01',
                     title: 'Community Dynamics',
-                    desc: 'Identify the needs and problems of the community and involve students in problem-solving.'
+                    desc: 'Identify the needs and problems of the community and involve students actively in practical problem-solving.'
                 },
                 {
                     id: '02',
                     title: 'Social Responsibility',
-                    desc: 'Develop among themselves a sense of social and civic responsibility.'
+                    desc: 'Develop among volunteers a profound sense of civic duty, social cohesion, and ethical responsibility.'
                 },
                 {
                     id: '03',
                     title: 'Practical Solutions',
-                    desc: 'Utilize knowledge in finding practical solutions to individual and community problems.'
+                    desc: 'Apply classroom knowledge and engineering thinking to discover sustainable solutions for societal challenges.'
                 },
                 {
                     id: '04',
-                    title: 'Group Living',
-                    desc: 'Develop competence required for group-living and sharing of responsibilities.'
+                    title: 'Democratic Living',
+                    desc: 'Cultivate democratic attitudes, group living skills, and selfless sharing of communal responsibilities.'
                 },
                 {
                     id: '05',
                     title: 'Leadership Qualities',
-                    desc: 'Acquire leadership qualities and democratic attitudes through community service.'
+                    desc: 'Acquire leadership qualities, empathy, and organizational competence through active community field work.'
                 },
                 {
                     id: '06',
                     title: 'National Integration',
-                    desc: 'Practice national integration and social harmony to build a stronger nation.'
+                    desc: 'Foster national integration, communal harmony, and inclusive development across all sections of society.'
                 }
             ],
         },
         mjcet: {
             title: 'NSS MJCET Chapter',
-            text: 'Continuing the legacy of service, NSS MJCET empowers students to become socially responsible citizens. Through outreach and innovation, we bridge the gap between education and community needs.',
+            text: 'Continuing the proud legacy of service, the NSS MJCET unit empowers engineering students to bridge technical excellence with social empathy. Through outreach, environmental drives, healthcare camps, and literacy campaigns, we nurture engineers who lead with conscience.',
         },
     },
     te: {
         title: 'NSS గురించి',
-        subtitle: 'నేషనల్ సర్వీస్ స్కీమ్',
+        subtitle: 'నేషనల్ సర్వీస్ స్కీమ్ · MJCET',
         motto: 'నేను కాదు మీరు',
         intro: {
-            title: 'మా గుర్తింపు',
-            text: 'జాతీయ సేవా పథకం (NSS) అనేది భారత ప్రభుత్వ యువజన వ్యవహారాలు మరియు క్రీడల మంత్రిత్వ శాఖ నిర్వహించే పబ్లిక్ సర్వీస్ ప్రోగ్రామ్. 1969లో ప్రారంభించబడిన దీని ప్రధాన లక్ష్యం స్వచ్ఛంద సామాజిక సేవ ద్వారా విద్యార్థుల వ్యక్తిత్వాన్ని మరియు స్వభావాన్ని అభివృద్ధి చేయడం.',
+            title: 'మా గుర్తింపు & చిహ్నం',
+            text: 'జాతీయ సేవా పథకం (NSS) అనేది భారత ప్రభుత్వ యువజన వ్యవహారాలు మరియు క్రీడల మంత్రిత్వ శాఖ నిర్వహించే పబ్లిక్ సర్వీస్ ప్రోగ్రామ్. 1969లో ప్రారంభించబడిన దీని ప్రధాన లక్ష్యం స్వచ్ఛంద సామాజిక సేవ ద్వారా విద్యార్థుల వ్యక్తిత్వాన్ని అభివృద్ధి చేయడం.',
             symbol: 'NSS చిహ్నం ఒడిశాలోని కోణార్క్ సూర్య దేవాలయ చక్రంపై ఆధారపడి ఉంటుంది. ఇది సృష్టి, సంరక్షణ మరియు విడుదలను వర్ణిస్తుంది, ఇది సమయం మరియు స్థలం అంతటా జీవితంలో కదలికను సూచిస్తుంది.',
         },
         objectives: {
+            eyebrow: 'మార్గదర్శక సూత్రాలు',
             title: 'ముఖ్య లక్ష్యాలు',
+            subtext: 'సమాజ సేవ ద్వారా యువతను తీర్చిదిద్దడానికి ముఖ్య లక్ష్యాలు.',
             items: [
                 {
                     id: '01',
@@ -84,7 +87,7 @@ const translations = {
                 {
                     id: '03',
                     title: 'ఆచరణాత్మక పరిష్కారాలు',
-                    desc: 'వ్యక్తిగత మరియు సామాజిక సమస్యలకు ఆచరణాత్మక పరిష్కారాలను కనుగొనడంలో జ్ఞానాన్ని ఉపయోగించడం.'
+                    desc: 'సమస్యలకు ఆచరణాత్మక పరిష్కారాలను కనుగొనడంలో జ్ఞానాన్ని ఉపయోగించడం.'
                 },
                 {
                     id: '04',
@@ -110,15 +113,17 @@ const translations = {
     },
     hi: {
         title: 'एनएसएस के बारे में',
-        subtitle: 'राष्ट्रीय सेवा योजना',
+        subtitle: 'राष्ट्रीय सेवा योजना · MJCET',
         motto: 'मैं नहीं बल्कि आप',
         intro: {
-            title: 'हमारी पहचान',
+            title: 'हमारी पहचान और प्रतीक',
             text: 'राष्ट्रीय सेवा योजना (एनएसएस) युवा मामले और खेल मंत्रालय द्वारा संचालित एक भारत सरकार प्रायोजित सार्वजनिक सेवा कार्यक्रम है। 1969 में शुरू किया गया, इसका प्राथमिक लक्ष्य स्वैच्छिक सामुदायिक सेवा के माध्यम से छात्र युवाओं के व्यक्तित्व का विकास करना है।',
             symbol: 'एनएसएस प्रतीक कोणार्क सूर्य मंदिर, ओडिशा के पहिये पर आधारित है। यह सृजन, संरक्षण और मुक्ति के चक्र को चित्रित करता है।',
         },
         objectives: {
+            eyebrow: 'मार्गदर्शक सिद्धांत',
             title: 'रणनीतिक लक्ष्य',
+            subtext: 'सामुदायिक सेवा के माध्यम से युवाओं के समग्र विकास के मुख्य उद्देश्य।',
             items: [
                 {
                     id: '01',
@@ -162,8 +167,7 @@ const translations = {
 export default function AboutPage() {
     const { language } = useLanguage();
     const [dynamicContent, setDynamicContent] = useState(null);
-    const t = translations[language];
-    const containerRef = useRef(null);
+    const t = translations[language] || translations.en;
 
     useEffect(() => {
         fetchWithCache('/api/content?pageId=about')
@@ -173,207 +177,167 @@ export default function AboutPage() {
             .catch(err => console.error('About fetch error:', err));
     }, []);
 
-    // Merge logic: Use dynamic if available, otherwise fallback
+    // Merge logic: Use dynamic title/content if available
     const displayTitle = dynamicContent?.title?.[language] || dynamicContent?.title?.en || t.title;
-    const displayIntro = dynamicContent?.content?.[language] || dynamicContent?.content?.en || t.intro.text;
+    const displaySubtitle = t.subtitle;
     const displaySections = dynamicContent?.sections || [];
 
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start start", "end end"]
-    });
-
-    const chakraRotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
-
     return (
-        <div className={styles.aboutPage} ref={containerRef}>
-            {/* 1. HERO SECTION */}
+        <div className={styles.aboutPage}>
+            {/* 1. EDITORIAL HERO SECTION */}
             <section className={styles.heroSection}>
-                <div className={styles.tricolorOverlay} />
-                <motion.div
-                    className={styles.chakraWatermark}
-                    style={{ rotate: chakraRotate }}
-                >
-                    <svg viewBox="0 0 100 100" className={styles.chakraSvg}>
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                        <circle cx="50" cy="50" r="8" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                        {[...Array(24)].map((_, i) => (
-                            <line
-                                key={i}
-                                x1="50" y1="50"
-                                x2={50 + 45 * Math.cos((i * 15 * Math.PI) / 180)}
-                                y2={50 + 45 * Math.sin((i * 15 * Math.PI) / 180)}
-                                stroke="currentColor"
-                                strokeWidth="0.5"
-                            />
-                        ))}
-                    </svg>
-                </motion.div>
-
                 <div className="container">
                     <div className={styles.heroContent}>
-                        <motion.h1
-                            initial={{ opacity: 0, y: 40 }}
+                        <motion.div
+                            className={styles.heroEyebrow}
+                            initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <span>National Service Scheme · MJCET</span>
+                        </motion.div>
+                        <motion.h1
+                            className={styles.heroTitle}
+                            initial={{ opacity: 0, y: 25 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, delay: 0.1 }}
                         >
                             {displayTitle}
                         </motion.h1>
-                        <motion.div
-                            className={styles.heroLine}
-                            initial={{ scaleX: 0 }}
-                            animate={{ scaleX: 1 }}
-                            transition={{ delay: 0.4, duration: 1 }}
-                        />
                         <motion.p
                             className={styles.heroSubtitle}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5, duration: 0.8 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.7, delay: 0.2 }}
                         >
-                            {t.subtitle}
+                            {displaySubtitle}
                         </motion.p>
                     </div>
                 </div>
             </section>
 
-            <div className="container">
-                {/* 2. IDENTITY CARD */}
-                <motion.section
-                    className={styles.introCardSection}
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.8 }}
-                >
-                    <div className={styles.glassCard}>
-                        <div className={styles.cardLayout}>
-                            <motion.div
-                                className={styles.logoContainer}
-                                whileHover={{ rotateY: 15, rotateX: -10, scale: 1.05 }}
-                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                            >
-                                <div className={styles.logoBacklight} />
-                                <Image
-                                    src="/uploads/nss-logo.png"
-                                    alt="NSS Logo"
-                                    width={200}
-                                    height={200}
-                                    className={styles.nssLogo}
-                                />
-                            </motion.div>
-                            <div className={styles.introText}>
-                                <h2 className={styles.glassTitle}>{t.intro.title}</h2>
-                                <p className={styles.mainDescription}>{displayIntro}</p>
-                                <div className={styles.symbolInfo}>
-                                    <div className={styles.symbolTag}>SYMBOLISM</div>
-                                    <p>{t.intro.symbol}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </motion.section>
+            {/* 2. EDITORIAL ABOUT US SECTION — Identity Emblem + Who We Are + Activity Cycle */}
+            <AboutUsSection language={language} />
 
-                {/* 3. OBJECTIVES GRID */}
-                <section className={styles.objectivesSection}>
-                    <motion.h2
-                        className={styles.sectionHeading}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        {t.objectives.title}
-                    </motion.h2>
+            {/* 3. STRATEGIC OBJECTIVES SECTION */}
+            <section className={styles.objectivesSection}>
+                <div className="container">
+                    <div className={styles.sectionHeader}>
+                        <span className={styles.sectionEyebrow}>{t.objectives.eyebrow}</span>
+                        <h2 className={styles.sectionHeading}>{t.objectives.title}</h2>
+                        <p className={styles.sectionSubtext}>{t.objectives.subtext}</p>
+                    </div>
 
                     <div className={styles.objectivesGrid}>
                         {t.objectives.items.map((item, index) => (
                             <motion.div
                                 key={item.id}
                                 className={styles.objectiveCard}
-                                initial={{ opacity: 0, y: 30 }}
+                                initial={{ opacity: 0, y: 25 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: index * 0.1, duration: 0.6 }}
-                                whileHover={{
-                                    y: -10,
-                                    scale: 1.03,
-                                    borderColor: index % 2 === 0 ? 'rgba(255, 153, 51, 0.4)' : 'rgba(19, 136, 8, 0.4)'
-                                }}
+                                transition={{ delay: index * 0.08, duration: 0.5 }}
                             >
                                 <div className={styles.cardHeader}>
                                     <span className={styles.cardNumber}>{item.id}</span>
-                                    <div className={styles.accentLine} />
+                                    <div className={styles.cardLine} />
                                 </div>
                                 <h3 className={styles.cardTitle}>{item.title}</h3>
                                 <p className={styles.cardDesc}>{item.desc}</p>
-                                <div className={styles.cardGlow} />
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* 4. SYMBOLISM & KONARK WHEEL SECTION */}
+            <section className={styles.symbolSection}>
+                <div className="container">
+                    <motion.div
+                        className={styles.symbolCard}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7 }}
+                    >
+                        <div className={styles.symbolEmblemCol}>
+                            <div className={styles.symbolEmblemFrame}>
+                                <Image
+                                    src="/uploads/nss-logo.png"
+                                    alt="NSS Crest"
+                                    width={150}
+                                    height={150}
+                                    priority
+                                />
+                            </div>
+                            <span className={styles.symbolBadge}>OFFICIAL EMBLEM</span>
+                        </div>
+                        <div className={styles.symbolContentCol}>
+                            <h2 className={styles.symbolHeading}>{t.intro.title}</h2>
+                            <p className={styles.symbolText}>{t.intro.text}</p>
+                            <p className={styles.symbolText}>{t.intro.symbol}</p>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* 5. INSTITUTIONAL PRIDE SECTION */}
+            <section className={styles.mjcetSection}>
+                <div className="container">
+                    <motion.div
+                        className={styles.mjcetCard}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7 }}
+                    >
+                        <div className={styles.mjcetIdentity}>
+                            <div className={styles.mjcetLogoWrap}>
+                                <Image
+                                    src="/uploads/sues-logo.png"
+                                    alt="MJCET Logo"
+                                    width={120}
+                                    height={120}
+                                    priority
+                                />
+                            </div>
+                            <span className={styles.mjcetName}>MJCET</span>
+                        </div>
+                        <div className={styles.mjcetContent}>
+                            <h2 className={styles.mjcetTitle}>{t.mjcet.title}</h2>
+                            <p className={styles.mjcetDesc}>{t.mjcet.text}</p>
+                            <div className={styles.mottoPill}>
+                                <span>&ldquo;{t.motto}&rdquo;</span>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* 6. DYNAMIC SECTIONS FROM ADMIN */}
+            {displaySections.length > 0 && (
+                <section className={styles.objectivesSection}>
+                    <div className="container">
+                        {displaySections.map((section, idx) => (
+                            <motion.div
+                                key={idx}
+                                className={styles.objectiveCard}
+                                style={{ marginBottom: '24px' }}
+                                initial={{ opacity: 0, y: 25 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                            >
+                                <h3 className={styles.cardTitle}>
+                                    {section.heading?.[language] || section.heading?.en}
+                                </h3>
+                                <p className={styles.cardDesc} style={{ whiteSpace: 'pre-wrap' }}>
+                                    {section.content?.[language] || section.content?.en}
+                                </p>
                             </motion.div>
                         ))}
                     </div>
                 </section>
-
-                {/* 4. INSTITUTIONAL PRIDE */}
-                <motion.section
-                    className={styles.mjcetSection}
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1 }}
-                >
-                    <div className={styles.mjcetGlass}>
-                        <div className={styles.mjcetLayout}>
-                            <div className={styles.institutionIdentity}>
-                                <motion.div
-                                    className={styles.instLogoWrap}
-                                    whileHover={{ y: -5, scale: 1.05 }}
-                                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                                >
-                                    <Image
-                                        src="/uploads/sues-logo.png"
-                                        alt="MJCET Logo"
-                                        width={140}
-                                        height={140}
-                                        className={styles.suesLogo}
-                                        priority
-                                    />
-                                </motion.div>
-                                <h3>MJCET</h3>
-                            </div>
-                            <div className={styles.mjcetContent}>
-                                <h2>{t.mjcet.title}</h2>
-                                <p>{t.mjcet.text}</p>
-                                <div className={styles.mottoText}>{t.motto}</div>
-                            </div>
-                        </div>
-                    </div>
-                </motion.section>
-
-                {/* 5. DYNAMIC SECTIONS FROM ADMIN */}
-                {displaySections.length > 0 && (
-                    <section className={styles.objectivesSection}>
-                        {displaySections.map((section, idx) => (
-                            <motion.div
-                                key={idx}
-                                className={styles.glassCard}
-                                style={{ marginBottom: '2rem', padding: '2rem' }}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                            >
-                                <h3 style={{ color: 'var(--color-primary)', marginBottom: '1rem', fontSize: '1.8rem' }}>
-                                    {section.heading[language] || section.heading.en}
-                                </h3>
-                                <div style={{ lineLeight: 1.8, fontSize: '1.1rem', color: '#444', whiteSpace: 'pre-wrap' }}>
-                                    {section.content[language] || section.content.en}
-                                </div>
-                            </motion.div>
-                        ))}
-                    </section>
-                )}
-            </div>
-
-            {/* 6. WHO WE ARE + ACTIVITY CYCLE — Editorial Section */}
-            <AboutUsSection language={language} />
+            )}
         </div>
     );
 }

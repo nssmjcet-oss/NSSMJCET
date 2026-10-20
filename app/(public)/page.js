@@ -306,10 +306,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* 2. Events Slider — original animated horizontal slider */}
-            <EventSlider onViewDetails={setSelectedEvent} />
-
-            {/* 3. Inspiration Section (Gandhi, Vivekananda, Ambedkar + NSS Motto) */}
+            {/* 2. Inspiration Section (Gandhi, Vivekananda, Ambedkar + NSS Motto) */}
             <MottoSection language={language} variants={dreamyReveal} />
 
             {/* Featured Spotlight / Live Event Section */}
@@ -368,15 +365,18 @@ export default function Home() {
                 </section>
             )}
 
-            {/* 4. Flagship Initiatives */}
+            {/* 3. Flagship Initiatives */}
             <FlagshipSection
                 flagships={flagships}
                 allEvents={allEvents}
                 onSelectEvent={setSelectedEvent}
             />
 
-            {/* 5. Leadership Section (Chairman & Program Officer) */}
+            {/* 4. Leadership Section (Chairman & Program Officer) */}
             <LeadershipSection />
+
+            {/* 5. Events Slider — placed right before Our Impact */}
+            <EventSlider onViewDetails={setSelectedEvent} />
 
             {/* 6. Our Impact (Dynamic Stats Counter) */}
             <section className={styles.stats}>

@@ -4,6 +4,7 @@ import { useLanguage, getText } from '@/contexts/LanguageContext';
 import styles from './LeadershipSection.module.css';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Quote, Sparkles, Building2 } from 'lucide-react';
 import { fetchWithCache } from '@/utils/client-cache';
 
@@ -28,22 +29,22 @@ export default function LeadershipSection() {
             .catch(console.error);
     }, []);
 
-    // 1. Chairman first, 2. Programme Officer second (stacked up and down)
+    // 1. Chairman first, 2. Programme Officer second
     const leaders = [
         {
             data: chairmanData,
             roleTag: 'CHAIRMAN',
             roleTitle: 'Chairman, NSS MJCET',
-            designationFallback: 'Principal & Head of Institution',
+            designationFallback: 'Professor & Principal',
             college: 'Muffakham Jah College of Engineering & Technology',
-            accent: 'saffron',
-            quoteFallback: 'Empowering youth through community service is at the very core of institutional education. NSS MJCET instills the lifelong values of leadership, empathy, and selfless nation-building.'
+            accent: 'gold',
+            quoteFallback: 'EDUCATION IS THE ARCHITECTURE OF THE SOUL'
         },
         {
             data: officerData,
             roleTag: 'PROGRAMME OFFICER',
             roleTitle: 'NSS Programme Officer',
-            designationFallback: 'NSS Programme Officer & Faculty, Mechanical Engg.',
+            designationFallback: 'NSS Programme Officer',
             college: 'Muffakham Jah College of Engineering & Technology',
             accent: 'green',
             quoteFallback: 'Service to society is service to humanity. Every volunteer carries the power to ignite meaningful change and transform communities with compassion and dedication.'
@@ -71,7 +72,7 @@ export default function LeadershipSection() {
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
                     >
-                        Leadership & Patrons
+                        Leadership &amp; Patrons
                     </motion.h2>
                     <motion.p
                         className={styles.sectionSubtext}
@@ -84,10 +85,10 @@ export default function LeadershipSection() {
                     </motion.p>
                 </div>
 
-                {/* Stacked Executive Cards (Up & Down: Chairman first, then Programme Officer) */}
-                <div className={styles.leadersStack}>
+                {/* Team-cards style 2-column grid */}
+                <div className={styles.leadersGrid}>
                     {leaders.map((item, idx) => (
-                        <ExecutiveCard
+                        <LeaderTeamCard
                             key={idx}
                             item={item}
                             language={language}
@@ -100,68 +101,82 @@ export default function LeadershipSection() {
     );
 }
 
-function ExecutiveCard({ item, language, index }) {
+function LeaderTeamCard({ item, language, index }) {
     const { data, roleTag, designationFallback, college, accent, quoteFallback } = item;
 
-    const name = data ? getText(data.name, language) : (accent === 'saffron' ? 'Dr. Basheer Ahmed' : 'Dr. Mohammed Naseeruddin');
+    const name = data ? getText(data.name, language) : (accent === 'gold' ? 'Dr. SURAMPUDI SRINIVASA RAO' : 'NBV Lakshmi Kumari');
     const designation = (data && getText(data.designation, language)) || designationFallback;
-    const quote = (data && getText(data.quote || data.message, language)) || quoteFallback;
+    const rawQuote = (data && getText(data.quote || data.message, language)) || quoteFallback;
+    const quote = rawQuote.replace(/^["'\u201C\u201D]+|["'\u201C\u201D]+$/g, '').trim();
     const photo = data?.photo;
+
+    const initials = name
+        ? name.split(' ').filter(Boolean).map(n => n[0]).join('').toUpperCase().substring(0, 2)
+        : 'LD';
 
     return (
         <motion.div
-            className={`${styles.executiveCard} ${accent === 'green' ? styles.cardGreen : styles.cardSaffron}`}
+            className={styles.leaderCard}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.6, delay: index * 0.15 }}
+            whileHover="hover"
         >
-            {/* Top Subtle Accent Bar */}
-            <div className={styles.cardTopAccent} />
+            {/* Portrait Image Canvas */}
+            <div className={styles.cardImageWrap}>
+                {photo ? (
+                    <motion.div
+                        className={styles.cardImgInner}
+                        variants={{ hover: { scale: 1.05 } }}
+                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <Image
+                            src={photo}
+                            alt={name}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 400px"
+                            className={styles.cardPhoto}
+                            priority
+                            unoptimized={typeof photo === 'string' && photo.startsWith('data:')}
+                        />
+                    </motion.div>
+                ) : (
+                    <div className={styles.cardPlaceholder}>
+                        <span>{initials}</span>
+                    </div>
+                )}
 
-            <div className={styles.cardLayout}>
-                {/* Left Portrait Column — CSI MJCET style */}
-                <div className={styles.portraitCol}>
-                    <div className={styles.portraitFrame}>
-                        {photo ? (
-                            <img
-                                src={photo}
-                                alt={name}
-                                className={styles.portraitImg}
-                            />
-                        ) : (
-                            <div className={styles.portraitPlaceholder}>
-                                <span>{name?.charAt(0)}</span>
-                            </div>
-                        )}
-                        <div className={styles.portraitGlow} />
+                {/* Subtle base gradient so text at bottom is always legible */}
+                <div className={styles.cardBaseGradient} />
+
+                {/* Top Role Badge */}
+                <div className={`${styles.roleBadge} ${accent === 'green' ? styles.badgeGreen : styles.badgeGold}`}>
+                    <span className={styles.roleDot} />
+                    <span>{roleTag}</span>
+                </div>
+
+                {/* Default Bottom Info Bar (Team-card style) */}
+                <div className={styles.bottomInfoBar}>
+                    <div className={styles.infoTextGroup}>
+                        <h3 className={styles.leaderName}>{name}</h3>
+                        <p className={styles.leaderDesignation}>{designation}</p>
+                        <p className={styles.leaderCollege}>{college}</p>
                     </div>
                 </div>
 
-                {/* Right Details Column — CSI MJCET style */}
-                <div className={styles.detailsCol}>
-                    {/* Role Header Badge */}
-                    <div className={styles.roleTag}>
-                        <span className={styles.roleDot} />
+                {/* Hover Quote Overlay — Slides up and reveals quote on cursor hover */}
+                <div className={styles.quoteOverlay}>
+                    <div className={styles.quoteIconCircle}>
+                        <Quote size={28} className={styles.quoteIcon} />
+                    </div>
+                    <blockquote className={styles.quoteMessage}>
+                        &ldquo;{quote}&rdquo;
+                    </blockquote>
+                    <div className={styles.quoteDivider} />
+                    <div className={styles.quoteAuthor}>
+                        <strong>{name}</strong>
                         <span>{roleTag}</span>
-                    </div>
-
-                    {/* Executive Full Name */}
-                    <h3 className={styles.executiveName}>{name}</h3>
-
-                    {/* Designation & Institution Box */}
-                    <div className={styles.designationBox}>
-                        <Building2 className={styles.boxIcon} size={18} />
-                        <div className={styles.boxTextGroup}>
-                            <span className={styles.boxPrimaryText}>{designation}</span>
-                            <span className={styles.boxSecondaryText}>{college}</span>
-                        </div>
-                    </div>
-
-                    {/* Quotation / Message Block */}
-                    <div className={styles.quoteBlock}>
-                        <Quote className={styles.quoteIcon} size={20} />
-                        <p className={styles.quoteText}>{quote}</p>
                     </div>
                 </div>
             </div>

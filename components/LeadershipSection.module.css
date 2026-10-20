@@ -1,12 +1,10 @@
 /* ============================================================
-   NSS MJCET — Executive Leadership Section Stylesheet
-   Modern, dignified, executive light theme (CSI MJCET & E-Cell MJCET style)
-   Clean white card surfaces, NSS Saffron & Green accents
-   Stacked vertically (Chairman first, Programme Officer second)
+   NSS MJCET — Leadership Section Stylesheet
+   Team-cards style with cursor hover quote reveal
    ============================================================ */
 
 .leadershipSection {
-    padding: clamp(28px, 4.5vw, 56px) 0;
+    padding: clamp(48px, 6vw, 84px) 0;
     position: relative;
     background: transparent;
     z-index: 2;
@@ -16,7 +14,7 @@
 .sectionHeader {
     text-align: center;
     max-width: 680px;
-    margin: 0 auto clamp(24px, 4vw, 44px);
+    margin: 0 auto clamp(28px, 4vw, 48px);
 }
 
 .headerBadge {
@@ -37,7 +35,7 @@
 
 .sectionHeading {
     font-family: var(--font-heading, 'Lora', serif);
-    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    font-size: clamp(2.2rem, 4.5vw, 3.4rem);
     font-weight: 700;
     color: #17233D;
     letter-spacing: -0.5px;
@@ -53,84 +51,56 @@
     font-weight: 400;
 }
 
-/* === STACKED CARDS CONTAINER === */
-.leadersStack {
-    display: flex;
-    flex-direction: column;
-    gap: 36px;
-    max-width: 960px;
+/* === TEAM-CARDS STYLE 2-COLUMN GRID === */
+.leadersGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 380px));
+    justify-content: center;
+    gap: clamp(24px, 4vw, 40px);
+    max-width: 860px;
     margin: 0 auto;
 }
 
-/* === EXECUTIVE CARD === */
-.executiveCard {
-    background: #FFFCF5;
-    border-radius: 12px;
-    box-shadow: 0 12px 36px rgba(23, 35, 61, 0.05);
-    border: 1px solid #DCD3C2;
-    overflow: hidden;
+/* === LEADER CARD === */
+.leaderCard {
     position: relative;
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 12px 36px rgba(23, 35, 61, 0.08);
+    border: 1px solid #DCD3C2;
+    background: #FFFCF5;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+    cursor: pointer;
 }
 
-.executiveCard:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 48px rgba(23, 35, 61, 0.08);
-}
-
-.cardSaffron:hover,
-.cardGreen:hover {
+.leaderCard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 56px rgba(23, 35, 61, 0.16);
     border-color: #C69A43;
 }
 
-/* Top Accent Line */
-.cardTopAccent {
-    height: 4px;
-    width: 100%;
-    background: linear-gradient(90deg, #17233D 0%, #C69A43 50%, #17233D 100%);
-}
-
-/* Inside Layout: 2 Columns on Desktop */
-.cardLayout {
-    padding: clamp(28px, 4vw, 40px);
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: clamp(24px, 4vw, 40px);
-    align-items: center;
-}
-
-/* === PORTRAIT COLUMN === */
-.portraitCol {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-}
-
-.portraitFrame {
-    width: 100%;
-    max-width: 240px;
-    aspect-ratio: 3 / 4;
-    border-radius: 20px;
-    overflow: hidden;
+/* Portrait Canvas (aspect ratio matching team cards) */
+.cardImageWrap {
     position: relative;
-    background: #f1f5f9;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: #e2e8f0;
 }
 
-.portraitImg {
+.cardImgInner {
+    position: relative;
     width: 100%;
     height: 100%;
+}
+
+.cardPhoto {
     object-fit: cover;
     object-position: top center;
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.executiveCard:hover .portraitImg {
-    transform: scale(1.04);
-}
-
-.portraitPlaceholder {
+.cardPlaceholder {
     width: 100%;
     height: 100%;
     display: flex;
@@ -138,186 +108,195 @@
     justify-content: center;
     background: linear-gradient(135deg, #f8fafc, #e2e8f0);
     color: #94a3b8;
-    font-size: 3.5rem;
+    font-size: 4rem;
     font-weight: 900;
 }
 
-.portraitGlow {
+/* Bottom base gradient so info bar is readable */
+.cardBaseGradient {
     position: absolute;
     inset: 0;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: linear-gradient(180deg, transparent 40%, rgba(23, 35, 61, 0.7) 75%, rgba(23, 35, 61, 0.95) 100%);
     pointer-events: none;
+    z-index: 1;
 }
 
-/* === DETAILS COLUMN === */
-.detailsCol {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-/* Role Header Tag */
-.roleTag {
+/* Role Badge at top left */
+.roleBadge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 3;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 5px 14px;
+    gap: 7px;
+    padding: 6px 14px;
     border-radius: 9999px;
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    width: fit-content;
-    margin-bottom: 8px;
+    backdrop-filter: blur(8px);
 }
 
-.cardSaffron .roleTag,
-.cardGreen .roleTag {
-    background: #F7F3E9;
-    color: #17233D;
-    border: 1px solid #DCD3C2;
+.badgeGold {
+    background: rgba(23, 35, 61, 0.85);
+    color: #FFFFFF;
+    border: 1px solid rgba(198, 154, 67, 0.5);
+}
+
+.badgeGreen {
+    background: rgba(23, 35, 61, 0.85);
+    color: #FFFFFF;
+    border: 1px solid rgba(34, 197, 94, 0.5);
 }
 
 .roleDot {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
+}
+
+.badgeGold .roleDot {
     background: #C69A43;
 }
 
-.cardSaffron .roleDot,
-.cardGreen .roleDot {
-    background: #C69A43;
+.badgeGreen .roleDot {
+    background: #22c55e;
 }
 
-/* Executive Full Name */
-.executiveName {
-    font-family: var(--font-heading, 'Lora', serif);
-    font-size: clamp(1.6rem, 2.8vw, 2.2rem);
-    font-weight: 700;
-    color: #17233D;
-    letter-spacing: -0.3px;
-    line-height: 1.2;
-    margin: 0 0 14px 0;
-    transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    display: inline-block;
+/* Default Bottom Info Bar (visible when not hovered) */
+.bottomInfoBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 22px 24px;
+    z-index: 2;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.cardSaffron:hover .executiveName,
-.cardSaffron .executiveName:hover,
-.cardGreen:hover .executiveName,
-.cardGreen .executiveName:hover {
-    color: #C69A43;
-    transform: translateX(4px);
-}
-
-/* Designation & Institution Box */
-.designationBox {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #F7F3E9;
-    border: 1px solid #DCD3C2;
-    border-radius: 8px;
-    padding: 10px 16px;
-    margin-bottom: 16px;
-}
-
-.boxIcon {
-    color: #17233D;
-    flex-shrink: 0;
-}
-
-.cardSaffron .boxIcon,
-.cardGreen .boxIcon {
-    color: #17233D;
-}
-
-.boxTextGroup {
+.infoTextGroup {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    min-width: 0;
+    gap: 3px;
 }
 
-.boxPrimaryText {
-    font-size: 13.5px;
+.leaderName {
+    font-family: var(--font-heading, 'Lora', serif);
+    font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0;
+    letter-spacing: -0.3px;
+    line-height: 1.25;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.leaderDesignation {
+    font-size: 0.86rem;
     font-weight: 600;
-    color: #17233D;
-    line-height: 1.35;
+    color: #C69A43;
+    margin: 0;
+    letter-spacing: 0.5px;
 }
 
-.boxSecondaryText {
-    font-size: 12px;
-    font-weight: 400;
-    color: #5F625F;
-    line-height: 1.3;
+.leaderCollege {
+    font-size: 0.74rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Quotation Block */
-.quoteBlock {
-    position: relative;
-    padding: 14px 18px 14px 40px;
-    border-radius: 0 8px 8px 0;
-    background: #FAF8F5;
-    border-left: 3px solid #C69A43;
+/* ============================================================
+   HOVER QUOTE OVERLAY
+   Smoothly reveals the inspirational quote when cursor enters card
+   ============================================================ */
+.quoteOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(23, 35, 61, 0.94);
+    backdrop-filter: blur(8px);
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 26px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(16px);
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.cardSaffron .quoteBlock,
-.cardGreen .quoteBlock {
-    background: #FAF8F5;
-    border-left: 3px solid #C69A43;
+.leaderCard:hover .quoteOverlay {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.quoteIconCircle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(198, 154, 67, 0.15);
+    border: 1px solid rgba(198, 154, 67, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
 .quoteIcon {
-    position: absolute;
-    top: 14px;
-    left: 12px;
     color: #C69A43;
 }
 
-.cardSaffron .quoteIcon,
-.cardGreen .quoteIcon {
-    color: #C69A43;
-}
-
-.quoteText {
+.quoteMessage {
     font-family: var(--font-heading, 'Lora', serif);
-    font-size: 13.5px;
-    line-height: 1.65;
-    color: #5F625F;
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
     font-style: italic;
-    font-weight: 400;
-    margin: 0;
+    color: #FFFFFF;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+    max-width: 90%;
+}
+
+.quoteDivider {
+    width: 44px;
+    height: 2px;
+    background: #C69A43;
+    border-radius: 2px;
+    margin-bottom: 14px;
+}
+
+.quoteAuthor {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.quoteAuthor strong {
+    font-size: 0.95rem;
+    color: #FFFFFF;
+    letter-spacing: 0.5px;
+}
+
+.quoteAuthor span {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #C69A43;
 }
 
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
-    .cardLayout {
+    .leadersGrid {
         grid-template-columns: 1fr;
-        padding: 24px 20px;
-        gap: 24px;
-        text-align: center;
-    }
-
-    .portraitCol {
-        margin: 0 auto;
-    }
-
-    .portraitFrame {
-        max-width: 200px;
-    }
-
-    .roleTag {
-        margin: 0 auto 10px;
-    }
-
-    .designationBox {
-        text-align: left;
-    }
-
-    .quoteBlock {
-        text-align: left;
+        max-width: 360px;
+        gap: 28px;
     }
 }

@@ -77,22 +77,12 @@ export default function SplashScreen({ onComplete }) {
                         {/* Subtitle */}
                         <motion.p
                             className={styles.subtitle}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.8, duration: 1.2, ease: "easeInOut" }}
                         >
-                            &quot;Not Me, But You&quot;
+                            &quot;Not Me But You&quot;
                         </motion.p>
-
-                        {/* Subtle navy and gold progress line */}
-                        <motion.div
-                            className={styles.loaderBar}
-                            initial={{ opacity: 0, width: 0 }}
-                            animate={{ opacity: 1, width: '120px' }}
-                            transition={{ delay: 0.5, duration: 1.0, ease: "easeInOut" }}
-                        >
-                            <span className={styles.loaderGlow} />
-                        </motion.div>
                     </div>
 
                 </motion.div>

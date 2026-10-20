@@ -306,7 +306,7 @@ function MemberCard({ member, tier = 'core', priority = false }) {
 
     return (
         <motion.div
-            className={`${styles.memberCard} ${tierClass}`}
+            className={`${styles.memberCard} ${tierClass} ${isFlipped ? styles.cardFlipped : ''}`}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -329,7 +329,7 @@ function MemberCard({ member, tier = 'core', priority = false }) {
                             alt={nameStr}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                            style={{ objectFit: 'cover', objectPosition: 'top center' }}
+                            className={styles.cardPhoto}
                             priority={priority}
                             unoptimized={typeof member.image === 'string' && member.image.startsWith('data:')}
                             onError={(e) => { if (e.target) e.target.src = '/placeholder-team.jpg'; }}
@@ -348,23 +348,6 @@ function MemberCard({ member, tier = 'core', priority = false }) {
                 {(tier === 'gb' || tier === 'execom') && (
                     <div className={styles.cardRoleBadge}>
                         {tier === 'gb' ? 'GOVERNING BODY' : 'EXEC'}
-                    </div>
-                )}
-
-                {/* Hover / Tap Quote Overlay — FOR GOVERNING BODY ONLY */}
-                {isGb && (
-                    <div className={`${styles.quoteOverlay} ${isFlipped ? styles.quoteOverlayActive : ''}`}>
-                        <div className={styles.quoteIconCircle}>
-                            <Quote size={24} className={styles.quoteIcon} />
-                        </div>
-                        <blockquote className={styles.quoteMessage}>
-                            &ldquo;{quote}&rdquo;
-                        </blockquote>
-                        <div className={styles.quoteDivider} />
-                        <div className={styles.quoteAuthor}>
-                            <strong>{nameStr}</strong>
-                            <span>{positionStr || 'GOVERNING BODY'}</span>
-                        </div>
                     </div>
                 )}
             </div>
@@ -406,6 +389,22 @@ function MemberCard({ member, tier = 'core', priority = false }) {
                     <span>LinkedIn</span>
                 </a>
             </div>
+
+            {/* Hover / Tap Quote Overlay — FOR GOVERNING BODY ONLY */}
+            {isGb && (
+                <div className={`${styles.quoteOverlay} ${isFlipped ? styles.quoteOverlayActive : ''}`}>
+                    <div className={styles.quoteIconCircle}>
+                        <Quote size={28} className={styles.quoteIcon} />
+                    </div>
+                    <blockquote className={styles.quoteMessage}>
+                        &ldquo;{quote}&rdquo;
+                    </blockquote>
+                    <div className={styles.quoteAuthor}>
+                        <strong>{nameStr}</strong>
+                        <span>{positionStr || 'GOVERNING BODY'}</span>
+                    </div>
+                </div>
+            )}
         </motion.div>
     );
 }

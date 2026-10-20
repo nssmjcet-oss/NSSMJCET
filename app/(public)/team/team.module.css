@@ -217,6 +217,18 @@
     backdrop-filter: blur(4px);
 }
 
+.cardPhoto {
+    object-fit: cover;
+    object-position: top center;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+}
+
+.cardGb:hover .cardPhoto,
+.cardGb.cardFlipped .cardPhoto {
+    filter: blur(8px) brightness(0.8);
+    transform: scale(1.08);
+}
+
 /* === FLOATING INFO BAR (E-Cell bottom overlay) === */
 .cardInfoBar {
     position: absolute;
@@ -234,6 +246,20 @@
     backdrop-filter: blur(16px) saturate(180%);
     border-radius: 16px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.cardGb:hover .cardInfoBar,
+.cardGb.cardFlipped .cardInfoBar {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+}
+
+.cardGb:hover .cardRoleBadge,
+.cardGb.cardFlipped .cardRoleBadge {
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 /* ============================================================
@@ -244,24 +270,24 @@
 .quoteOverlay {
     position: absolute;
     inset: 0;
-    background: rgba(23, 35, 61, 0.94);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    z-index: 5;
+    background: rgba(15, 23, 42, 0.50);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 10;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 24px 20px;
+    padding: 32px 24px;
     text-align: center;
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(14px);
     pointer-events: none;
     transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     border-radius: 22px;
 }
 
-.memberCard:hover .quoteOverlay,
+.cardGb:hover .quoteOverlay,
 .quoteOverlayActive {
     opacity: 1 !important;
     transform: translateY(0) !important;
@@ -269,16 +295,17 @@
 }
 
 .quoteIconCircle {
-    width: 44px;
-    height: 44px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
-    background: rgba(198, 154, 67, 0.15);
-    border: 1px solid rgba(198, 154, 67, 0.35);
+    background: rgba(198, 154, 67, 0.18);
+    border: 1px solid rgba(198, 154, 67, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 14px;
+    margin-bottom: 20px;
     flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .quoteIcon {
@@ -287,52 +314,47 @@
 
 .quoteMessage {
     font-family: var(--font-heading, 'Lora', serif);
-    font-size: clamp(0.92rem, 1.4vw, 1.05rem);
+    font-size: clamp(0.96rem, 1.5vw, 1.15rem);
     font-style: italic;
+    font-weight: 500;
     color: #FFFFFF;
-    line-height: 1.55;
-    margin: 0 0 14px 0;
-    max-width: 95%;
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+    max-width: 90%;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
     display: -webkit-box;
     -webkit-line-clamp: 5;
     line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-.quoteDivider {
-    width: 36px;
-    height: 2px;
-    background: #C69A43;
-    border-radius: 2px;
-    margin-bottom: 10px;
-    flex-shrink: 0;
 }
 
 .quoteAuthor {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
 }
 
 .quoteAuthor strong {
-    font-size: 0.9rem;
+    font-size: 0.98rem;
     font-weight: 700;
     color: #FFFFFF;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 240px;
+    max-width: 250px;
 }
 
 .quoteAuthor span {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
-    color: #C69A43;
+    color: #FCD34D;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
 }
 
 .cardInfoLeft {

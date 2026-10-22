@@ -1,0 +1,335 @@
+/* ─────────────────────────────────────────────────────────────
+   Gallery Floating Menu & Side Panel
+   Updated with larger NSS Logo (64px desktop / 48px mobile)
+   and balanced Menu Button (52px desktop / 46px mobile)
+   ───────────────────────────────────────────────────────────── */
+
+/* Floating Top-Left NSS Logo */
+.topLogoLink {
+    position: fixed;
+    top: max(24px, env(safe-area-inset-top, 24px));
+    left: max(24px, env(safe-area-inset-left, 24px));
+    z-index: 850;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.topLogoLink:hover {
+    transform: scale(1.04);
+}
+
+.topLogoImg {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.16));
+}
+
+.topLogoText {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-navy-primary, #17233D);
+    letter-spacing: 0.03em;
+    background: rgba(250, 248, 245, 0.82);
+    padding: 6px 14px;
+    border-radius: 8px;
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(220, 211, 194, 0.6);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+    .topLogoLink {
+        top: max(16px, env(safe-area-inset-top, 16px));
+        left: max(16px, env(safe-area-inset-left, 16px));
+        gap: 10px;
+    }
+
+    .topLogoImg {
+        width: 48px;
+        height: 48px;
+    }
+
+    .topLogoText {
+        font-size: 16px;
+        padding: 4px 10px;
+    }
+}
+
+/* Floating Hamburger Trigger Button */
+.floatingMenuBtn {
+    position: fixed;
+    top: max(24px, env(safe-area-inset-top, 24px));
+    right: max(24px, env(safe-area-inset-right, 24px));
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--color-navy-primary, #17233D);
+    color: #FFFFFF;
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 6px 20px rgba(23, 35, 61, 0.28), 0 2px 6px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 900;
+    transition: transform 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
+    outline: none;
+}
+
+.floatingMenuBtn:hover {
+    background: #0E1626;
+    transform: scale(1.08);
+    box-shadow: 0 8px 24px rgba(23, 35, 61, 0.38);
+}
+
+.floatingMenuBtn:focus-visible {
+    box-shadow: 0 0 0 3px #C69A43, 0 8px 24px rgba(23, 35, 61, 0.38);
+}
+
+/* Hamburger lines morphing to X */
+.hamburgerIcon {
+    width: 24px;
+    height: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hamburgerLine {
+    width: 100%;
+    height: 2.5px;
+    background: #FFFFFF;
+    border-radius: 2px;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    transform-origin: center;
+}
+
+.open .hamburgerLine:nth-child(1) {
+    transform: translateY(6.75px) rotate(45deg);
+}
+
+.open .hamburgerLine:nth-child(2) {
+    opacity: 0;
+}
+
+.open .hamburgerLine:nth-child(3) {
+    transform: translateY(-6.75px) rotate(-45deg);
+}
+
+@media (max-width: 768px) {
+    .floatingMenuBtn {
+        top: max(16px, env(safe-area-inset-top, 16px));
+        right: max(16px, env(safe-area-inset-right, 16px));
+        width: 46px;
+        height: 46px;
+    }
+
+    .hamburgerIcon {
+        width: 20px;
+        height: 14px;
+    }
+
+    .hamburgerLine {
+        height: 2px;
+    }
+
+    .open .hamburgerLine:nth-child(1) {
+        transform: translateY(6px) rotate(45deg);
+    }
+
+    .open .hamburgerLine:nth-child(3) {
+        transform: translateY(-6px) rotate(-45deg);
+    }
+}
+
+/* ── Menu Backdrop & Panel ── */
+.menuBackdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 26, 47, 0.45);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 950;
+    display: flex;
+    justify-content: flex-end;
+    animation: fadeIn 0.28s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.menuPanel {
+    width: min(380px, 86vw);
+    height: 100%;
+    height: 100dvh;
+    background: #FAF8F5;
+    border-left: 1px solid rgba(220, 211, 194, 0.8);
+    box-shadow: -8px 0 32px rgba(17, 26, 47, 0.22);
+    display: flex;
+    flex-direction: column;
+    padding: clamp(24px, 4vh, 36px) clamp(20px, 4vw, 32px);
+    overflow-y: auto;
+    animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    outline: none;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+/* Panel Header */
+.panelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(220, 211, 194, 0.6);
+    margin-bottom: 24px;
+}
+
+.panelLogoWrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.panelLogoImg {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.panelLogoTitle {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-navy-primary, #17233D);
+    line-height: 1.1;
+}
+
+.panelLogoSubtitle {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--color-accent-gold, #C69A43);
+    text-transform: uppercase;
+}
+
+.panelCloseBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid rgba(23, 35, 61, 0.15);
+    color: var(--color-navy-primary, #17233D);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.panelCloseBtn:hover {
+    background: var(--color-navy-primary, #17233D);
+    color: #FFFFFF;
+}
+
+/* Nav Links List */
+.navLinksList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+
+.navLinkItem {
+    display: flex;
+}
+
+.navLink {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--color-navy-primary, #17233D);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navLink:hover {
+    background: rgba(23, 35, 61, 0.05);
+    color: var(--color-accent-gold, #C69A43);
+    transform: translateX(4px);
+}
+
+.navLinkActive {
+    background: var(--color-navy-primary, #17233D) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(23, 35, 61, 0.15);
+}
+
+.activeDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent-gold, #C69A43);
+}
+
+/* Panel Footer with Language Toggle & Join Us */
+.panelFooter {
+    padding-top: 20px;
+    border-top: 1px solid rgba(220, 211, 194, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: auto;
+}
+
+.languageRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-navy-primary, #17233D);
+}
+
+.joinUsBtn {
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--color-accent-gold, #C69A43);
+    color: #FFFFFF;
+    border-radius: 9999px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.22s ease;
+    box-shadow: 0 4px 14px rgba(198, 154, 67, 0.25);
+    display: block;
+}
+
+.joinUsBtn:hover {
+    background: #B38632;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(198, 154, 67, 0.35);
+}

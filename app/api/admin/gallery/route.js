@@ -21,6 +21,8 @@ const DEFAULT_SETTINGS = {
     showMenuButton: true,
     showHeader: false,
     allowDrag: true,
+    dragEffects: true,
+    showDragHint: true,
     headerText: {
         en: {
             eyebrow: 'NSS MJCET · NOT ME BUT YOU',

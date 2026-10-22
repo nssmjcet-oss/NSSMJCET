@@ -383,3 +383,72 @@
         to   { opacity: 1; }
     }
 }
+
+/* ─────── Impact Shockwave Rings Pool ─────── */
+.impactRingLayer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 500;
+}
+
+.impactRing {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    margin-left: -30px;
+    margin-top: -30px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.4);
+    will-change: transform, opacity;
+}
+
+/* ─────── Drag Hint Pill ─────── */
+.dragHintPill {
+    position: fixed;
+    bottom: clamp(24px, 5vh, 48px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(220, 211, 194, 0.8);
+    border-radius: 9999px;
+    padding: 8px 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-navy-primary, #17233D);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    box-shadow: 0 8px 24px rgba(23, 35, 61, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+    pointer-events: none;
+    z-index: 850;
+    opacity: 0;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.dragHintVisible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.dragHintHidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+}
+
+.dragHintIcon {
+    width: 15px;
+    height: 15px;
+    opacity: 0.85;
+    color: var(--color-accent-gold, #C69A43);
+}

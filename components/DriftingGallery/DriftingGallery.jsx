@@ -210,6 +210,8 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         showMenuButton: true,
         showHeader: false,
         allowDrag: true,
+        dragEffects: true,
+        showDragHint: true,
         ...initialSettings,
     });
 
@@ -225,6 +227,64 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     // Auto spotlight
     const spotlightTimerRef = useRef(null);
     const hasInteractedRef = useRef(false);
+
+    // Reusable impact ring elements
+    const impactRingsRef = useRef([]);
+
+    // Drag hint pill state & touch detection
+    const [hintVisible, setHintVisible] = useState(false);
+    const [isTouchDevice, setIsTouchDevice] = useState(false);
+    const hintDismissedRef = useRef(false);
+
+    const dismissHint = useCallback(() => {
+        if (!hintDismissedRef.current) {
+            hintDismissedRef.current = true;
+            setHintVisible(false);
+            try {
+                localStorage.setItem('nssGalleryDragHintSeen', '1');
+            } catch {}
+        }
+    }, []);
+
+    // Drag hint timing & touch detection
+    useEffect(() => {
+        try {
+            if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+                setIsTouchDevice(true);
+            }
+        } catch {}
+
+        let seen = false;
+        try {
+            seen = !!localStorage.getItem('nssGalleryDragHintSeen');
+        } catch {}
+
+        if (seen) {
+            hintDismissedRef.current = true;
+            return;
+        }
+
+        if (settings.allowDrag === false || settings.showDragHint === false) {
+            return;
+        }
+
+        // Show at 2s
+        const showTimer = setTimeout(() => {
+            if (!hintDismissedRef.current) {
+                setHintVisible(true);
+            }
+        }, 2000);
+
+        // Auto hide after 7.5s (stays visible ~5.5s)
+        const hideTimer = setTimeout(() => {
+            setHintVisible(false);
+        }, 7500);
+
+        return () => {
+            clearTimeout(showTimer);
+            clearTimeout(hideTimer);
+        };
+    }, [settings.allowDrag, settings.showDragHint]);
 
     // Keep cardsDataRef in sync
     useEffect(() => {
@@ -331,6 +391,9 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         applyTextFade: settings.showHeader,
         textZoneHeight: isMobile ? 200 : 260,
         allowDrag: settings.allowDrag ?? true,
+        dragEffects: settings.dragEffects ?? true,
+        impactRingsRef,
+        onDragStartCallback: dismissHint,
     });
 
     // Layout builder based on screen area density & repeat rules
@@ -535,6 +598,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     const handleCardPointerDown = (e, index) => {
         if (e.button !== 0 && e.pointerType === 'mouse') return;
         registerInteraction();
+        dismissHint();
         pointerDownRef.current = {
             time: performance.now(),
             x: e.clientX,
@@ -731,6 +795,17 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         document.body
     ) : null;
 
+    // Drag hint copy with multilingual support
+    const hintText = (() => {
+        if (language === 'hi') {
+            return isTouchDevice ? 'फ़ोटो को छूकर खींचें' : 'फ़ोटो को खींचकर देखें';
+        }
+        if (language === 'te') {
+            return isTouchDevice ? 'ఫోటోను తాకి లాగండి' : 'ఫోటోను లాగండి';
+        }
+        return isTouchDevice ? 'Touch and drag a photo' : 'Drag a photo';
+    })();
+
     return (
         <div className={styles.fullScreenWrapper}>
             {/* Floating Menu Button & NSS Logo */}
@@ -787,6 +862,17 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                 <div className={styles.topEdgeGradient} />
                 <div className={styles.bottomEdgeGradient} />
 
+                {/* Impact Shockwaves Pool (6 reusable rings) */}
+                <div className={styles.impactRingLayer} aria-hidden="true">
+                    {[0, 1, 2, 3, 4, 5].map((i) => (
+                        <div
+                            key={i}
+                            ref={(el) => { impactRingsRef.current[i] = el; }}
+                            className={styles.impactRing}
+                        />
+                    ))}
+                </div>
+
                 {/* Drifting Cards Field */}
                 <div className={styles.driftingField}>
                     {cardsData.map((card, idx) => {
@@ -837,6 +923,32 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                     })}
                 </div>
             </section>
+
+            {/* Drag Hint Pill */}
+            {(settings.allowDrag ?? true) && (settings.showDragHint ?? true) && (
+                <aside
+                    className={`${styles.dragHintPill} ${hintVisible ? styles.dragHintVisible : styles.dragHintHidden}`}
+                    aria-live="polite"
+                    onClick={dismissHint}
+                >
+                    <svg
+                        className={styles.dragHintIcon}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
+                        <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2" />
+                        <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
+                        <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
+                    </svg>
+                    <span>{hintText}</span>
+                </aside>
+            )}
 
             {/* Enlarged Portal Overlay */}
             {overlay}

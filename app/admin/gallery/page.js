@@ -43,6 +43,8 @@ const DEFAULT_SETTINGS = {
     showMenuButton: true,
     showHeader: false,
     allowDrag: true,
+    dragEffects: true,
+    showDragHint: true,
     headerText: {
         en: {
             eyebrow: 'NSS MJCET · NOT ME BUT YOU',
@@ -790,6 +792,38 @@ export default function AdminGalleryPage() {
                                 </label>
                                 <span className={galleryStyles.helperText}>
                                     Drag cards with physics, collisions, and bounce (click/tap still opens)
+                                </span>
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={galleryStyles.checkboxLabel}>
+                                    <input
+                                        type="checkbox"
+                                        checked={settings.dragEffects ?? true}
+                                        onChange={(e) => setSettings((prev) => ({ ...prev, dragEffects: e.target.checked }))}
+                                        disabled={!settings.allowDrag}
+                                        style={{ width: '18px', height: '18px' }}
+                                    />
+                                    Drag Effects (Swing, Ripples & Scatter)
+                                </label>
+                                <span className={galleryStyles.helperText}>
+                                    Swing tilt, impact shockwave rings, and shake-to-scatter physics
+                                </span>
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={galleryStyles.checkboxLabel}>
+                                    <input
+                                        type="checkbox"
+                                        checked={settings.showDragHint ?? true}
+                                        onChange={(e) => setSettings((prev) => ({ ...prev, showDragHint: e.target.checked }))}
+                                        disabled={!settings.allowDrag}
+                                        style={{ width: '18px', height: '18px' }}
+                                    />
+                                    Show Drag Hint to New Visitors
+                                </label>
+                                <span className={galleryStyles.helperText}>
+                                    Brief educational pill prompting visitors to touch/drag a photo
                                 </span>
                             </div>
 

@@ -7,7 +7,11 @@ export const BASE_SPEED = 40; // px per second
 /**
  * Custom 60fps drift loop hook managing physics, edge wrap, tuned soft repulsion
  * for larger cards (90px - 170px), lens hover effect, corner avoidance, and
- * interactive dragging with multi-card elastic collisions and impulse decay.
+ * interactive dragging with:
+ *  1. Swing tilt via a damped spring (natural wobble when moving and settling).
+ *  2. Soft impact shockwaves (reusable ring pool, triggers on relative speed > threshold).
+ *  3. Shake-to-scatter physics (3 rapid direction reversals trigger radial blast).
+ *  4. Body grabbing cursor during active drag.
  */
 export function useDriftLoop({
     containerRef,
@@ -21,6 +25,9 @@ export function useDriftLoop({
     applyTextFade = false,
     textZoneHeight = 260,
     allowDrag = true,
+    dragEffects = true,
+    impactRingsRef,
+    onDragStartCallback,
 }) {
     const isPausedRef = useRef(false);
     const lastTimeRef = useRef(0);
@@ -40,6 +47,12 @@ export function useDriftLoop({
 
     const allowDragRef = useRef(allowDrag);
     allowDragRef.current = allowDrag;
+
+    const dragEffectsRef = useRef(dragEffects);
+    dragEffectsRef.current = dragEffects;
+
+    const onDragStartCallbackRef = useRef(onDragStartCallback);
+    onDragStartCallbackRef.current = onDragStartCallback;
 
     const fpsFrameCountRef = useRef(0);
     const fpsLastCheckRef = useRef(0);
@@ -61,9 +74,51 @@ export function useDriftLoop({
         grabOffsetY: 0,
         isDragging: false,
         velocityHistory: [], // [{ x, y, t }]
+        // Swing Tilt Spring Physics
+        tiltAngle: 0,
+        tiltVelocity: 0,
+        // Shake to Scatter Detector
+        // Reversals tracked: [{ dirX, dirY, time, peakX, peakY }]
+        reversals: [],
+        lastVxSign: 0,
+        lastVySign: 0,
+        lastScatterTime: 0,
     });
 
-    // Track ripple triggers
+    // Reusable Impact Shockwave Rings Pool (Max 6 rings)
+    // Structure: [{ x, y, startTime, duration: 450, active: false, scale: 0.4 }]
+    const ringPoolRef = useRef(
+        Array.from({ length: 6 }, () => ({
+            x: 0,
+            y: 0,
+            startTime: 0,
+            duration: 450,
+            active: false,
+        }))
+    );
+    // Rate limit contact rings per card pair
+    const lastRingTimeRef = useRef({}); // { 'i_j': timestamp }
+
+    // Spawn an impact ring from the pool
+    const triggerImpactRing = (x, y, isScatter = false) => {
+        if (!dragEffectsRef.current) return;
+        const now = performance.now();
+        const pool = ringPoolRef.current;
+        // Find first inactive or oldest ring
+        let ring = pool.find((r) => !r.active);
+        if (!ring) {
+            // Find oldest
+            ring = pool.reduce((oldest, r) => (r.startTime < oldest.startTime ? r : oldest), pool[0]);
+        }
+        ring.x = x;
+        ring.y = y;
+        ring.startTime = now;
+        ring.duration = isScatter ? 550 : 450;
+        ring.isScatter = isScatter;
+        ring.active = true;
+    };
+
+    // Track ripple triggers (container click)
     const triggerRipple = (x, y) => {
         ripplesRef.current.push({
             x,
@@ -104,6 +159,12 @@ export function useDriftLoop({
             grabOffsetY: relY - card.y,
             isDragging: false,
             velocityHistory: [{ x: relX, y: relY, t: performance.now() }],
+            tiltAngle: card.tiltSpring || 0,
+            tiltVelocity: 0,
+            reversals: [],
+            lastVxSign: 0,
+            lastVySign: 0,
+            lastScatterTime: dragStateRef.current.lastScatterTime || 0,
         };
     };
 
@@ -131,20 +192,106 @@ export function useDriftLoop({
                     el.classList.add('isDragging');
                     el.style.willChange = 'transform';
                 }
+                // Set cursor grabbing on body
+                document.body.style.cursor = 'grabbing';
+                if (onDragStartCallbackRef.current) {
+                    onDragStartCallbackRef.current();
+                }
             }
         }
 
         if (ds.isDragging) {
             const now = performance.now();
             ds.velocityHistory.push({ x: relX, y: relY, t: now });
-            // Keep only last ~100ms
             while (ds.velocityHistory.length > 2 && now - ds.velocityHistory[0].t > 120) {
                 ds.velocityHistory.shift();
+            }
+
+            // Direction reversal tracking for Shake-to-Scatter
+            // Condition: 3 rapid direction changes in 600ms with >= 45px distance and speed >= 350px/s
+            if (dragEffectsRef.current && ds.velocityHistory.length >= 2) {
+                const prev = ds.velocityHistory[ds.velocityHistory.length - 2];
+                const dtSec = (now - prev.t) / 1000;
+                if (dtSec > 0.005) {
+                    const instVx = (relX - prev.x) / dtSec;
+                    const instVy = (relY - prev.y) / dtSec;
+                    const vxSign = instVx > 120 ? 1 : instVx < -120 ? -1 : 0;
+                    const vySign = instVy > 120 ? 1 : instVy < -120 ? -1 : 0;
+
+                    if (vxSign !== 0 && ds.lastVxSign !== 0 && vxSign !== ds.lastVxSign) {
+                        ds.reversals.push({ time: now, x: relX, y: relY });
+                    } else if (vySign !== 0 && ds.lastVySign !== 0 && vySign !== ds.lastVySign) {
+                        ds.reversals.push({ time: now, x: relX, y: relY });
+                    }
+
+                    if (vxSign !== 0) ds.lastVxSign = vxSign;
+                    if (vySign !== 0) ds.lastVySign = vySign;
+
+                    // Filter reversals within last 600ms
+                    ds.reversals = ds.reversals.filter((r) => now - r.time <= 600);
+
+                    // Check for scatter trigger: >= 3 reversals, 1.5s cooldown
+                    if (ds.reversals.length >= 3 && now - ds.lastScatterTime > 1500) {
+                        // Check distance between first and last reversal to avoid micro tremor false triggers
+                        const firstR = ds.reversals[0];
+                        const lastR = ds.reversals[ds.reversals.length - 1];
+                        const spanDist = Math.hypot(lastR.x - firstR.x, lastR.y - firstR.y);
+
+                        if (spanDist >= 40) {
+                            ds.lastScatterTime = now;
+                            ds.reversals = [];
+                            triggerScatter(ds.cardIndex);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    // Scatter effect on rapid shake
+    const triggerScatter = (heldIndex) => {
+        const cards = cardsStateRef.current;
+        const heldCard = cards[heldIndex];
+        if (!heldCard) return;
+
+        const heldCenterX = heldCard.x + heldCard.size * 0.5;
+        const heldCenterY = heldCard.y + heldCard.size * 0.5;
+        const scatterRadius = heldCard.size * 3.2; // ~3 card sizes
+
+        // Trigger big shockwave ring around held card
+        triggerImpactRing(heldCenterX, heldCenterY, true);
+
+        const count = cards.length;
+        for (let j = 0; j < count; j++) {
+            if (j === heldIndex) continue;
+            const cj = cards[j];
+            if (cj.id === enlargedIdRef.current) continue;
+
+            const jCenterX = cj.x + cj.size * 0.5;
+            const jCenterY = cj.y + cj.size * 0.5;
+            const dx = jCenterX - heldCenterX;
+            const dy = jCenterY - heldCenterY;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < scatterRadius && dist > 1) {
+                const nx = dx / dist;
+                const ny = dy / dist;
+                // Closer cards fly farther
+                const factor = 1 - dist / scatterRadius;
+                const blastSpeed = 280 + factor * 380; // 280 - 660 px/s
+
+                cj.bounceVx = nx * blastSpeed;
+                cj.bounceVy = ny * blastSpeed;
+                cj.bounceDecay = 1.0;
+                cj.bounceSpin = (Math.random() - 0.5) * 12;
             }
         }
     };
 
     const endDrag = (pointerId) => {
+        // Remove grabbing cursor from body
+        document.body.style.cursor = '';
+
         const ds = dragStateRef.current;
         if (!ds.active || (pointerId !== null && ds.pointerId !== pointerId)) {
             return { wasDragging: false };
@@ -188,8 +335,12 @@ export function useDriftLoop({
                 card.vy = vy;
                 card.bounceVx = vx;
                 card.bounceVy = vy;
-                card.bounceDecay = 1.0; // Decay over ~1 second
+                card.bounceDecay = 1.0;
             }
+
+            // Keep residual swing spring on released card
+            card.tiltSpring = ds.tiltAngle;
+            card.tiltSpringVel = ds.tiltVelocity;
         }
 
         // Reset drag state
@@ -205,6 +356,12 @@ export function useDriftLoop({
             grabOffsetY: 0,
             isDragging: false,
             velocityHistory: [],
+            tiltAngle: 0,
+            tiltVelocity: 0,
+            reversals: [],
+            lastVxSign: 0,
+            lastVySign: 0,
+            lastScatterTime: dragStateRef.current.lastScatterTime || 0,
         };
 
         return { wasDragging };
@@ -297,6 +454,7 @@ export function useDriftLoop({
             const shouldFadeText = applyTextFadeRef.current;
             const ds = dragStateRef.current;
             const draggedIdx = ds.isDragging ? ds.cardIndex : -1;
+            const useEffects = dragEffectsRef.current && !prefersReducedMotion;
 
             // Clean expired ripples
             ripplesRef.current = ripplesRef.current.filter(
@@ -335,7 +493,7 @@ export function useDriftLoop({
                 const rawX = ds.currentX - ds.grabOffsetX;
                 const rawY = ds.currentY - ds.grabOffsetY;
 
-                // Keep inside screen boundaries (cannot be dragged fully out of viewport)
+                // Keep inside screen boundaries
                 const margin = 8;
                 const minX = margin;
                 const maxX = width - draggedCard.size - margin;
@@ -354,6 +512,23 @@ export function useDriftLoop({
                 draggedCard.y = clampedY;
                 draggedCard.vx = dragVx;
                 draggedCard.vy = dragVy;
+
+                // --- SWING TILT: DAMPED SPRING PHYSICS ---
+                if (useEffects) {
+                    // target tilt proportional to horizontal velocity (factor 0.035, clamped +-15 deg)
+                    const targetSwing = Math.max(-15, Math.min(15, dragVx * 0.035));
+                    // Spring equation: F = -k*(x - target) - c*v
+                    // k=36 (stiffness), c=7.5 (damping) for ~2-3 wobbles then settles in ~0.7s
+                    const k = 36;
+                    const c = 7.5;
+                    const springAccel = -k * (ds.tiltAngle - targetSwing) - c * ds.tiltVelocity;
+                    ds.tiltVelocity += springAccel * dt;
+                    ds.tiltAngle += ds.tiltVelocity * dt;
+                    // Clamp swing to [-20, 20]
+                    ds.tiltAngle = Math.max(-20, Math.min(20, ds.tiltAngle));
+                } else {
+                    ds.tiltAngle = 0;
+                }
             }
 
             // --- 2. COLLISIONS: DRAGGED CARD PUSHES OTHERS (HEAVY OBJECT) ---
@@ -382,23 +557,37 @@ export function useDriftLoop({
                         const nx = dx / dist;
                         const ny = dy / dist;
 
-                        // Push cj out smoothly
+                        // Soft separate cj
                         const overlap = minDist - dist;
                         cj.x += nx * overlap;
                         cj.y += ny * overlap;
 
-                        // Impulse based on drag speed with a reliable minimum push
-                        const impulse = Math.max(70, Math.min(360, dragSpeed * 0.85 + 60)) * (prefersReducedMotion ? 0.3 : 1.0);
+                        // Impulse based on drag speed
+                        const impulse = Math.max(70, Math.min(380, dragSpeed * 0.85 + 60)) * (prefersReducedMotion ? 0.3 : 1.0);
                         cj.bounceVx = nx * impulse;
                         cj.bounceVy = ny * impulse;
                         cj.bounceDecay = 1.0;
 
-                        // Small bounce spin clamped to baseTilt +-12
-                        if (!prefersReducedMotion) {
+                        if (useEffects) {
                             cj.bounceSpin = (Math.random() - 0.5) * 8;
                         }
 
-                        // Chain reaction depth 1: cj pushes its nearby neighbor
+                        // --- SOFT IMPACT SHOCKWAVE RING TRIGGER ---
+                        // Trigger only on relative impact speed above threshold (e.g. >= 140 px/s)
+                        // Rate limit to once per card-pair per 300ms
+                        if (useEffects && dragSpeed >= 140) {
+                            const pairKey = `${Math.min(draggedIdx, j)}_${Math.max(draggedIdx, j)}`;
+                            const lastRingTime = lastRingTimeRef.current[pairKey] || 0;
+                            if (now - lastRingTime >= 300) {
+                                lastRingTimeRef.current[pairKey] = now;
+                                // Contact point between centers
+                                const contactX = dCenterX + nx * dRadius;
+                                const contactY = dCenterY + ny * dRadius;
+                                triggerImpactRing(contactX, contactY, false);
+                            }
+                        }
+
+                        // Chain reaction depth 1
                         for (let k = 0; k < count; k++) {
                             if (k === j || k === draggedIdx) continue;
                             const ck = cards[k];
@@ -451,11 +640,25 @@ export function useDriftLoop({
                         ci.vy -= ny * push;
                         cj.vx += nx * push;
                         cj.vy += ny * push;
+
+                        // Check collision between two thrown/bouncing cards for impact ring
+                        const speedI = Math.hypot(ci.bounceVx || 0, ci.bounceVy || 0);
+                        const speedJ = Math.hypot(cj.bounceVx || 0, cj.bounceVy || 0);
+                        if (useEffects && (speedI > 160 || speedJ > 160)) {
+                            const pairKey = `${i}_${j}`;
+                            const lastRingTime = lastRingTimeRef.current[pairKey] || 0;
+                            if (now - lastRingTime >= 300) {
+                                lastRingTimeRef.current[pairKey] = now;
+                                const contactX = ci.x + ci.size * 0.5 + nx * (ci.size * 0.45);
+                                const contactY = ci.y + ci.size * 0.5 + ny * (ci.size * 0.45);
+                                triggerImpactRing(contactX, contactY, false);
+                            }
+                        }
                     }
                 }
             }
 
-            // --- 4. CARD UPDATES (INTEGRATE VELOCITIES, BOUNCES, LENS, AND RENDER) ---
+            // --- 4. CARD UPDATES & RENDERING ---
             for (let i = 0; i < count; i++) {
                 const card = cards[i];
                 const el = cardElsRef.current[i];
@@ -480,6 +683,19 @@ export function useDriftLoop({
                     if (card.bounceSpin) {
                         card.bounceSpin *= 0.92;
                         if (Math.abs(card.bounceSpin) < 0.05) card.bounceSpin = 0;
+                    }
+
+                    // Decay residual tilt spring after thrown release
+                    if (card.tiltSpring) {
+                        const k = 32;
+                        const c = 6.8;
+                        const springAccel = -k * card.tiltSpring - c * (card.tiltSpringVel || 0);
+                        card.tiltSpringVel = (card.tiltSpringVel || 0) + springAccel * dt;
+                        card.tiltSpring += card.tiltSpringVel * dt;
+                        if (Math.abs(card.tiltSpring) < 0.1 && Math.abs(card.tiltSpringVel) < 0.1) {
+                            card.tiltSpring = 0;
+                            card.tiltSpringVel = 0;
+                        }
                     }
 
                     // Edge bounce while being pushed / bounced
@@ -529,7 +745,7 @@ export function useDriftLoop({
                         card.vrot = Math.abs(card.vrot || 1);
                     }
 
-                    // --- Standard Screen Edge Wrap (when card leaves screen completely) ---
+                    // Screen Edge Wrap
                     const margin = card.size + 16;
                     let wrapped = false;
                     let reEntryX = card.x;
@@ -646,9 +862,9 @@ export function useDriftLoop({
                     }
                 }
 
-                // Lens effect: cursor approaching within ~180px (disabled while dragging or on dragged card)
+                // Lens effect: cursor approaching within ~180px (disabled while dragging)
                 let targetLensScale = isHeld ? 1.08 : 1.0;
-                let targetLensRot = isHeld ? 0 : 0;
+                let targetLensRot = 0;
 
                 const cx = card.x + card.size * 0.5;
                 const cy = card.y + card.size * 0.5;
@@ -717,18 +933,57 @@ export function useDriftLoop({
                 const rawOpacity = currentEnlarged ? card.baseOpacity * 0.4 : card.baseOpacity;
                 const renderOpacity = isHeld ? 1.0 : rawOpacity * edgeFade * textFactor * bloomFactor;
 
-                // Straighten tilt slightly when held
-                let baseRotation = isHeld ? (card.rot || 0) * 0.35 : (card.rot || 0);
-                let renderRot = baseRotation + (card.bounceSpin || 0) + (card.lensRot || 0);
-
-                // Clamp final angle to card.baseTilt +- 12 deg
-                const maxAngle = (card.baseTilt || 0) + 12;
-                const minAngle = (card.baseTilt || 0) - 12;
-                renderRot = Math.max(minAngle, Math.min(maxAngle, renderRot));
+                // Rotation calculation:
+                // If held: baseTilt (reduced) + swing spring angle
+                // Clamped strictly to baseTilt +- 20 while held
+                let renderRot;
+                if (isHeld) {
+                    const base = (card.baseTilt || 0) * 0.35;
+                    renderRot = base + (ds.tiltAngle || 0);
+                    const maxH = (card.baseTilt || 0) + 20;
+                    const minH = (card.baseTilt || 0) - 20;
+                    renderRot = Math.max(minH, Math.min(maxH, renderRot));
+                } else {
+                    renderRot = (card.rot || 0) + (card.bounceSpin || 0) + (card.lensRot || 0) + (card.tiltSpring || 0);
+                    // Clamped strictly to baseTilt +- 12 when settled/drifting
+                    const maxD = (card.baseTilt || 0) + 12;
+                    const minD = (card.baseTilt || 0) - 12;
+                    renderRot = Math.max(minD, Math.min(maxD, renderRot));
+                }
 
                 el.style.transform = `translate3d(${card.x.toFixed(1)}px, ${card.y.toFixed(1)}px, 0) rotate(${renderRot.toFixed(2)}deg) scale(${card.lensScale.toFixed(3)})`;
                 el.style.opacity = Math.max(0, Math.min(1, renderOpacity)).toFixed(3);
                 el.style.zIndex = isHeld ? 1000 : card.layer + 1;
+            }
+
+            // --- 5. ANIMATE REUSABLE IMPACT RINGS POOL ---
+            const ringPool = ringPoolRef.current;
+            const ringEls = impactRingsRef ? impactRingsRef.current : null;
+            if (ringEls && ringEls.length > 0) {
+                for (let r = 0; r < 6; r++) {
+                    const ring = ringPool[r];
+                    const rEl = ringEls[r];
+                    if (!rEl) continue;
+
+                    if (ring && ring.active) {
+                        const elapsed = now - ring.startTime;
+                        if (elapsed >= ring.duration) {
+                            ring.active = false;
+                            rEl.style.opacity = '0';
+                        } else {
+                            const p = elapsed / ring.duration;
+                            // Scale from 0.4 to 1.6 (or 2.4 for scatter)
+                            const maxScale = ring.isScatter ? 2.4 : 1.6;
+                            const scale = 0.4 + (maxScale - 0.4) * Math.sin(p * Math.PI * 0.5);
+                            // Fade out over second half
+                            const opacity = (1 - p).toFixed(2);
+                            rEl.style.transform = `translate3d(${ring.x.toFixed(1)}px, ${ring.y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
+                            rEl.style.opacity = opacity;
+                        }
+                    } else if (rEl.style.opacity !== '0') {
+                        rEl.style.opacity = '0';
+                    }
+                }
             }
         };
 
@@ -741,8 +996,9 @@ export function useDriftLoop({
             document.removeEventListener('visibilitychange', handleVisibilityChange);
             window.removeEventListener('blur', handleBlur);
             observer.disconnect();
+            document.body.style.cursor = '';
         };
-    }, [containerRef, cardElsRef, cardsStateRef, onMomentRecycle, textZoneHeight]);
+    }, [containerRef, cardElsRef, cardsStateRef, onMomentRecycle, textZoneHeight, impactRingsRef]);
 
     return {
         setPointer,

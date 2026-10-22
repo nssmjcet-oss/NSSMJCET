@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3C6E71"/>
+      <stop offset="100%" stop-color="#3C6E71" stop-opacity="0.82"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" rx="12" fill="url(#grad2)"/>
+  <circle cx="200" cy="160" r="100" fill="white" fill-opacity="0.08"/>
+  <g fill="#D9D9D9" color="#D9D9D9">
+    <path d="M200 60 L140 140 L170 140 L120 220 L185 220 L185 280 L215 280 L215 220 L280 220 L230 140 L260 140 Z" fill="currentColor" opacity="0.9"/>
+  </g>
+  <text x="200" y="315" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#D9D9D9" text-anchor="middle" letter-spacing="1.5">MOMENT 02</text>
+  <text x="200" y="342" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="500" fill="#D9D9D9" opacity="0.8" text-anchor="middle">VOLUNTEER STORY</text>
+</svg>

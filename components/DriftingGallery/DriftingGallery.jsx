@@ -209,6 +209,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         showLogo: true,
         showMenuButton: true,
         showHeader: false,
+        allowDrag: true,
         ...initialSettings,
     });
 
@@ -318,7 +319,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     const currentEnlargedId = currentEnlargedCard ? currentEnlargedCard.id : null;
 
     // Physics & Drift hook
-    const { setPointer, triggerRipple } = useDriftLoop({
+    const { setPointer, triggerRipple, startDrag, updateDrag, endDrag, cancelDrag } = useDriftLoop({
         containerRef,
         cardElsRef,
         cardsStateRef,
@@ -329,6 +330,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         speedMultiplier: settings.speedMultiplier,
         applyTextFade: settings.showHeader,
         textZoneHeight: isMobile ? 200 : 260,
+        allowDrag: settings.allowDrag ?? true,
     });
 
     // Layout builder based on screen area density & repeat rules
@@ -519,8 +521,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     };
 
     // Open from card's screen position
-    const handleCardClick = (e, index) => {
-        e.stopPropagation();
+    const openEnlarged = (index) => {
         registerInteraction();
         if (cardElsRef.current[index]) {
             sourceRectRef.current = cardElsRef.current[index].getBoundingClientRect();
@@ -528,17 +529,89 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         setEnlargedIndex(index);
     };
 
+    // Track pointer down for distinguishing click vs drag
+    const pointerDownRef = useRef({ time: 0, x: 0, y: 0, index: -1, pointerId: null });
+
+    const handleCardPointerDown = (e, index) => {
+        if (e.button !== 0 && e.pointerType === 'mouse') return;
+        registerInteraction();
+        pointerDownRef.current = {
+            time: performance.now(),
+            x: e.clientX,
+            y: e.clientY,
+            index,
+            pointerId: e.pointerId,
+        };
+        if (settings.allowDrag ?? true) {
+            e.currentTarget.setPointerCapture(e.pointerId);
+            startDrag(index, e.pointerId, e.clientX, e.clientY);
+        }
+    };
+
+    const handleCardPointerMove = (e, index) => {
+        if ((settings.allowDrag ?? true) && pointerDownRef.current.pointerId === e.pointerId) {
+            updateDrag(e.pointerId, e.clientX, e.clientY);
+        }
+    };
+
+    const handleCardPointerUp = (e, index) => {
+        const pd = pointerDownRef.current;
+        if (pd.pointerId === e.pointerId) {
+            try {
+                if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                    e.currentTarget.releasePointerCapture(e.pointerId);
+                }
+            } catch {}
+
+            const duration = performance.now() - pd.time;
+            const dist = Math.hypot(e.clientX - pd.x, e.clientY - pd.y);
+
+            let wasDragging = false;
+            if (settings.allowDrag ?? true) {
+                const res = endDrag(e.pointerId);
+                wasDragging = res.wasDragging;
+            }
+
+            // Click or tap condition: moved less than 6px AND released within 300ms
+            if (!wasDragging && dist < 6 && duration <= 300) {
+                openEnlarged(index);
+            }
+
+            pointerDownRef.current = { time: 0, x: 0, y: 0, index: -1, pointerId: null };
+        }
+    };
+
+    const handleCardPointerCancel = (e) => {
+        try {
+            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                e.currentTarget.releasePointerCapture(e.pointerId);
+            }
+        } catch {}
+        if (settings.allowDrag ?? true) {
+            cancelDrag();
+        }
+        pointerDownRef.current = { time: 0, x: 0, y: 0, index: -1, pointerId: null };
+    };
+
+    const handleCardClick = (e, index) => {
+        e.stopPropagation();
+        if (settings.allowDrag === false) {
+            openEnlarged(index);
+        }
+    };
+
     const handleClose = useCallback(() => {
         setEnlargedIndex(null);
         sourceRectRef.current = null;
-    }, []);
+        cancelDrag();
+    }, [cancelDrag]);
 
     // Keyboard navigation
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (enlargedIndex === null) return;
             registerInteraction();
-            if (e.key === 'Escape') handleClose();
+            if (e.key === 'Escape') { handleClose(); cancelDrag(); }
             else if (e.key === 'ArrowRight') setEnlargedIndex((prev) => (prev + 1) % cardsData.length);
             else if (e.key === 'ArrowLeft') setEnlargedIndex((prev) => (prev - 1 + cardsData.length) % cardsData.length);
         };
@@ -733,11 +806,16 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                                     opacity: isCurrent ? 0 : undefined,
                                     pointerEvents: isCurrent ? 'none' : undefined,
                                 }}
+                                onPointerDown={(e) => handleCardPointerDown(e, idx)}
+                                onPointerMove={(e) => handleCardPointerMove(e, idx)}
+                                onPointerUp={(e) => handleCardPointerUp(e, idx)}
+                                onPointerCancel={handleCardPointerCancel}
                                 onClick={(e) => handleCardClick(e, idx)}
+                                onDragStart={(e) => e.preventDefault()}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' || e.key === ' ') {
                                         e.preventDefault();
-                                        handleCardClick(e, idx);
+                                        openEnlarged(idx);
                                     }
                                 }}
                                 tabIndex={0}

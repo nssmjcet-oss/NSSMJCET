@@ -71,10 +71,22 @@
         0 2px 6px rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(220, 211, 194, 0.65);
     pointer-events: auto;
-    cursor: pointer;
-    will-change: transform, opacity;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
     outline: none;
     transition: box-shadow 0.24s ease, border-color 0.24s ease;
+}
+
+.driftCard.isDragging {
+    cursor: grabbing !important;
+    z-index: 1000 !important;
+    box-shadow:
+        0 18px 45px rgba(23, 35, 61, 0.32),
+        0 6px 16px rgba(0, 0, 0, 0.15) !important;
+    border-color: rgba(198, 154, 67, 0.85) !important;
+    will-change: transform;
 }
 
 .driftCard:focus-visible {

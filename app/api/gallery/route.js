@@ -17,6 +17,7 @@ const DEFAULT_SETTINGS = {
     showLogo: true,
     showMenuButton: true,
     showHeader: false,
+    allowDrag: true,
     headerText: {
         en: {
             eyebrow: 'NSS MJCET · NOT ME BUT YOU',

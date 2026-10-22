@@ -42,6 +42,7 @@ const DEFAULT_SETTINGS = {
     showLogo: true,
     showMenuButton: true,
     showHeader: false,
+    allowDrag: true,
     headerText: {
         en: {
             eyebrow: 'NSS MJCET · NOT ME BUT YOU',
@@ -779,7 +780,22 @@ export default function AdminGalleryPage() {
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
                             <div className={styles.formGroup}>
                                 <label className={galleryStyles.checkboxLabel}>
-                                    <input
+                                        <input
+                                        type="checkbox"
+                                        checked={settings.allowDrag ?? true}
+                                        onChange={(e) => setSettings((prev) => ({ ...prev, allowDrag: e.target.checked }))}
+                                        style={{ width: '18px', height: '18px' }}
+                                    />
+                                    Allow Dragging Cards
+                                </label>
+                                <span className={galleryStyles.helperText}>
+                                    Drag cards with physics, collisions, and bounce (click/tap still opens)
+                                </span>
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={galleryStyles.checkboxLabel}>
+                                <input
                                         type="checkbox"
                                         checked={settings.autoSpotlight}
                                         onChange={(e) => setSettings((s) => ({ ...s, autoSpotlight: e.target.checked }))}

@@ -146,7 +146,7 @@ export default function Navbar() {
     const handleLogout = async () => {
         try {
             await logout();
-            window.location.href = '/';
+            router.push('/');
         } catch (error) {
             console.error('Logout error:', error);
         }
@@ -255,7 +255,7 @@ export default function Navbar() {
                                     </div>
 
                                     {session && (
-                                        <Link href="/admin" className="marvelous-btn marvelous-btn-outline marvelous-btn-sm" style={{ padding: '8px 16px', fontSize: '12px' }}>
+                                        <Link href="/admin" prefetch={true} className="marvelous-btn marvelous-btn-outline marvelous-btn-sm" style={{ padding: '8px 16px', fontSize: '12px' }}>
                                             {t.admin}
                                         </Link>
                                     )}

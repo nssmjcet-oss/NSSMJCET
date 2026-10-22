@@ -23,7 +23,7 @@ export default function TopProgressBar() {
         return () => {
             clearTimeout(resetTimerRef.current);
         };
-    }, [pathname]);
+    }, [pathname, visible]);
 
     // Intercept navigation link clicks for instant 0ms feedback
     useEffect(() => {

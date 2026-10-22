@@ -5,20 +5,28 @@ import Image from 'next/image';
 import styles from './SplashScreen.module.css';
 
 export default function SplashScreen({ onComplete }) {
-    const [visible, setVisible] = useState(true);
+    const [visible, setVisible] = useState(false);
     const [exiting, setExiting] = useState(false);
 
     useEffect(() => {
-        // Start fade-out at 1100ms
+        try {
+            if (sessionStorage.getItem('nss_splash_shown')) {
+                if (onComplete) onComplete();
+                return;
+            }
+            sessionStorage.setItem('nss_splash_shown', 'true');
+        } catch (e) {}
+        setVisible(true);
+        // Start fade-out at 550ms
         const exitTimer = setTimeout(() => {
             setExiting(true);
-        }, 1100);
+        }, 550);
 
-        // Completely remove from DOM at 1450ms
+        // Completely remove from DOM at 800ms
         const removeTimer = setTimeout(() => {
             setVisible(false);
             if (onComplete) onComplete();
-        }, 1450);
+        }, 800);
 
         return () => {
             clearTimeout(exitTimer);
@@ -31,7 +39,7 @@ export default function SplashScreen({ onComplete }) {
         setTimeout(() => {
             setVisible(false);
             if (onComplete) onComplete();
-        }, 250);
+        }, 200);
     };
 
     if (!visible) return null;

@@ -91,11 +91,39 @@ export async function compressImage(file, options = {}) {
 }
 
 /**
+ * Draws an image onto a canvas scaled to maxLongestSide and returns a data URL.
+ * Used internally by compressImageToDataURL.
+ */
+function _drawScaled(img, maxLongestSide) {
+    let width = img.width;
+    let height = img.height;
+    const longest = Math.max(width, height);
+    if (longest > maxLongestSide) {
+        const scale = maxLongestSide / longest;
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, width, height);
+    return canvas;
+}
+
+/**
  * Compresses an image and returns it as a Base64 Data URL.
- * Use this for profile photos stored directly in Firestore — no Firebase Storage upload needed.
+ * Supports HEIC/HEIF conversion and an optional adaptive quality loop
+ * to hit a target file-size ceiling.
  *
  * @param {File} file - The image file to compress.
- * @param {Object} options - Same options as compressImage.
+ * @param {Object} options
+ * @param {number} [options.maxWidth=800]    - Maximum width (longest-side cap).
+ * @param {number} [options.maxHeight=800]   - Maximum height (longest-side cap).
+ * @param {number} [options.quality=0.68]    - Starting quality (0–1).
+ * @param {string} [options.type='image/jpeg'] - Output MIME type.
+ * @param {number} [options.targetBytes]     - If set, loop quality down until output ≤ targetBytes.
+ * @param {number} [options.minQuality=0.40] - Floor quality for the adaptive loop.
  * @returns {Promise<string>} Base64 data URL string (e.g. "data:image/jpeg;base64,...")
  */
 export async function compressImageToDataURL(file, options = {}) {
@@ -103,7 +131,9 @@ export async function compressImageToDataURL(file, options = {}) {
         maxWidth = 800,
         maxHeight = 800,
         quality = 0.68,
-        type = 'image/jpeg'
+        type = 'image/jpeg',
+        targetBytes = null,
+        minQuality = 0.40,
     } = options;
 
     let processedFile = file;
@@ -138,33 +168,73 @@ export async function compressImageToDataURL(file, options = {}) {
             const img = new Image();
             img.src = event.target.result;
             img.onload = () => {
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
+                // Determine longest-side cap (use the larger of maxWidth / maxHeight for longest-side logic)
+                const maxLongestSide = Math.max(maxWidth, maxHeight);
+                const canvas = _drawScaled(img, maxLongestSide);
 
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height = Math.round((height * maxWidth) / width);
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width = Math.round((width * maxHeight) / height);
-                        height = maxHeight;
-                    }
+                if (!targetBytes) {
+                    // Simple single-pass compression
+                    resolve(canvas.toDataURL(type, quality));
+                    return;
                 }
 
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
+                // Adaptive quality loop: reduce quality until output ≤ targetBytes
+                let q = quality;
+                const tryEncode = () => {
+                    const dataUrl = canvas.toDataURL(type, q);
+                    // base64 overhead: actual bytes ≈ (dataUrl.length - prefix.length) * 3/4
+                    const prefix = `data:${type};base64,`;
+                    const b64Len = dataUrl.length - prefix.length;
+                    const approxBytes = Math.ceil((b64Len * 3) / 4);
 
-                // Returns compressed data URL directly
-                resolve(canvas.toDataURL(type, quality));
+                    if (approxBytes <= targetBytes || q <= minQuality) {
+                        resolve(dataUrl);
+                    } else {
+                        q = Math.max(minQuality, q - 0.05);
+                        tryEncode();
+                    }
+                };
+                tryEncode();
             };
             img.onerror = (err) => reject(err);
         };
         reader.onerror = (err) => reject(err);
+    });
+}
+
+/**
+ * Gallery thumbnail: max 400px longest side, WebP, target ≤ 30 KB.
+ * Adaptive loop starts at quality 0.85 and steps down to floor 0.55.
+ *
+ * @param {File} file
+ * @returns {Promise<string>} WebP data URL
+ */
+export async function compressGalleryThumbnail(file) {
+    return compressImageToDataURL(file, {
+        maxWidth: 400,
+        maxHeight: 400,
+        quality: 0.85,
+        type: 'image/webp',
+        targetBytes: 30 * 1024,  // 30 KB target
+        minQuality: 0.55,
+    });
+}
+
+/**
+ * Gallery full image: max 2000px longest side, WebP, target ≤ 400 KB.
+ * Adaptive loop starts at quality 0.85 and steps down to floor 0.55.
+ *
+ * @param {File} file
+ * @returns {Promise<string>} WebP data URL
+ */
+export async function compressGalleryFullImage(file) {
+    return compressImageToDataURL(file, {
+        maxWidth: 2000,
+        maxHeight: 2000,
+        quality: 0.85,
+        type: 'image/webp',
+        targetBytes: 400 * 1024,  // 400 KB target
+        minQuality: 0.55,
     });
 }
 
@@ -217,4 +287,3 @@ export async function compressMemberPhoto(file) {
         type: 'image/jpeg'
     });
 }
-

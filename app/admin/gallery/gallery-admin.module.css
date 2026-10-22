@@ -1,0 +1,259 @@
+/* Gallery Admin Light/Dark Adaptive Styles */
+
+.adminCard {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: all 0.2s ease;
+}
+
+[data-theme='dark'] .adminCard {
+    background: rgba(15, 23, 42, 0.65);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+}
+
+.cardTitle {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+}
+
+[data-theme='dark'] .cardTitle {
+    color: #f8fafc;
+}
+
+.cardSubtitle {
+    color: #475569;
+    font-size: 13px;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+[data-theme='dark'] .cardSubtitle {
+    color: #94a3b8;
+}
+
+.fieldLabel {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1e293b;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+}
+
+[data-theme='dark'] .fieldLabel {
+    color: #cbd5e1;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+[data-theme='dark'] .checkboxLabel {
+    color: #f1f5f9;
+}
+
+.textInput,
+.selectInput {
+    width: 100% !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    color: #0f172a !important;
+    font-family: inherit !important;
+    transition: all 0.2s ease !important;
+}
+
+.textInput:focus,
+.selectInput:focus {
+    outline: none !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    background: #ffffff !important;
+}
+
+.textInput::placeholder {
+    color: #64748b !important;
+}
+
+.selectInput option {
+    background: #ffffff;
+    color: #0f172a;
+    padding: 8px;
+}
+
+[data-theme='dark'] .textInput,
+[data-theme='dark'] .selectInput {
+    background: rgba(15, 23, 42, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #f8fafc !important;
+}
+
+[data-theme='dark'] .selectInput option {
+    background: #0f172a;
+    color: #f8fafc;
+}
+
+/* Photo Moment Card */
+.photoCard {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+}
+
+.photoCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+}
+
+.photoCardSelected {
+    background: #fffcf0 !important;
+    border: 2px solid #c69a43 !important;
+    box-shadow: 0 6px 20px rgba(198, 154, 67, 0.15) !important;
+}
+
+[data-theme='dark'] .photoCard {
+    background: rgba(15, 23, 42, 0.7);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='dark'] .photoCardSelected {
+    background: rgba(198, 154, 67, 0.12) !important;
+    border-color: #c69a43 !important;
+}
+
+.photoDate {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+[data-theme='dark'] .photoDate {
+    color: #f8fafc;
+}
+
+.orderBtn {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+    border-radius: 6px;
+    padding: 3px 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.orderBtn:hover:not(:disabled) {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.orderBtn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+[data-theme='dark'] .orderBtn {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #f8fafc;
+}
+
+.helperText {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 4px;
+    display: block;
+    line-height: 1.4;
+}
+
+[data-theme='dark'] .helperText {
+    color: #94a3b8;
+}
+
+.actionBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+}
+
+.actionBtn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+[data-theme='dark'] .actionBtn {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #f8fafc;
+}
+
+.dangerBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #dc2626;
+}
+
+.dangerBtn:hover {
+    background: rgba(239, 68, 68, 0.16);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.langContainer {
+    margin-top: 24px;
+    padding: 18px;
+    background: #f8fafc;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+}
+
+[data-theme='dark'] .langContainer {
+    background: rgba(15, 23, 42, 0.5);
+    border-color: rgba(255, 255, 255, 0.08);
+}

@@ -1,66 +1,113 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
-import { GalleryItem } from '@/lib/models';
+import { GalleryItem, GallerySettings } from '@/lib/models';
+import { galleryMoments } from '@/data/galleryMoments';
 
 export const dynamic = 'force-dynamic';
+
+const DEFAULT_SETTINGS = {
+    speedMultiplier: 2,
+    maxDesktopCards: 60,
+    maxMobileCards: 20,
+    repeatPhotos: true,
+    cardScale: 'medium',
+    autoSpotlight: true,
+    spotlightDelay: 6,
+    dateFormat: 'DD MMM YYYY',
+    showLogo: true,
+    showMenuButton: true,
+    showHeader: false,
+    headerText: {
+        en: {
+            eyebrow: 'NSS MJCET · NOT ME BUT YOU',
+            headingPlain: 'The Spirit of Our ',
+            headingItalic: 'Volunteers',
+            subtext: 'Real moments from the people who show up, work hard and enjoy every step of the journey.',
+        },
+        hi: {
+            eyebrow: 'NSS MJCET · मैं नहीं, आप',
+            headingPlain: 'हमारे स्वयंसेवकों की ',
+            headingItalic: 'भावना',
+            subtext: 'उन लोगों के असली पल, जो आगे आते हैं, मेहनत करते हैं और सफ़र के हर कदम का आनंद लेते हैं।',
+        },
+        te: {
+            eyebrow: 'NSS MJCET · నేను కాదు, మీరు',
+            headingPlain: 'మా వాలంటీర్ల ',
+            headingItalic: 'స్ఫూర్తి',
+            subtext: 'ముందుకు వచ్చి, కష్టపడి, ప్రయాణంలోని ప్రతి అడుగునూ ఆస్వాదించే వ్యక్తుల నిజమైన క్షణాలు.',
+        },
+    },
+};
 
 export async function GET(request) {
     try {
         await connectToDatabase();
-        const { searchParams } = new URL(request.url);
-        const category = searchParams.get('category');
-        const year = searchParams.get('year');
 
-        // If gallery collection is empty, populate initial authentic records so admin can edit them immediately
-        const count = await GalleryItem.countDocuments();
-        if (count === 0) {
-            const initialPhotos = [
-                { title: 'Youth Community Rally', category: 'Community Service', caption: 'Active community youth outreach and empowerment drive.', image: '/uploads/events/1772212213205-20251110130725.jpg', academicYear: '2025-2026', order: 1, isPublished: true, createdAt: new Date() },
-                { title: 'Annual Youth Convention', category: 'Youth Parliament & MUN', caption: 'Statewide student convention discussing civic duties & democracy.', image: '/uploads/events/1772212213217-20251110152340.jpg', academicYear: '2025-2026', order: 2, isPublished: true, createdAt: new Date() },
-                { title: 'Faculty Interactive Forum', category: 'Campus Activities', caption: 'Interactive symposium on social responsibility in technical education.', image: '/uploads/events/1772212213224-20251110145020.jpg', academicYear: '2025-2026', order: 3, isPublished: true, createdAt: new Date() },
-                { title: 'Campus Cultural Initiative', category: 'Health & Awareness', caption: 'Cultural awareness campaign for community health and sanitation.', image: '/uploads/events/1772219830828-Untitleddesign4.jpg', academicYear: '2025-2026', order: 4, isPublished: true, createdAt: new Date() },
-                { title: 'Volunteer Training Programme', category: 'Volunteer Life', caption: 'Comprehensive induction and field orientation for student volunteers.', image: '/uploads/events/1772258937302-DSC90851.jpg', academicYear: '2025-2026', order: 5, isPublished: true, createdAt: new Date() },
-                { title: 'Social Service Induction', category: 'Community Service', caption: 'Oath-taking ceremony for newly inducted NSS MJCET volunteers.', image: '/uploads/events/1772212567791-NSS01-3.jpg', academicYear: '2025-2026', order: 6, isPublished: true, createdAt: new Date() },
-                { title: 'NSS Student Volunteers', category: 'Campus Activities', caption: 'Student leadership council driving campus sustainability initiatives.', image: '/uploads/events/1772212567799-NSS01-1.jpg', academicYear: '2025-2026', order: 7, isPublished: true, createdAt: new Date() },
-            ];
-            try {
-                await GalleryItem.insertMany(initialPhotos);
-            } catch (seedErr) {
-                console.error('Gallery auto-seed note:', seedErr.message);
-            }
-        }
-
-        let filter = { isPublished: { $ne: false } };
-        if (category && category !== 'all' && category !== 'All Moments') {
-            filter.category = category;
-        }
-        if (year && year !== 'all') {
-            filter.academicYear = year;
-        }
-
-        const docs = await GalleryItem.find(filter)
-            .sort({ order: 1, createdAt: -1 })
+        // 1. Fetch public (non-hidden) photos sorted by order asc, then date desc
+        const docs = await GalleryItem.find({
+            isHidden: { $ne: true },
+            isPublished: { $ne: false }
+        })
+            .sort({ order: 1, date: -1, createdAt: -1 })
             .lean();
 
-        const items = docs.map(doc => {
-            const imgSrc = doc.image || doc.imageUrl || doc.url || doc.src || '';
+        let photos = docs.map((doc, idx) => {
+            const fullSrc = doc.image || doc.imageUrl || doc.url || doc.src || '';
+            const thumbSrc = doc.thumbnail || fullSrc;
+            const momentDate = doc.date || (doc.createdAt ? new Date(doc.createdAt).toISOString().split('T')[0] : '2026-03-14');
+
             return {
-                ...doc,
-                id: doc._id?.toString() || doc._id,
-                _id: doc._id?.toString() || doc._id,
-                image: imgSrc,
-                imageUrl: imgSrc,
-                src: imgSrc,
+                id: doc._id?.toString() || `photo-${idx}`,
+                src: fullSrc || '/gallery-placeholders/moment-1.svg',
+                thumbnail: thumbSrc || fullSrc || '/gallery-placeholders/moment-1.svg',
+                date: momentDate,
+                order: doc.order ?? idx,
             };
         });
 
-        return NextResponse.json({ items }, {
-            headers: {
-                'Cache-Control': 'no-store, max-age=0',
+        // Fallback to placeholder moments if database is empty so gallery never breaks
+        if (photos.length === 0) {
+            photos = galleryMoments.map((m, idx) => ({
+                id: m.id,
+                src: m.src,
+                thumbnail: m.src,
+                date: m.date,
+                order: idx,
+            }));
+        }
+
+        // 2. Fetch gallery settings
+        let settingsDoc = await GallerySettings.findOne({ _id: 'gallery-settings' }).lean();
+        const settings = {
+            ...DEFAULT_SETTINGS,
+            ...(settingsDoc || {}),
+            headerText: {
+                ...DEFAULT_SETTINGS.headerText,
+                ...(settingsDoc?.headerText || {}),
+            },
+        };
+
+        return NextResponse.json(
+            { photos, settings },
+            {
+                headers: {
+                    'Cache-Control': 'public, s-maxage=5, stale-while-revalidate=30',
+                },
             }
-        });
+        );
     } catch (error) {
-        console.error('Gallery GET error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error('Public Gallery GET error:', error);
+        // Resilient fallback: return local placeholder moments with default settings
+        return NextResponse.json({
+            photos: galleryMoments.map((m, idx) => ({
+                id: m.id,
+                src: m.src,
+                thumbnail: m.src,
+                date: m.date,
+                order: idx,
+            })),
+            settings: DEFAULT_SETTINGS,
+            isFallback: true,
+        });
     }
 }

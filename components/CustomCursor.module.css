@@ -47,8 +47,10 @@
 /* ─── Chakra ring ──────────────────────────────────────── */
 .cursorRing {
     position: absolute;
-    width: 32px;
-    height: 32px;
+    width: 32px !important;
+    height: 32px !important;
+    max-width: 32px;
+    max-height: 32px;
     border-radius: 50%;
     pointer-events: none;
     z-index: 999999;
@@ -64,14 +66,18 @@
 }
 
 .cursorRing.ringHovering {
-    width: 48px;
-    height: 48px;
+    width: 48px !important;
+    height: 48px !important;
+    max-width: 48px;
+    max-height: 48px;
     color: #138808;
 }
 
 .chakraSvg {
     width: 100%;
     height: 100%;
+    max-width: 48px;
+    max-height: 48px;
     filter: drop-shadow(0 0 5px currentColor);
     /* The SVG itself spins */
     animation: spinSvg 10s linear infinite;

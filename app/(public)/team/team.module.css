@@ -7,7 +7,7 @@
 /* === PAGE WRAPPER === */
 .teamPage {
     min-height: 100vh;
-    padding-top: clamp(100px, 13vw, 135px);
+    padding-top: clamp(115px, 14vw, 140px);
     background: transparent;
     color: #1a1a1a;
     position: relative;
@@ -76,6 +76,7 @@
     align-items: center;
     text-align: center;
     margin-bottom: 44px;
+    padding: 0 16px;
 }
 
 .sectionLine {
@@ -86,6 +87,7 @@
     text-align: center;
     max-width: 700px;
     margin: 0 auto;
+    width: 100%;
 }
 
 .sectionBadge {
@@ -93,16 +95,16 @@
 }
 
 .sectionTitle {
-    font-size: clamp(2.4rem, 5.5vw, 4rem);
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
     font-weight: 900;
     color: #0f172a;
-    letter-spacing: -1.2px;
-    line-height: 1.1;
-    margin: 0 0 14px;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin: 0 0 12px;
 }
 
 .sectionSubtitle {
-    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-size: clamp(0.95rem, 1.8vw, 1.15rem);
     color: #64748b;
     font-weight: 400;
     max-width: 640px;
@@ -223,9 +225,22 @@
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
 }
 
-.cardGb:hover .cardPhoto,
+@media (hover: hover) and (pointer: fine) {
+    .cardGb:hover .cardPhoto {
+        filter: blur(8px) brightness(0.75);
+        transform: scale(1.08);
+    }
+
+    .cardGb:hover .cardInfoBar,
+    .cardGb:hover .cardRoleBadge {
+        opacity: 0;
+        transform: translateY(8px);
+        pointer-events: none;
+    }
+}
+
 .cardGb.cardFlipped .cardPhoto {
-    filter: blur(8px) brightness(0.8);
+    filter: blur(8px) brightness(0.75);
     transform: scale(1.08);
 }
 
@@ -249,17 +264,11 @@
     transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-.cardGb:hover .cardInfoBar,
-.cardGb.cardFlipped .cardInfoBar {
+.cardGb.cardFlipped .cardInfoBar,
+.cardGb.cardFlipped .cardRoleBadge {
     opacity: 0;
     transform: translateY(8px);
     pointer-events: none;
-}
-
-.cardGb:hover .cardRoleBadge,
-.cardGb.cardFlipped .cardRoleBadge {
-    opacity: 0;
-    transition: opacity 0.3s ease;
 }
 
 /* ============================================================
@@ -270,24 +279,41 @@
 .quoteOverlay {
     position: absolute;
     inset: 0;
-    background: rgba(15, 23, 42, 0.50);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     z-index: 10;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding: 32px 24px;
+    justify-content: flex-start;
+    padding: 22px 16px;
     text-align: center;
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(12px);
     pointer-events: none;
-    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     border-radius: 22px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    box-sizing: border-box;
 }
 
-.cardGb:hover .quoteOverlay,
+.quoteOverlay::-webkit-scrollbar {
+    display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .cardGb:hover .quoteOverlay {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        pointer-events: auto !important;
+    }
+}
+
+.cardGb.cardFlipped .quoteOverlay,
 .quoteOverlayActive {
     opacity: 1 !important;
     transform: translateY(0) !important;
@@ -295,79 +321,97 @@
 }
 
 .quoteIconCircle {
-    width: 52px;
-    height: 52px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: rgba(198, 154, 67, 0.18);
-    border: 1px solid rgba(198, 154, 67, 0.45);
+    background: rgba(198, 154, 67, 0.2);
+    border: 1px solid rgba(198, 154, 67, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-top: auto;
+    margin-bottom: 10px;
     flex-shrink: 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .quoteIcon {
-    color: #C69A43;
+    color: #FCD34D;
 }
 
 .quoteMessage {
     font-family: var(--font-heading, 'Lora', serif);
-    font-size: clamp(0.96rem, 1.5vw, 1.15rem);
+    font-size: clamp(0.86rem, 1.15vw, 0.98rem);
     font-style: italic;
     font-weight: 500;
     color: #FFFFFF;
-    line-height: 1.6;
-    margin: 0 0 20px 0;
-    max-width: 90%;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    line-clamp: 5;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    line-height: 1.48;
+    margin: 0 0 10px 0;
+    width: 100%;
+    max-width: 95%;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+    word-break: break-word;
+    overflow-wrap: break-word;
+    flex-shrink: 0;
 }
 
 .quoteAuthor {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    gap: 3px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: auto;
+    flex-shrink: 0;
 }
 
 .quoteAuthor strong {
-    font-size: 0.98rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: #FFFFFF;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
     text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 250px;
+    white-space: normal;
+    line-height: 1.25;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    display: block;
 }
 
 .quoteAuthor span {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 800;
-    letter-spacing: 1.8px;
+    letter-spacing: 1.4px;
     text-transform: uppercase;
     color: #FCD34D;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+    line-height: 1.2;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    display: block;
 }
 
 .cardInfoLeft {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 8px;
     min-width: 0;
     flex: 1;
+    overflow: hidden;
 }
 
 .cardAvatarThumb {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     overflow: hidden;
     border: 1.5px solid rgba(255, 255, 255, 0.6);
@@ -382,22 +426,23 @@
 .cardAvatarInitial {
     color: white;
     font-weight: 800;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .cardNameGroup {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 1px;
     flex: 1;
+    overflow: hidden;
 }
 
 .cardName {
-    font-size: 13.5px;
+    font-size: clamp(11.5px, 1.1vw, 13px);
     font-weight: 700;
     color: #ffffff;
-    line-height: 1.25;
+    line-height: 1.2;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -405,7 +450,10 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     word-break: break-word;
+    overflow-wrap: break-word;
     transition: color 0.25s ease;
+    width: 100%;
+    max-width: 100%;
 }
 
 .memberCard:hover .cardName {
@@ -413,21 +461,24 @@
 }
 
 .cardPosition {
-    font-size: 10px;
+    font-size: 9px;
     color: #FFB366;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.4px;
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.15;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+    max-width: 100%;
 }
 
 .cardLinkedIn {
     flex-shrink: 0;
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -520,6 +571,10 @@
 }
 
 @media (max-width: 820px) {
+    .teamPage {
+        padding-top: 120px;
+    }
+
     .gbGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 14px;
@@ -531,8 +586,9 @@
     }
 
     .sectionHeader {
-        flex-direction: column;
-        gap: 12px;
+        margin-bottom: 28px;
+        padding: 0 16px;
+        gap: 10px;
     }
 
     .sectionLine {
@@ -541,20 +597,111 @@
         background: linear-gradient(90deg, transparent, rgba(255, 153, 51, 0.4), transparent);
     }
 
-    .cardInfoBar {
-        padding: 7px 9px;
-        bottom: 8px;
-        left: 8px;
-        right: 8px;
+    .sectionTitle {
+        font-size: clamp(1.75rem, 5.5vw, 2.3rem);
+        letter-spacing: -0.6px;
+        line-height: 1.2;
+        margin-bottom: 10px;
     }
 
-    .cardName { font-size: 12px; }
-    .cardPosition { font-size: 9px; }
-    .cardAvatarThumb { width: 28px; height: 28px; }
-    .cardLinkedIn { width: 26px; height: 26px; }
+    .sectionSubtitle {
+        font-size: 0.92rem;
+        line-height: 1.5;
+        max-width: 440px;
+    }
+
+    .cardInfoBar {
+        padding: 6px 8px;
+        bottom: 6px;
+        left: 6px;
+        right: 6px;
+        border-radius: 12px;
+        gap: 6px;
+    }
+
+    .cardName {
+        font-size: 11px;
+        line-height: 1.18;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .cardPosition {
+        font-size: 8px;
+        letter-spacing: 0.3px;
+    }
+
+    .cardAvatarThumb { width: 24px; height: 24px; }
+    .cardLinkedIn { width: 24px; height: 24px; }
+
+    /* GB Quote Overlay on tablets & medium mobile */
+    .quoteOverlay {
+        padding: 14px 12px;
+        border-radius: 18px;
+    }
+
+    .quoteIconCircle {
+        width: 34px;
+        height: 34px;
+        margin-top: auto;
+        margin-bottom: 8px;
+    }
+
+    .quoteIcon {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .quoteMessage {
+        font-size: 0.78rem;
+        line-height: 1.36;
+        margin: 0 0 8px 0;
+        width: 100%;
+        max-width: 100%;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        flex-shrink: 0;
+    }
+
+    .quoteAuthor {
+        gap: 2px;
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: auto;
+        flex-shrink: 0;
+    }
+
+    .quoteAuthor strong {
+        font-size: 0.76rem;
+        letter-spacing: 0.3px;
+        max-width: 100%;
+        width: 100%;
+        white-space: normal;
+        line-height: 1.2;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        text-align: center;
+        display: block;
+    }
+
+    .quoteAuthor span {
+        font-size: 0.60rem;
+        letter-spacing: 0.8px;
+        line-height: 1.15;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+        display: block;
+    }
 }
 
 @media (max-width: 480px) {
+    .teamPage {
+        padding-top: 115px;
+    }
+
     .gbGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
@@ -565,18 +712,111 @@
         gap: 10px;
     }
 
+    .sectionHeader {
+        margin-bottom: 22px;
+        padding: 0 12px;
+    }
+
+    .sectionTitle {
+        font-size: clamp(1.45rem, 6vw, 1.85rem);
+        letter-spacing: -0.4px;
+        line-height: 1.2;
+        margin-bottom: 8px;
+    }
+
+    .sectionSubtitle {
+        font-size: 0.84rem;
+        line-height: 1.45;
+        max-width: 320px;
+    }
+
     .memberCard, .cardGb {
         border-radius: 16px;
     }
 
     .cardInfoBar {
-        padding: 6px 8px;
-        border-radius: 12px;
-        bottom: 6px;
-        left: 6px;
-        right: 6px;
+        padding: 5px 6px;
+        border-radius: 10px;
+        bottom: 5px;
+        left: 5px;
+        right: 5px;
+        gap: 5px;
     }
 
-    .cardName { font-size: 11px; }
-    .cardPosition { font-size: 8.5px; }
+    .cardName {
+        font-size: 10px;
+        line-height: 1.15;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .cardPosition {
+        font-size: 7.5px;
+        letter-spacing: 0.2px;
+    }
+
+    .cardAvatarThumb { width: 22px; height: 22px; }
+    .cardLinkedIn { width: 22px; height: 22px; }
+
+    /* GB Quote Overlay on compact mobile screens */
+    .quoteOverlay {
+        padding: 10px 8px;
+        border-radius: 14px;
+    }
+
+    .quoteIconCircle {
+        width: 28px;
+        height: 28px;
+        margin-top: auto;
+        margin-bottom: 6px;
+    }
+
+    .quoteIcon {
+        width: 13px !important;
+        height: 13px !important;
+    }
+
+    .quoteMessage {
+        font-size: 0.70rem;
+        line-height: 1.3;
+        margin: 0 0 6px 0;
+        width: 100%;
+        max-width: 100%;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        flex-shrink: 0;
+    }
+
+    .quoteAuthor {
+        gap: 2px;
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: auto;
+        flex-shrink: 0;
+    }
+
+    .quoteAuthor strong {
+        font-size: 0.68rem;
+        letter-spacing: 0.2px;
+        max-width: 100%;
+        width: 100%;
+        white-space: normal;
+        line-height: 1.15;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        text-align: center;
+        display: block;
+    }
+
+    .quoteAuthor span {
+        font-size: 0.54rem;
+        letter-spacing: 0.6px;
+        line-height: 1.15;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+        display: block;
+    }
 }

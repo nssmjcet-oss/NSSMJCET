@@ -13,7 +13,7 @@
     gap: var(--space-8);
 }
 
-.scrolled .navbar {
+.navbar.scrolled {
     top: var(--space-2);
 }
 
@@ -107,7 +107,7 @@
     flex: 1;
 }
 
-.scrolled .navContainer {
+.navbar.scrolled .navContainer {
     background: rgba(255, 252, 245, 0.98);
     border-color: #DCD3C2;
     min-height: 60px;
@@ -122,7 +122,7 @@
     box-shadow: 0 10px 30px -10px rgba(23, 35, 61, 0.08);
 }
 
-.scrolled .logoWrapper {
+.navbar.scrolled .logoWrapper {
     width: 64px;
     height: 64px;
 }
@@ -155,7 +155,7 @@
     transition: all var(--transition-base);
 }
 
-.scrolled .largeLogo {
+.navbar.scrolled .largeLogo {
     height: 50px;
 }
 

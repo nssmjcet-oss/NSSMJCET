@@ -311,7 +311,16 @@ function MemberCard({ member, tier = 'core', priority = false }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            whileHover="hover"
+            whileHover={isGb ? undefined : "hover"}
+            role={isGb ? 'button' : undefined}
+            tabIndex={isGb ? 0 : undefined}
+            aria-label={isGb ? `${nameStr}, ${positionStr || 'Governing Body'}. Tap to toggle quote.` : `${nameStr}, ${positionStr || 'Team Member'}`}
+            onKeyDown={(e) => {
+                if (isGb && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    setIsFlipped(prev => !prev);
+                }
+            }}
             onClick={() => {
                 if (isGb) setIsFlipped(prev => !prev);
             }}

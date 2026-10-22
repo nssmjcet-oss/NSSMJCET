@@ -228,9 +228,6 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     const spotlightTimerRef = useRef(null);
     const hasInteractedRef = useRef(false);
 
-    // Reusable impact ring elements
-    const impactRingsRef = useRef([]);
-
     // Drag hint pill state & touch detection
     const [hintVisible, setHintVisible] = useState(false);
     const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -392,7 +389,6 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         textZoneHeight: isMobile ? 200 : 260,
         allowDrag: settings.allowDrag ?? true,
         dragEffects: settings.dragEffects ?? true,
-        impactRingsRef,
         onDragStartCallback: dismissHint,
     });
 
@@ -861,17 +857,6 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                 {/* Edge fade gradients at top & bottom of the full screen */}
                 <div className={styles.topEdgeGradient} />
                 <div className={styles.bottomEdgeGradient} />
-
-                {/* Impact Shockwaves Pool (6 reusable rings) */}
-                <div className={styles.impactRingLayer} aria-hidden="true">
-                    {[0, 1, 2, 3, 4, 5].map((i) => (
-                        <div
-                            key={i}
-                            ref={(el) => { impactRingsRef.current[i] = el; }}
-                            className={styles.impactRing}
-                        />
-                    ))}
-                </div>
 
                 {/* Drifting Cards Field */}
                 <div className={styles.driftingField}>

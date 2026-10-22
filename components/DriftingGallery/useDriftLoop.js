@@ -26,7 +26,6 @@ export function useDriftLoop({
     textZoneHeight = 260,
     allowDrag = true,
     dragEffects = true,
-    impactRingsRef,
     onDragStartCallback,
 }) {
     const isPausedRef = useRef(false);
@@ -84,39 +83,6 @@ export function useDriftLoop({
         lastVySign: 0,
         lastScatterTime: 0,
     });
-
-    // Reusable Impact Shockwave Rings Pool (Max 6 rings)
-    // Structure: [{ x, y, startTime, duration: 450, active: false, scale: 0.4 }]
-    const ringPoolRef = useRef(
-        Array.from({ length: 6 }, () => ({
-            x: 0,
-            y: 0,
-            startTime: 0,
-            duration: 450,
-            active: false,
-        }))
-    );
-    // Rate limit contact rings per card pair
-    const lastRingTimeRef = useRef({}); // { 'i_j': timestamp }
-
-    // Spawn an impact ring from the pool
-    const triggerImpactRing = (x, y, isScatter = false) => {
-        if (!dragEffectsRef.current) return;
-        const now = performance.now();
-        const pool = ringPoolRef.current;
-        // Find first inactive or oldest ring
-        let ring = pool.find((r) => !r.active);
-        if (!ring) {
-            // Find oldest
-            ring = pool.reduce((oldest, r) => (r.startTime < oldest.startTime ? r : oldest), pool[0]);
-        }
-        ring.x = x;
-        ring.y = y;
-        ring.startTime = now;
-        ring.duration = isScatter ? 550 : 450;
-        ring.isScatter = isScatter;
-        ring.active = true;
-    };
 
     // Track ripple triggers (container click)
     const triggerRipple = (x, y) => {
@@ -257,9 +223,6 @@ export function useDriftLoop({
         const heldCenterX = heldCard.x + heldCard.size * 0.5;
         const heldCenterY = heldCard.y + heldCard.size * 0.5;
         const scatterRadius = heldCard.size * 3.2; // ~3 card sizes
-
-        // Trigger big shockwave ring around held card
-        triggerImpactRing(heldCenterX, heldCenterY, true);
 
         const count = cards.length;
         for (let j = 0; j < count; j++) {
@@ -572,21 +535,6 @@ export function useDriftLoop({
                             cj.bounceSpin = (Math.random() - 0.5) * 8;
                         }
 
-                        // --- SOFT IMPACT SHOCKWAVE RING TRIGGER ---
-                        // Trigger only on relative impact speed above threshold (e.g. >= 140 px/s)
-                        // Rate limit to once per card-pair per 300ms
-                        if (useEffects && dragSpeed >= 140) {
-                            const pairKey = `${Math.min(draggedIdx, j)}_${Math.max(draggedIdx, j)}`;
-                            const lastRingTime = lastRingTimeRef.current[pairKey] || 0;
-                            if (now - lastRingTime >= 300) {
-                                lastRingTimeRef.current[pairKey] = now;
-                                // Contact point between centers
-                                const contactX = dCenterX + nx * dRadius;
-                                const contactY = dCenterY + ny * dRadius;
-                                triggerImpactRing(contactX, contactY, false);
-                            }
-                        }
-
                         // Chain reaction depth 1
                         for (let k = 0; k < count; k++) {
                             if (k === j || k === draggedIdx) continue;
@@ -640,20 +588,6 @@ export function useDriftLoop({
                         ci.vy -= ny * push;
                         cj.vx += nx * push;
                         cj.vy += ny * push;
-
-                        // Check collision between two thrown/bouncing cards for impact ring
-                        const speedI = Math.hypot(ci.bounceVx || 0, ci.bounceVy || 0);
-                        const speedJ = Math.hypot(cj.bounceVx || 0, cj.bounceVy || 0);
-                        if (useEffects && (speedI > 160 || speedJ > 160)) {
-                            const pairKey = `${i}_${j}`;
-                            const lastRingTime = lastRingTimeRef.current[pairKey] || 0;
-                            if (now - lastRingTime >= 300) {
-                                lastRingTimeRef.current[pairKey] = now;
-                                const contactX = ci.x + ci.size * 0.5 + nx * (ci.size * 0.45);
-                                const contactY = ci.y + ci.size * 0.5 + ny * (ci.size * 0.45);
-                                triggerImpactRing(contactX, contactY, false);
-                            }
-                        }
                     }
                 }
             }
@@ -955,36 +889,6 @@ export function useDriftLoop({
                 el.style.opacity = Math.max(0, Math.min(1, renderOpacity)).toFixed(3);
                 el.style.zIndex = isHeld ? 1000 : card.layer + 1;
             }
-
-            // --- 5. ANIMATE REUSABLE IMPACT RINGS POOL ---
-            const ringPool = ringPoolRef.current;
-            const ringEls = impactRingsRef ? impactRingsRef.current : null;
-            if (ringEls && ringEls.length > 0) {
-                for (let r = 0; r < 6; r++) {
-                    const ring = ringPool[r];
-                    const rEl = ringEls[r];
-                    if (!rEl) continue;
-
-                    if (ring && ring.active) {
-                        const elapsed = now - ring.startTime;
-                        if (elapsed >= ring.duration) {
-                            ring.active = false;
-                            rEl.style.opacity = '0';
-                        } else {
-                            const p = elapsed / ring.duration;
-                            // Scale from 0.4 to 1.6 (or 2.4 for scatter)
-                            const maxScale = ring.isScatter ? 2.4 : 1.6;
-                            const scale = 0.4 + (maxScale - 0.4) * Math.sin(p * Math.PI * 0.5);
-                            // Fade out over second half
-                            const opacity = (1 - p).toFixed(2);
-                            rEl.style.transform = `translate3d(${ring.x.toFixed(1)}px, ${ring.y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
-                            rEl.style.opacity = opacity;
-                        }
-                    } else if (rEl.style.opacity !== '0') {
-                        rEl.style.opacity = '0';
-                    }
-                }
-            }
         };
 
         lastTimeRef.current = performance.now();
@@ -998,7 +902,7 @@ export function useDriftLoop({
             observer.disconnect();
             document.body.style.cursor = '';
         };
-    }, [containerRef, cardElsRef, cardsStateRef, onMomentRecycle, textZoneHeight, impactRingsRef]);
+    }, [containerRef, cardElsRef, cardsStateRef, onMomentRecycle, textZoneHeight]);
 
     return {
         setPointer,

@@ -292,8 +292,6 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     useEffect(() => {
         setPortalMounted(true);
 
-        // Use default fetch caching — CDN serves s-maxage=300, browser caches for session.
-        // Admin changes bust the CDN via revalidatePath('/gallery') server-side.
         fetch('/api/gallery')
             .then((r) => r.json())
             .then((data) => {

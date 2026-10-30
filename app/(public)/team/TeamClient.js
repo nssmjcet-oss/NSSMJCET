@@ -340,7 +340,7 @@ function MemberCard({ member, tier = 'core', priority = false }) {
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                             className={styles.cardPhoto}
                             priority={priority}
-                            unoptimized={typeof member.image === 'string' && member.image.startsWith('data:')}
+                            unoptimized={typeof member.image === 'string' && (member.image.startsWith('data:') || member.image.startsWith('/api/team/image/'))}
                             onError={(e) => { if (e.target) e.target.src = '/placeholder-team.jpg'; }}
                         />
                     </motion.div>
@@ -372,7 +372,7 @@ function MemberCard({ member, tier = 'core', priority = false }) {
                                 fill
                                 sizes="40px"
                                 style={{ objectFit: 'cover', objectPosition: 'top' }}
-                                unoptimized={typeof member.image === 'string' && member.image.startsWith('data:')}
+                                unoptimized={typeof member.image === 'string' && (member.image.startsWith('data:') || member.image.startsWith('/api/team/image/'))}
                                 onError={(e) => { if (e.target) e.target.src = '/placeholder-team.jpg'; }}
                             />
                         ) : (

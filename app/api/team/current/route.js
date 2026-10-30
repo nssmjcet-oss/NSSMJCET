@@ -31,10 +31,14 @@ export async function GET() {
             .sort({ order: 1 })
             .lean();
 
-        const members = teamData.map(doc => ({
-            ...doc,
-            id: doc._id?.toString() || doc._id
-        }));
+        const members = teamData.map(doc => {
+            const hasBase64 = typeof doc.image === 'string' && doc.image.startsWith('data:');
+            return {
+                ...doc,
+                image: hasBase64 ? ('/api/team/image/' + (doc._id?.toString() || doc._id)) : (doc.image || ''),
+                id: doc._id?.toString() || doc._id
+            };
+        });
 
         return NextResponse.json(
             { currentYear, session: currentSession || null, members },

@@ -52,8 +52,11 @@ async function getTeamData() {
             .lean();
 
         const members = teamData.map(doc => {
+            const hasBase64 = typeof doc.image === 'string' && doc.image.startsWith('data:');
+            const imageSrc = hasBase64 ? `/api/team/image/${doc._id}` : (doc.image || '');
             const serialized = {
                 ...doc,
+                image: imageSrc,
                 id: doc._id?.toString() || doc._id,
                 _id: doc._id?.toString() || doc._id,
             };

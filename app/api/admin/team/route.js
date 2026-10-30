@@ -22,10 +22,14 @@ export async function GET(request) {
         const query = year ? { academicYear: year } : {};
         const teamData = await Team.find(query).sort({ order: 1 }).lean();
         
-        const team = teamData.map(doc => ({
-            ...doc,
-            id: doc._id
-        }));
+        const team = teamData.map(doc => {
+            const hasBase64 = typeof doc.image === 'string' && doc.image.startsWith('data:');
+            return {
+                ...doc,
+                image: hasBase64 ? ('/api/team/image/' + (doc._id?.toString() || doc._id)) : (doc.image || ''),
+                id: doc._id
+            };
+        });
 
         const sessions = await TeamSession.find({}).sort({ teamYear: -1 }).lean();
         const currentSession = sessions.find(s => s.status === 'current');
@@ -168,7 +172,11 @@ export async function PUT(request) {
         if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
         if (data.image) {
-            data.image = await maybeUploadImage(data.image, 'team');
+            if (typeof data.image === 'string' && data.image.startsWith('/api/team/image')) {
+                delete data.image;
+            } else {
+                data.image = await maybeUploadImage(data.image, 'team');
+            }
         }
 
         await Team.findByIdAndUpdate(id, {

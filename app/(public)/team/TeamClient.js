@@ -64,7 +64,7 @@ export default function TeamClient({ initialMembers = [], currentYear = '2025-20
     useEffect(() => {
         if (!yearMembersMap[selectedYear]) {
             setLoadingYear(true);
-            fetchWithCache(`/api/team/archive?year=${encodeURIComponent(selectedYear)}`)
+            fetchWithCache(`/api/team/archive?year=${encodeURIComponent(selectedYear)}`, { ttlMs: 60 * 1000 })
                 .then(data => {
                     if (data?.members) {
                         setYearMembersMap(prev => ({ ...prev, [selectedYear]: data.members }));
@@ -93,9 +93,9 @@ export default function TeamClient({ initialMembers = [], currentYear = '2025-20
     };
 
     const currentDisplayMembers = yearMembersMap[selectedYear] || [];
-    const gbsMembers = currentDisplayMembers.filter(m => m.role === 'GB');
-    const execomMembers = currentDisplayMembers.filter(m => m.role === 'Execom');
-    const coreMembers = currentDisplayMembers.filter(m => m.role === 'Core');
+    const gbsMembers = currentDisplayMembers.filter(m => m.role?.toLowerCase() === 'gb');
+    const execomMembers = currentDisplayMembers.filter(m => m.role?.toLowerCase() === 'execom');
+    const coreMembers = currentDisplayMembers.filter(m => m.role?.toLowerCase() === 'core');
 
     const filteredExecom = execomMembers.filter(m => matchesFilter(m, execomFilter));
     const filteredCore = coreMembers.filter(m => matchesFilter(m, coreFilter));

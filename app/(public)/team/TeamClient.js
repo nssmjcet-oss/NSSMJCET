@@ -47,7 +47,7 @@ const translations = {
     },
 };
 
-const deptFilters = ['ALL', 'HR', 'PR', 'MEDIA', 'DESIGN', 'DOC', 'EVENTS', 'MARKETING', 'LOGISTICS', 'TECH'];
+const deptFilters = ['ALL', 'HR', 'PR', 'MEDIA', 'DESIGN', 'DOC', 'EVENTS', 'MARKETING', 'LOGISTICS', 'RESEARCH', 'TECH'];
 
 export default function TeamClient({ initialMembers = [], currentYear = '2025-2026', allYears = ['2025-2026'] }) {
     const { language } = useLanguage();
@@ -86,6 +86,7 @@ export default function TeamClient({ initialMembers = [], currentYear = '2025-20
             case 'EVENTS': return pos.includes('event');
             case 'LOGISTICS': return pos.includes('logistics');
             case 'MARKETING': return pos.includes('marketing');
+            case 'RESEARCH': return pos.includes('research') || pos.includes('rnd') || pos.includes('r&d') || pos.includes('r & d');
             case 'TECH': return pos.includes('tech') || pos.includes('web');
             case 'PR': return pos.includes('public relation') || pos.includes('pr');
             default: return false;

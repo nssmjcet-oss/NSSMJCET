@@ -18,7 +18,7 @@ export default function ArchiveClient({ initialYears = [], currentYear = '2025-2
     const [loadingYear, setLoadingYear] = useState(false);
     const [departmentFilter, setDepartmentFilter] = useState('ALL');
 
-    const filters = ['ALL', 'HR', 'PR', 'MEDIA', 'DESIGN', 'DOC', 'EVENTS', 'MARKETING', 'LOGISTICS', 'TECH'];
+    const filters = ['ALL', 'HR', 'PR', 'MEDIA', 'DESIGN', 'DOC', 'EVENTS', 'MARKETING', 'LOGISTICS', 'RESEARCH', 'TECH'];
 
     const handleSelectYear = async (yr) => {
         if (selectedYear === yr) {
@@ -55,6 +55,7 @@ export default function ArchiveClient({ initialYears = [], currentYear = '2025-2
             case 'EVENTS': return pos.includes('event');
             case 'LOGISTICS': return pos.includes('logistics');
             case 'MARKETING': return pos.includes('marketing');
+            case 'RESEARCH': return pos.includes('research') || pos.includes('rnd') || pos.includes('r&d') || pos.includes('r & d');
             case 'TECH': return pos.includes('tech') || pos.includes('web');
             case 'PR': return pos.includes('public relation') || pos.includes('pr');
             default: return false;

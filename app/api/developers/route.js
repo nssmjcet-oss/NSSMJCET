@@ -1,3 +1,4 @@
+import { toMediaUrl } from '@/lib/media-url';
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
@@ -10,7 +11,11 @@ export async function GET() {
             .sort({ order_index: 1 })
             .lean();
 
-        let developers = devsData.map(doc => ({ ...doc, id: doc._id }));
+        let developers = devsData.map(doc => ({
+            ...doc,
+            image: toMediaUrl('developers', doc._id, doc.image),
+            id: doc._id
+        }));
 
         // Enforce specific ordering: Mirza Zohair Ali Baig (2nd), Farnaaz Munawar (3rd)
         const mirza = developers.find(d => d.name?.toLowerCase().includes('zohair'));

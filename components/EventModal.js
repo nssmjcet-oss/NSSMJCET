@@ -80,7 +80,7 @@ export default function EventModal({ event, onClose }) {
                                         className={styles.mainImage}
                                         sizes="(max-width: 900px) 100vw, 820px"
                                         priority
-                                        unoptimized={typeof images[currentImageIndex] === 'string' && images[currentImageIndex].startsWith('data:')}
+                                        unoptimized={typeof images[currentImageIndex] === 'string' && (images[currentImageIndex].startsWith('data:') || images[currentImageIndex].startsWith('/api/'))}
                                         onError={(e) => {
                                             if (e.target) e.target.src = '/placeholder-event.jpg';
                                         }}

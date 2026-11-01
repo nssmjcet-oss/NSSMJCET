@@ -1,3 +1,4 @@
+import { toMediaUrl } from '@/lib/media-url';
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
@@ -9,7 +10,11 @@ export async function GET() {
     try {
         await connectToDatabase();
         const data = await GoverningBody.find({}).sort({ order: 1 }).lean();
-        const members = data.map(doc => ({ ...doc, id: doc._id }));
+        const members = data.map(doc => ({
+            ...doc,
+            photo: toMediaUrl('governing-body', doc._id, doc.photo || doc.image),
+            id: doc._id
+        }));
         return NextResponse.json({ members }, {
             status: 200,
             headers: {

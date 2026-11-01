@@ -382,7 +382,7 @@ export default function EventsClient({ events }) {
                                                     fill
                                                     sizes="(max-width: 768px) 100vw, 33vw"
                                                     className={styles.editorialImg}
-                                                    unoptimized={typeof event.images?.[0] === 'string' && event.images[0].startsWith('data:')}
+                                                    unoptimized={typeof event.images?.[0] === 'string' && (event.images[0].startsWith('data:') || event.images[0].startsWith('/api/'))}
                                                     onError={(e) => { if (e.target) e.target.src = '/placeholder-event.jpg'; }}
                                                 />
                                                 {event.category && (

@@ -109,7 +109,7 @@ export default function FlagshipSection({ flagships = [], allEvents = [], onSele
                                 sizes="100vw"
                                 className={styles.featureImg}
                                 priority
-                                unoptimized={typeof image === 'string' && image.startsWith('data:')}
+                                unoptimized={typeof image === 'string' && (image.startsWith('data:') || image.startsWith('/api/'))}
                                 onError={(e) => {
                                     if (e.target) e.target.src = '/placeholder-event.jpg';
                                 }}

@@ -1,5 +1,6 @@
 import "./globals.css";
 import Providers from "./providers";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata = {
     metadataBase: new URL('https://www.nssmjcet.in'),
@@ -94,6 +95,7 @@ export default function RootLayout({ children }) {
             </head>
             <body className="marvelous-theme">
                 <Providers>{children}</Providers>
+                <Analytics />
             </body>
         </html>
     );

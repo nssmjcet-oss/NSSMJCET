@@ -1,5 +1,7 @@
 {
-  "regions": ["bom1"],
+  "regions": [
+    "bom1"
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -44,6 +46,24 @@
       ]
     },
     {
+      "source": "/api/media/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/api/team/image/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
       "source": "/api/(events|stats|flagship|content|program-officer|chairman|team/archive)",
       "headers": [
         {
@@ -54,4 +74,3 @@
     }
   ]
 }
-

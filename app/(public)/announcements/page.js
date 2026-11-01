@@ -1,3 +1,4 @@
+import { toMediaUrl } from '@/lib/media-url';
 import connectToDatabase from '@/lib/mongodb';
 import { Announcement } from '@/lib/models';
 import AnnouncementsClient from './AnnouncementsClient';
@@ -26,10 +27,13 @@ async function getAnnouncements() {
             .lean();
 
         return docs.map(doc => {
+            const id = doc._id?.toString() || doc._id;
+            const imageUrl = toMediaUrl('announcements', id, doc.imageUrl || doc.image);
             const serialized = {
                 ...doc,
-                id: doc._id?.toString() || doc._id,
-                _id: doc._id?.toString() || doc._id,
+                imageUrl,
+                id,
+                _id: id,
                 createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : (doc.createdAt || null),
                 updatedAt: doc.updatedAt instanceof Date ? doc.updatedAt.toISOString() : (doc.updatedAt || null),
             };

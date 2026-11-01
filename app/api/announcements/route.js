@@ -1,3 +1,4 @@
+import { toMediaUrl } from '@/lib/media-url';
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { Announcement } from '@/lib/models';

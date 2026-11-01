@@ -59,10 +59,14 @@ export async function GET(request) {
             const thumbSrc = doc.thumbnail || fullSrc;
             const momentDate = doc.date || (doc.createdAt ? new Date(doc.createdAt).toISOString().split('T')[0] : '2026-03-14');
 
+            const id = doc._id?.toString() || `photo-${idx}`;
+            const isBase64 = typeof fullSrc === 'string' && fullSrc.startsWith('data:');
+            const mediaSrc = isBase64 ? `/api/media/gallery/${id}` : (fullSrc || '/gallery-placeholders/moment-1.svg');
+            const mediaThumb = isBase64 ? `/api/media/gallery/${id}?thumb=1` : (thumbSrc || mediaSrc);
             return {
-                id: doc._id?.toString() || `photo-${idx}`,
-                src: fullSrc || '/gallery-placeholders/moment-1.svg',
-                thumbnail: thumbSrc || fullSrc || '/gallery-placeholders/moment-1.svg',
+                id,
+                src: mediaSrc,
+                thumbnail: mediaThumb,
                 date: momentDate,
                 order: doc.order ?? idx,
             };

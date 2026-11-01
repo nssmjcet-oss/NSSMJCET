@@ -1,3 +1,4 @@
+import { toMediaUrl } from '@/lib/media-url';
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
@@ -9,7 +10,7 @@ export async function GET() {
         const doc = await ProgramOfficer.findOne({}).lean();
 
         const officer = doc
-            ? { ...doc, id: doc._id }
+            ? { ...doc, photo: toMediaUrl('program-officer', doc._id, doc.photo), id: doc._id }
             : {
                 name: { en: '', te: '', hi: '' },
                 designation: { en: '', te: '', hi: '' },

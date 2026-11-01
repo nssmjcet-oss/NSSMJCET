@@ -1,3 +1,4 @@
+import { toMediaUrl } from '@/lib/media-url';
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { Event } from '@/lib/models';
@@ -16,8 +17,11 @@ export async function GET(request) {
             if (!eventDoc) {
                 return NextResponse.json({ error: 'Event not found' }, { status: 404 });
             }
+            const detailImages = Array.isArray(eventDoc.images)
+                ? eventDoc.images.map((img, idx) => toMediaUrl('events', eventDoc._id, img, '?index=' + idx))
+                : [];
             return NextResponse.json({
-                event: { ...eventDoc, id: eventDoc._id }
+                event: { ...eventDoc, images: detailImages, id: eventDoc._id }
             }, {
                 status: 200,
                 headers: {
@@ -45,10 +49,17 @@ export async function GET(request) {
             .sort({ date: -1 })
             .lean();
 
-        const events = eventsData.map(doc => ({
-            ...doc,
-            id: doc._id
-        }));
+        const events = eventsData.map(doc => {
+            const id = doc._id?.toString() || doc._id;
+            const images = Array.isArray(doc.images)
+                ? doc.images.map((img, idx) => toMediaUrl('events', id, img, '?index=' + idx))
+                : [];
+            return {
+                ...doc,
+                images,
+                id
+            };
+        });
 
         return NextResponse.json({ events }, {
             status: 200,

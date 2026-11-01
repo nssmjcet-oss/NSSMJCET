@@ -1,3 +1,4 @@
+import { toMediaUrl } from '@/lib/media-url';
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import mongoose from 'mongoose';
@@ -22,7 +23,7 @@ export async function GET(request) {
                 return NextResponse.json({ error: 'Initiative not found' }, { status: 404 });
             }
             return NextResponse.json({
-                initiative: { ...doc, id: doc._id }
+                initiative: { ...doc, image: toMediaUrl('flagship', doc._id, doc.image), id: doc._id }
             }, {
                 headers: {
                     'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=86400',
@@ -32,7 +33,11 @@ export async function GET(request) {
 
         const filter = status ? { status } : {};
         const docs = await Flagship.find(filter).sort({ order: 1, createdAt: 1 }).lean();
-        const flagships = docs.map(d => ({ ...d, id: d._id }));
+        const flagships = docs.map(d => ({
+            ...d,
+            image: toMediaUrl('flagship', d._id, d.image),
+            id: d._id
+        }));
         return NextResponse.json({ flagships }, {
             headers: {
                 'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=86400',

@@ -1,3 +1,4 @@
+import { toMediaUrl } from '@/lib/media-url';
 import { Suspense } from 'react';
 import connectToDatabase from '@/lib/mongodb';
 import { Event } from '@/lib/models';
@@ -41,10 +42,15 @@ async function getEvents() {
             .lean();
 
         return eventsData.map(doc => {
+            const id = doc._id?.toString() || doc._id;
+            const images = Array.isArray(doc.images)
+                ? doc.images.map((img, idx) => toMediaUrl('events', id, img, '?index=' + idx))
+                : [];
             const serialized = {
                 ...doc,
-                id: doc._id?.toString() || doc._id,
-                _id: doc._id?.toString() || doc._id,
+                images,
+                id,
+                _id: id,
                 createdBy: doc.createdBy || null,
                 date: doc.date instanceof Date ? doc.date.toISOString() : (doc.date || null),
             };

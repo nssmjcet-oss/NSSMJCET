@@ -138,7 +138,7 @@ function LeaderTeamCard({ item, language, index }) {
                             sizes="(max-width: 768px) 100vw, 400px"
                             className={styles.cardPhoto}
                             priority
-                            unoptimized={typeof photo === 'string' && photo.startsWith('data:')}
+                            unoptimized={typeof photo === 'string' && (photo.startsWith('data:') || photo.startsWith('/api/'))}
                         />
                     </motion.div>
                 ) : (

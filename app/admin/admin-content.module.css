@@ -319,25 +319,36 @@
 .modalTitle {
     font-size: var(--text-2xl);
     font-weight: 800;
-    color: white;
+    color: #ffffff !important;
     letter-spacing: -0.5px;
 }
 
+.modalContent h3,
+.modalContent h4,
+.modalHeader h3 {
+    color: #ffffff !important;
+}
+
 .closeBtn {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
-    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
+    font-size: 24px;
+    line-height: 1;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
+    padding: 0;
 }
 
 .closeBtn:hover {
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.4);
     color: #ef4444;
     transform: rotate(90deg);
 }
@@ -348,6 +359,24 @@
     flex: 1;
     color: white; /* Ensure text is readable */
     -webkit-overflow-scrolling: touch;
+}
+
+.modalBody::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modalBody::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
+}
+
+.modalBody::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+}
+
+.modalBody::-webkit-scrollbar-thumb:hover {
+    background: #FF9933;
 }
 
 /* Ensure form rows inside modal body are properly spaced */
@@ -386,11 +415,27 @@
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.gridItem {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
 .gridItem:hover {
-    transform: translateY(-8px) scale(1.02);
-    border-color: rgba(59, 130, 246, 0.3);
-    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5);
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(22, 33, 58, 0.95);
+    border-color: rgba(59, 130, 246, 0.45);
+    transform: translateY(-6px);
+    box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.6);
+}
+
+.gridItem h3 {
+    color: #ffffff !important;
 }
 
 .gridImage {
@@ -402,14 +447,20 @@
 
 .gridContent {
     padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .gridActions {
-    padding: 16px 24px;
-    background: rgba(0, 0, 0, 0.15);
+    padding: 16px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
+    margin-top: auto;
 }
 
 /* Mobile Responsive */
@@ -438,23 +489,4 @@
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-.gridItem {
-    background: rgba(15, 23, 42, 0.7); /* Deepen background for contrast */
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 28px;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    display: flex;
-    flex-direction: column;
-    color: white; /* Force white text */
-}
-
-.gridItem:hover {
-    background: rgba(30, 41, 59, 0.9);
-    border-color: #3b82f6;
-    transform: translateY(-8px);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }

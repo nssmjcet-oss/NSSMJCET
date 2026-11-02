@@ -174,32 +174,57 @@ export default function EventsPage() {
                     <p className={styles.sectionSubtitle}>Create and manage organization events</p>
                 </div>
                 <button
-                    className="marvelous-btn marvelous-btn-primary marvelous-btn-sm"
+                    className={`${styles.btn} ${styles.btnPrimary}`}
                     onClick={() => setShowCreateModal(true)}
+                    style={{ borderRadius: '14px', padding: '10px 22px', fontSize: '13px', fontWeight: '700' }}
                 >
                     <Plus size={18} /> {t.createEvent}
                 </button>
             </div>
 
-            <div className={styles.card} style={{ padding: '12px', borderRadius: '20px', marginBottom: '32px', display: 'inline-flex', gap: '8px' }}>
+            <div className={styles.card} style={{ padding: '8px', borderRadius: '16px', marginBottom: '32px', display: 'inline-flex', gap: '6px', background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,0,0,0.06)' }}>
                 <button
                     className={`${styles.btn} ${filter === 'all' ? styles.btnPrimary : styles.btnSecondary}`}
                     onClick={() => setFilter('all')}
-                    style={{ borderRadius: '14px' }}
+                    style={{
+                        borderRadius: '12px',
+                        padding: '8px 18px',
+                        fontSize: '13px',
+                        background: filter === 'all' ? '#FF9933' : 'transparent',
+                        color: filter === 'all' ? '#ffffff' : '#334155',
+                        border: 'none',
+                        boxShadow: filter === 'all' ? '0 4px 12px rgba(255, 153, 51, 0.3)' : 'none'
+                    }}
                 >
                     {t.allEvents}
                 </button>
                 <button
                     className={`${styles.btn} ${filter === 'published' ? styles.btnPrimary : styles.btnSecondary}`}
                     onClick={() => setFilter('published')}
-                    style={{ borderRadius: '14px' }}
+                    style={{
+                        borderRadius: '12px',
+                        padding: '8px 18px',
+                        fontSize: '13px',
+                        background: filter === 'published' ? '#FF9933' : 'transparent',
+                        color: filter === 'published' ? '#ffffff' : '#334155',
+                        border: 'none',
+                        boxShadow: filter === 'published' ? '0 4px 12px rgba(255, 153, 51, 0.3)' : 'none'
+                    }}
                 >
                     {t.published}
                 </button>
                 <button
                     className={`${styles.btn} ${filter === 'draft' ? styles.btnPrimary : styles.btnSecondary}`}
                     onClick={() => setFilter('draft')}
-                    style={{ borderRadius: '14px' }}
+                    style={{
+                        borderRadius: '12px',
+                        padding: '8px 18px',
+                        fontSize: '13px',
+                        background: filter === 'draft' ? '#FF9933' : 'transparent',
+                        color: filter === 'draft' ? '#ffffff' : '#334155',
+                        border: 'none',
+                        boxShadow: filter === 'draft' ? '0 4px 12px rgba(255, 153, 51, 0.3)' : 'none'
+                    }}
                 >
                     {t.draft}
                 </button>
@@ -253,58 +278,89 @@ export default function EventsPage() {
                                     {event.title[language] || event.title.en}
                                 </h3>
 
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--marvel-text-dim)', fontSize: '14px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <Calendar size={14} style={{ color: '#3b82f6' }} />
-                                        <span>
+                                        <Calendar size={15} style={{ color: '#60a5fa', flexShrink: 0 }} />
+                                        <span style={{ color: '#e2e8f0', fontWeight: '500' }}>
                                             {event.endDate && event.endDate !== event.date
                                                 ? `${formatDate(event.date)} - ${formatDate(event.endDate)}`
                                                 : formatDate(event.date)}
                                         </span>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <MapPin size={14} style={{ color: '#3b82f6' }} />
-                                        <span>{event.location}</span>
+                                        <MapPin size={15} style={{ color: '#60a5fa', flexShrink: 0 }} />
+                                        <span style={{ color: '#cbd5e1' }}>{event.location}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className={styles.gridActions} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <div className={styles.gridActions}>
                                 <button
                                     type="button"
-                                    className={styles.btn}
                                     style={{
-                                        flex: '1 1 auto',
-                                        background: event.isFeatured
-                                            ? 'linear-gradient(135deg, #f59e0b, #d97706)'
-                                            : 'rgba(255, 255, 255, 0.05)',
-                                        color: event.isFeatured ? '#ffffff' : '#fbbf24',
-                                        border: event.isFeatured ? '1px solid #fbbf24' : '1px solid rgba(251, 191, 36, 0.35)',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        padding: '7px 13px',
+                                        borderRadius: '9999px',
                                         fontSize: '12px',
-                                        padding: '8px 12px',
-                                        borderRadius: '12px'
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.25s ease',
+                                        border: event.isFeatured ? '1px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.15)',
+                                        background: event.isFeatured ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'rgba(255, 255, 255, 0.06)',
+                                        color: event.isFeatured ? '#ffffff' : '#cbd5e1',
+                                        boxShadow: event.isFeatured ? '0 2px 10px rgba(245, 158, 11, 0.35)' : 'none',
+                                        whiteSpace: 'nowrap'
                                     }}
                                     onClick={() => handleToggleFeatured(event)}
                                     disabled={togglingId === (event.id || event._id)}
-                                    title={event.isFeatured ? "Currently featured in top banner on /events" : "Set as featured top banner on /events"}
+                                    title={event.isFeatured ? "Featured banner on /events (Click to unfeature)" : "Set as featured banner on /events"}
                                 >
-                                    <Star size={13} fill={event.isFeatured ? "#ffffff" : "none"} />
-                                    {togglingId === (event.id || event._id) ? 'Updating...' : (event.isFeatured ? 'Featured Banner' : 'Set as Banner')}
+                                    <Star size={13} fill={event.isFeatured ? "#ffffff" : "none"} color={event.isFeatured ? "#ffffff" : "#fbbf24"} />
+                                    <span>{togglingId === (event.id || event._id) ? 'Updating...' : (event.isFeatured ? 'Banner Active' : 'Set Banner')}</span>
                                 </button>
-                                <button
-                                    className={`${styles.btn} ${styles.btnSecondary}`}
-                                    onClick={() => setEditingEvent(event)}
-                                    style={{ padding: '8px 14px', borderRadius: '12px' }}
-                                >
-                                    <Edit2 size={14} /> {t.edit}
-                                </button>
-                                <button
-                                    className={`${styles.btn} ${styles.btnDanger}`}
-                                    onClick={() => handleDelete(event.id || event._id)}
-                                    style={{ padding: '8px 12px', borderRadius: '12px' }}
-                                >
-                                    <Trash2 size={14} /> {t.delete}
-                                </button>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <button
+                                        type="button"
+                                        className={`${styles.btn} ${styles.btnSecondary}`}
+                                        onClick={() => setEditingEvent(event)}
+                                        style={{
+                                            padding: '7px 13px',
+                                            borderRadius: '10px',
+                                            fontSize: '12px',
+                                            fontWeight: '600',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '5px',
+                                            background: 'rgba(255, 255, 255, 0.08)',
+                                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                                            color: '#e2e8f0',
+                                            cursor: 'pointer'
+                                        }}
+                                        title="Edit event details"
+                                    >
+                                        <Edit2 size={13} />
+                                        <span>{t.edit}</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`${styles.btn} ${styles.btnDanger}`}
+                                        onClick={() => handleDelete(event.id || event._id)}
+                                        style={{
+                                            padding: '7px 10px',
+                                            borderRadius: '10px',
+                                            fontSize: '12px',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            cursor: 'pointer'
+                                        }}
+                                        title="Delete event"
+                                    >
+                                        <Trash2 size={13} />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -580,8 +636,8 @@ function EventFormModal({ event, onClose, onSuccess }) {
         <div className={styles.modalOverlay} onClick={onClose}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
                 <div className={styles.modalHeader}>
-                    <h3 className={styles.modalTitle}>{isEdit ? 'Edit Event' : 'Create New Event'}</h3>
-                    <button className={styles.closeBtn} onClick={onClose}>×</button>
+                    <h3 className={styles.modalTitle} style={{ color: '#ffffff', margin: 0 }}>{isEdit ? 'Edit Event' : 'Create New Event'}</h3>
+                    <button type="button" className={styles.closeBtn} onClick={onClose} title="Close">×</button>
                 </div>
 
                 {error && <div className={styles.badge} style={{ width: 'calc(100% - 40px)', margin: '20px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', padding: '12px', justifyContent: 'center' }}>{error}</div>}
@@ -589,14 +645,25 @@ function EventFormModal({ event, onClose, onSuccess }) {
 
                 <form onSubmit={handleSubmit} style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', flex: 1 }}>
                     <div className={styles.modalBody}>
-                        <div className={styles.tabs} style={{ display: 'flex', gap: '8px', marginBottom: '32px', background: 'rgba(0,0,0,0.2)', padding: '6px', borderRadius: '16px' }}>
+                        <div className={styles.tabs} style={{ display: 'flex', gap: '8px', marginBottom: '28px', background: 'rgba(0,0,0,0.3)', padding: '6px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)' }}>
                             {['en', 'te', 'hi'].map((lang) => (
                                 <button
                                     key={lang}
                                     type="button"
-                                    className={`${styles.btn} ${activeTab === lang ? styles.btnPrimary : styles.btnSecondary}`}
                                     onClick={() => setActiveTab(lang)}
-                                    style={{ flex: 1, borderRadius: '12px', padding: '10px' }}
+                                    style={{
+                                        flex: 1,
+                                        borderRadius: '12px',
+                                        padding: '10px',
+                                        fontWeight: '700',
+                                        fontSize: '14px',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.25s ease',
+                                        background: activeTab === lang ? '#FF9933' : 'rgba(255, 255, 255, 0.06)',
+                                        color: activeTab === lang ? '#ffffff' : '#cbd5e1',
+                                        border: activeTab === lang ? '1px solid rgba(255, 255, 255, 0.25)' : '1px solid rgba(255, 255, 255, 0.1)',
+                                        boxShadow: activeTab === lang ? '0 4px 15px rgba(255, 153, 51, 0.35)' : 'none',
+                                    }}
                                 >
                                     {lang === 'en' ? 'English' : lang === 'te' ? 'తెలుగు' : 'हिंदी'}
                                 </button>
@@ -925,10 +992,24 @@ function EventFormModal({ event, onClose, onSuccess }) {
                     </div>
 
                     <div className={styles.modalFooter}>
-                        <button type="button" className={`${styles.btn} ${styles.btnSecondary}`} onClick={onClose}>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.08)',
+                                border: '1px solid rgba(255, 255, 255, 0.15)',
+                                color: '#cbd5e1',
+                                borderRadius: '14px',
+                                padding: '10px 22px',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                            }}
+                        >
                             Cancel
                         </button>
-                        <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`} disabled={loading || uploading} style={{ minWidth: '160px' }}>
+                        <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`} disabled={loading || uploading} style={{ minWidth: '160px', borderRadius: '14px', padding: '10px 24px' }}>
                             {loading ? 'Propagating...' : (isEdit ? 'Authorize Update' : 'Publish Event')}
                         </button>
                     </div>

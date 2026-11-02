@@ -126,7 +126,8 @@ export default function EventsClient({ events }) {
     });
 
     // Select the premier/featured event: prefer an event flagged with isFeatured / flagship / ongoing / upcoming, or first event
-    const featuredEvent = events.find(e => e.isFeatured || e.eventType === 'ongoing') || events.find(e => e.eventType === 'upcoming') || events[0];
+    // Select the premier/featured event: 1. Admin-chosen featured event, 2. Live ongoing event, 3. Upcoming event, 4. First event
+    const featuredEvent = events.find(e => e.isFeatured) || events.find(e => e.eventType === 'ongoing') || events.find(e => e.eventType === 'upcoming') || events[0];
 
     return (
         <div className={styles.eventsPage}>
@@ -203,7 +204,7 @@ export default function EventsClient({ events }) {
                                         title={((featuredEvent.title?.en || '').toLowerCase().includes('mun') || (featuredEvent.title?.en || '').toLowerCase().includes('yds'))
                                             ? 'MUN x NSS'
                                             : (featuredEvent.short_title || featuredEvent.title[language] || featuredEvent.title.en)}
-                                        subtitle="Youth Diplomacy Summit"
+                                        subtitle={featuredEvent.subtitle || featuredEvent.tagline || (((featuredEvent.title?.en || '').toLowerCase().includes('mun') || (featuredEvent.title?.en || '').toLowerCase().includes('yds')) ? 'Youth Diplomacy Summit' : (typeof featuredEvent.category === 'object' ? (featuredEvent.category[language] || featuredEvent.category.en) : (featuredEvent.category || 'Empowering Communities, Inspiring Change')))}
                                         animationPreset="diplomatic"
                                         accentColor="saffron"
                                         theme="dark"
@@ -215,7 +216,7 @@ export default function EventsClient({ events }) {
                                     <div className={styles.featuredMetaItem}>
                                         <Calendar size={15} style={{ color: '#93c5fd' }} />
                                         <span>
-                                            {featuredEvent.endDate && featuredEvent.endDate !== featuredEvent.date
+                                            {featuredEvent.endDate && featuredEvent.endDate !== featuredEvent.date && new Date(featuredEvent.endDate) >= new Date(featuredEvent.date)
                                                 ? `${formatDate(featuredEvent.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')} - ${formatDate(featuredEvent.endDate, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}`
                                                 : formatDate(featuredEvent.date, language === 'en' ? 'en-IN' : language === 'te' ? 'te-IN' : 'hi-IN')}
                                         </span>

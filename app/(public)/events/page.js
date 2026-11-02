@@ -35,6 +35,11 @@ async function getEvents() {
                 academicYear: 1,
                 description: 1,
                 status: 1,
+                isFeatured: 1,
+                short_title: 1,
+                shortTitle: 1,
+                subtitle: 1,
+                tagline: 1,
                 images: { $slice: 1 }
             }
         )
@@ -51,8 +56,13 @@ async function getEvents() {
                 images,
                 id,
                 _id: id,
+                isFeatured: Boolean(doc.isFeatured),
+                short_title: doc.short_title || doc.shortTitle || null,
+                subtitle: doc.subtitle || doc.tagline || null,
+                category: doc.category || null,
                 createdBy: doc.createdBy || null,
                 date: doc.date instanceof Date ? doc.date.toISOString() : (doc.date || null),
+                endDate: doc.endDate instanceof Date ? doc.endDate.toISOString() : (doc.endDate || null),
             };
             return JSON.parse(JSON.stringify(serialized));
         });

@@ -6,7 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import styles from '../admin-content.module.css';
 import { Icons } from '@/components/Icons';
 import { adminFetch } from '@/utils/api-client';
-import { Plus, Calendar, MapPin, Edit2, Trash2, Crop } from 'lucide-react';
+import { Plus, Calendar, MapPin, Edit2, Trash2, Crop, Star } from 'lucide-react';
 import { formatDate } from '@/utils/formatters';
 import { translateText } from '@/utils/translation';
 import { compressImageToDataURL } from '@/utils/image-compression';
@@ -28,6 +28,7 @@ const translations = {
         title: 'Title',
         date: 'Date',
         category: 'Category',
+        noEvents: 'No events found',
     },
     te: {
         title: 'ఈవెంట్స్ నిర్వహణ',
@@ -44,6 +45,7 @@ const translations = {
         title: 'శీర్షిక',
         date: 'తేదీ',
         category: 'వర్గం',
+        noEvents: 'ఈవెంట్స్ కనుగొనబడలేదు',
     },
     hi: {
         title: 'ईवेंट प्रबंधन',
@@ -60,6 +62,7 @@ const translations = {
         title: 'शीर्षक',
         date: 'तारीఖ',
         category: 'श्रेणी',
+        noEvents: 'कोई ईवेंट नहीं मिला',
     },
 };
 
@@ -95,6 +98,45 @@ export default function EventsPage() {
             setLoading(false);
         }
     }, [filter]);
+
+    const [togglingId, setTogglingId] = useState(null);
+
+    const handleToggleFeatured = async (event) => {
+        const eventId = event.id || event._id;
+        const newStatus = !event.isFeatured;
+        setTogglingId(eventId);
+        try {
+            const response = await adminFetch('/api/admin/events', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: eventId,
+                    action: 'toggle_featured',
+                    isFeatured: newStatus
+                })
+            });
+
+            if (response.ok) {
+                setEvents(prev => prev.map(e => ({
+                    ...e,
+                    isFeatured: (e.id || e._id) === eventId ? newStatus : (newStatus ? false : e.isFeatured)
+                })));
+                adminFetch('/api/revalidate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paths: ['/', '/events'] })
+                }).catch(() => {});
+            } else {
+                const errData = await response.json();
+                alert(errData.error || 'Failed to update featured banner status');
+            }
+        } catch (error) {
+            console.error('Failed to toggle featured status:', error);
+            alert('Failed to update featured banner status');
+        } finally {
+            setTogglingId(null);
+        }
+    };
 
     const handleDelete = async (id) => {
         if (!confirm(t.confirmDelete)) return;
@@ -176,7 +218,24 @@ export default function EventsPage() {
                                 <img src={event.images[0]} alt="" className={styles.gridImage} />
                             )}
                             <div className={styles.gridContent}>
-                                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                                    {event.isFeatured && (
+                                        <span
+                                            className={styles.badge}
+                                            style={{
+                                                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(234, 88, 12, 0.3))',
+                                                color: '#fbbf24',
+                                                border: '1px solid rgba(251, 191, 36, 0.6)',
+                                                fontWeight: '800',
+                                                boxShadow: '0 0 10px rgba(245, 158, 11, 0.25)',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '5px'
+                                            }}
+                                        >
+                                            <Star size={12} fill="#fbbf24" /> FEATURED BANNER
+                                        </span>
+                                    )}
                                     <span className={`${styles.badge} ${event.status === 'published' ? styles.badgeSuccess : styles.badgeWarning}`}>
                                         {event.status === 'published' ? t.published : t.draft}
                                     </span>
@@ -210,16 +269,39 @@ export default function EventsPage() {
                                 </div>
                             </div>
 
-                            <div className={styles.gridActions}>
+                            <div className={styles.gridActions} style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                <button
+                                    type="button"
+                                    className={styles.btn}
+                                    style={{
+                                        flex: '1 1 auto',
+                                        background: event.isFeatured
+                                            ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                                            : 'rgba(255, 255, 255, 0.05)',
+                                        color: event.isFeatured ? '#ffffff' : '#fbbf24',
+                                        border: event.isFeatured ? '1px solid #fbbf24' : '1px solid rgba(251, 191, 36, 0.35)',
+                                        fontSize: '12px',
+                                        padding: '8px 12px',
+                                        borderRadius: '12px'
+                                    }}
+                                    onClick={() => handleToggleFeatured(event)}
+                                    disabled={togglingId === (event.id || event._id)}
+                                    title={event.isFeatured ? "Currently featured in top banner on /events" : "Set as featured top banner on /events"}
+                                >
+                                    <Star size={13} fill={event.isFeatured ? "#ffffff" : "none"} />
+                                    {togglingId === (event.id || event._id) ? 'Updating...' : (event.isFeatured ? 'Featured Banner' : 'Set as Banner')}
+                                </button>
                                 <button
                                     className={`${styles.btn} ${styles.btnSecondary}`}
                                     onClick={() => setEditingEvent(event)}
+                                    style={{ padding: '8px 14px', borderRadius: '12px' }}
                                 >
                                     <Edit2 size={14} /> {t.edit}
                                 </button>
                                 <button
                                     className={`${styles.btn} ${styles.btnDanger}`}
-                                    onClick={() => handleDelete(event.id)}
+                                    onClick={() => handleDelete(event.id || event._id)}
+                                    style={{ padding: '8px 12px', borderRadius: '12px' }}
                                 >
                                     <Trash2 size={14} /> {t.delete}
                                 </button>
@@ -298,6 +380,10 @@ function EventFormModal({ event, onClose, onSuccess }) {
         status: event?.status || 'published',
         eventType: event?.eventType || 'upcoming',
         academicYear: event?.academicYear || '2026-2027',
+        isFeatured: Boolean(event?.isFeatured),
+        short_title: event?.short_title || event?.shortTitle || '',
+        subtitle: event?.subtitle || event?.tagline || '',
+        category: typeof event?.category === 'object' ? (event?.category?.en || '') : (event?.category || ''),
         highlights: event?.highlights || '',
         winners: event?.winners || '',
         report: event?.report || '',
@@ -442,11 +528,18 @@ function EventFormModal({ event, onClose, onSuccess }) {
             return;
         }
 
+        if (formData.endDate && formData.date && formData.endDate < formData.date) {
+            setError('End Date cannot be earlier than Start Date.');
+            setLoading(false);
+            return;
+        }
+
         try {
             const url = '/api/admin/events';
             const method = isEdit ? 'PUT' : 'POST';
+            const eventId = event?.id || event?._id;
             const body = isEdit
-                ? { id: event.id, ...formData }
+                ? { id: eventId, ...formData }
                 : { ...formData, createdBy: user?.uid || 'admin' };
 
             const response = await adminFetch(url, {
@@ -705,6 +798,79 @@ function EventFormModal({ event, onClose, onSuccess }) {
                                     <option value="published">Visible to Public</option>
                                     <option value="draft">Internal Draft</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        {/* Events Page Featured Banner Configuration */}
+                        <div style={{
+                            marginTop: '20px',
+                            marginBottom: '20px',
+                            padding: '20px',
+                            background: formData.isFeatured ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+                            border: formData.isFeatured ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid rgba(255, 255, 255, 0.1)',
+                            borderRadius: '16px',
+                            transition: 'all 0.3s ease'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                                <div>
+                                    <h4 style={{ color: '#fbbf24', fontSize: '15px', fontWeight: '800', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Star size={16} fill={formData.isFeatured ? "#fbbf24" : "none"} />
+                                        Featured Top Hero Card (/events page)
+                                    </h4>
+                                    <p style={{ color: 'var(--marvel-text-dim)', fontSize: '12px', margin: '4px 0 0 0' }}>
+                                        Display this event prominently in the premier top cinematic card on the Events page.
+                                    </p>
+                                </div>
+                                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', background: formData.isFeatured ? '#f59e0b' : 'rgba(255,255,255,0.08)', padding: '8px 16px', borderRadius: '12px', color: formData.isFeatured ? '#000' : '#fff', fontWeight: '700', fontSize: '13px', transition: 'all 0.2s ease', userSelect: 'none' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.isFeatured}
+                                        onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                                        style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                                    />
+                                    <span>{formData.isFeatured ? '★ Featured Banner Active' : 'Set as Featured Banner'}</span>
+                                </label>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+                                    <label className={styles.label}>Banner Subtitle / Tagline</label>
+                                    <input
+                                        type="text"
+                                        className={styles.input}
+                                        value={formData.subtitle}
+                                        onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                                        placeholder="e.g. Youth Diplomacy Summit, Rashtriya Ekta Diwas"
+                                    />
+                                    <span style={{ fontSize: '11px', color: 'var(--marvel-text-dim)', marginTop: '4px', display: 'block' }}>
+                                        Custom subtitle under title on banner (replaces default &quot;Youth Diplomacy Summit&quot;).
+                                    </span>
+                                </div>
+
+                                <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+                                    <label className={styles.label}>Banner Short Title (Optional)</label>
+                                    <input
+                                        type="text"
+                                        className={styles.input}
+                                        value={formData.short_title}
+                                        onChange={(e) => setFormData({ ...formData, short_title: e.target.value })}
+                                        placeholder="e.g. MUN x NSS or National Unity Day"
+                                    />
+                                    <span style={{ fontSize: '11px', color: 'var(--marvel-text-dim)', marginTop: '4px', display: 'block' }}>
+                                        Custom short name for hero typography. Defaults to Event Title.
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className={styles.formGroup} style={{ marginTop: '16px', marginBottom: 0 }}>
+                                <label className={styles.label}>Event Category</label>
+                                <input
+                                    type="text"
+                                    className={styles.input}
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    placeholder="e.g. National Observance, Healthcare & Blood Donation, Civic Leadership"
+                                />
                             </div>
                         </div>
 

@@ -43,6 +43,11 @@ export async function GET(request) {
                 academicYear: 1,
                 description: 1,
                 status: 1,
+                isFeatured: 1,
+                short_title: 1,
+                shortTitle: 1,
+                subtitle: 1,
+                tagline: 1,
                 images: { $slice: 1 } // Only fetch 1st image for cards/sliders
             }
         )
@@ -57,7 +62,10 @@ export async function GET(request) {
             return {
                 ...doc,
                 images,
-                id
+                id,
+                isFeatured: Boolean(doc.isFeatured),
+                short_title: doc.short_title || doc.shortTitle || null,
+                subtitle: doc.subtitle || doc.tagline || null,
             };
         });
 

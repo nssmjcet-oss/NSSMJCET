@@ -68,6 +68,10 @@ export async function POST(request) {
             (images || []).map(img => maybeUploadImage(img, 'events'))
         );
 
+        if (body.isFeatured) {
+            await Event.updateMany({}, { $set: { isFeatured: false } });
+        }
+
         const eventData = {
             ...body,
             title,
@@ -76,6 +80,10 @@ export async function POST(request) {
             endDate: body.endDate ? new Date(body.endDate) : undefined,
             location,
             images: uploadedImages,
+            isFeatured: Boolean(body.isFeatured),
+            short_title: body.short_title || body.shortTitle || undefined,
+            subtitle: body.subtitle || body.tagline || undefined,
+            category: body.category || undefined,
             status: eventStatus || 'published',
             eventType: eventType || 'upcoming',
             createdBy: createdBy || 'admin',
@@ -116,16 +124,73 @@ export async function PUT(request) {
         const body = await request.json();
         const { id, ...updateData } = body;
 
-        if (!id) {
+        // Ensure id is a simple string if it's a serialized ObjectId object
+        const eventId = typeof id === 'object' ? (id.$oid || id.toString()) : (id || body._id);
+
+        if (!eventId) {
             return NextResponse.json(
                 { error: 'Event ID is required' },
                 { status: 400 }
             );
         }
 
+        // Quick feature toggle support (from quick action button)
+        if (updateData.action === 'toggle_featured' || ('isFeatured' in updateData && Object.keys(updateData).length <= 2)) {
+            const willBeFeatured = Boolean(updateData.isFeatured);
+            if (willBeFeatured) {
+                // Unfeature all other events so only one is featured
+                await Event.updateMany({ _id: { $ne: eventId } }, { $set: { isFeatured: false } });
+            }
+            const updatedDoc = await Event.findOneAndUpdate(
+                { _id: eventId },
+                { $set: { isFeatured: willBeFeatured, updatedAt: new Date() } },
+                { returnDocument: 'after' }
+            ).lean();
+
+            if (!updatedDoc) {
+                return NextResponse.json(
+                    { error: 'Event not found with ID: ' + eventId },
+                    { status: 404 }
+                );
+            }
+
+            revalidatePath('/');
+            revalidatePath('/events');
+            revalidatePath('/api/events');
+            revalidatePath('/api/stats');
+
+            return NextResponse.json(
+                { message: willBeFeatured ? 'Event set as featured banner' : 'Event unfeatured', isFeatured: willBeFeatured },
+                { status: 200 }
+            );
+        }
+
+        // If isFeatured is set to true in a full form update, unfeature all others
+        if (updateData.isFeatured === true || updateData.isFeatured === 'true') {
+            await Event.updateMany({ _id: { $ne: eventId } }, { $set: { isFeatured: false } });
+            updateData.isFeatured = true;
+        } else if (updateData.isFeatured === false || updateData.isFeatured === 'false') {
+            updateData.isFeatured = false;
+        }
+
         // Convert string date to Date object if present
         if (updateData.date) {
             updateData.date = new Date(updateData.date);
+        }
+
+        // Convert endDate to Date or null
+        if (updateData.endDate) {
+            updateData.endDate = new Date(updateData.endDate);
+        } else if (updateData.endDate === '' || updateData.endDate === null) {
+            updateData.endDate = null;
+        }
+
+        // Normalize short_title and subtitle
+        if (updateData.shortTitle && !updateData.short_title) {
+            updateData.short_title = updateData.shortTitle;
+        }
+        if (updateData.tagline && !updateData.subtitle) {
+            updateData.subtitle = updateData.tagline;
         }
 
         // Upload any new Base64 images to Firebase Storage
@@ -135,30 +200,27 @@ export async function PUT(request) {
             );
         }
 
-        // Ensure id is a simple string if it's a serialized ObjectId object
-        const eventId = typeof id === 'object' ? (id.$oid || id.toString()) : id;
- 
         let updated = null;
- 
-        // 1. Try as ObjectId if valid
-        if (typeof eventId === 'string' && eventId.length === 24) {
+
+        // 1. Try as ObjectId if valid 24-char hex string
+        if (typeof eventId === 'string' && eventId.length === 24 && /^[0-9a-fA-F]{24}$/.test(eventId)) {
             try {
                 updated = await Event.findByIdAndUpdate(
                     new mongoose.Types.ObjectId(eventId),
                     { ...updateData, updatedAt: new Date() },
-                    { new: true }
+                    { returnDocument: 'after' }
                 ).lean();
             } catch (e) {
                 console.log('Event ObjectId update failed, trying string format...');
             }
         }
- 
+
         // 2. Try as string
         if (!updated) {
             updated = await Event.findOneAndUpdate(
                 { _id: eventId },
                 { ...updateData, updatedAt: new Date() },
-                { new: true }
+                { returnDocument: 'after' }
             ).lean();
         }
  

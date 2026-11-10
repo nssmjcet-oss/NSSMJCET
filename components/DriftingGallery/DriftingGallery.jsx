@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
@@ -52,7 +52,7 @@ function formatAltText(dateStr) {
 
 /**
  * Compute target card count based on screen area:
- * aiming for ~1 card per 55,000-65,000 px²
+ * aiming for ~1 card per 55,000-65,000 pxÂ²
  * 1920x1080 -> about 32-38 cards (~36)
  * 1440x900  -> about 20-24 cards (~22)
  * tablet    -> about 14-18 cards (~16)
@@ -288,7 +288,9 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         cardsDataRef.current = cardsData;
     }, [cardsData]);
 
-    // Fetch fresh moments & settings from API on client mount
+    // Fetch fresh moments & settings from API on client mount.
+    // After photos load, rebuild the layout so ALL devices (phones included)
+    // show the full, up-to-date set — including older photos — not just placeholders.
     useEffect(() => {
         setPortalMounted(true);
 
@@ -297,6 +299,17 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
             .then((data) => {
                 if (data.photos && data.photos.length > 0) {
                     setMoments(data.photos);
+                    // Rebuild card layout with the real photo pool so photo assignment
+                    // reflects the actual DB photos (fixes 'only new photos on mobile').
+                    const container = containerRef.current;
+                    const rect = container
+                        ? container.getBoundingClientRect()
+                        : { width: window.innerWidth, height: window.innerHeight };
+                    const w = rect.width || window.innerWidth || 1200;
+                    const h = rect.height || window.innerHeight || 800;
+                    // Pass the photo count directly to avoid stale closure — buildLayout
+                    // is captured before React commits the new moments state.
+                    buildLayout(w, h, data.photos.length);
                 }
                 if (data.settings) {
                     setSettings((prev) => ({
@@ -306,6 +319,8 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                 }
             })
             .catch(() => {});
+    // buildLayout excluded from deps to avoid re-fetch loops; called manually after data arrives.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Recycle photo when card leaves screen:
@@ -392,8 +407,10 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         onDragStartCallback: dismissHint,
     });
 
-    // Layout builder based on screen area density & repeat rules
-    const buildLayout = useCallback((w, h) => {
+    // Layout builder based on screen area density & repeat rules.
+    // Pass momentCount to override moments.length when calling immediately after
+    // setMoments (before React re-renders the new closure).
+    const buildLayout = useCallback((w, h, momentCount) => {
         const mobile = w <= 768;
         const tablet = w > 768 && w <= 1024;
         setIsMobile(mobile);
@@ -413,7 +430,8 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         }
 
         // 2. Single photo rule: cap repeats to at most 8 cards
-        const totalMoments = moments.length;
+        // Use the passed-in count when available (avoids stale closure after setMoments)
+        const totalMoments = momentCount != null ? momentCount : moments.length;
         if (totalMoments === 1) {
             targetCount = Math.min(targetCount, 8);
         } else if (totalMoments > 1 && settings.repeatPhotos === false) {
@@ -571,7 +589,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         setPointer(-9999, -9999, false);
     };
 
-    // Container click → ripple
+    // Container click â†’ ripple
     const handleContainerClick = (e) => {
         registerInteraction();
         if (enlargedIndex !== null) return;
@@ -707,7 +725,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
 
     // Header strings if enabled
     const headerStrings = settings.headerText?.[language] || settings.headerText?.en || {
-        eyebrow: 'NSS MJCET · NOT ME BUT YOU',
+        eyebrow: 'NSS MJCET Â· NOT ME BUT YOU',
         headingPlain: 'The Spirit of Our ',
         headingItalic: 'Volunteers',
         subtext: 'Real moments from the people who show up, work hard and enjoy every step of the journey.',
@@ -729,7 +747,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                 aria-label="Close enlarged view"
                 title="Close (Esc)"
             >
-                ✕
+                âœ•
             </button>
 
             {/* Prev / Next buttons at far edges of viewport */}
@@ -743,7 +761,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                 aria-label="Previous moment"
                 title="Previous (Left arrow)"
             >
-                ‹
+                â€¹
             </button>
 
             <button
@@ -756,7 +774,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                 aria-label="Next moment"
                 title="Next (Right arrow)"
             >
-                ›
+                â€º
             </button>
 
             {/* Enlarged Card with natural aspect ratio */}
@@ -794,10 +812,10 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     // Drag hint copy with multilingual support
     const hintText = (() => {
         if (language === 'hi') {
-            return isTouchDevice ? 'फ़ोटो को छूकर खींचें' : 'फ़ोटो को खींचकर देखें';
+            return isTouchDevice ? 'à¤«à¤¼à¥‹à¤Ÿà¥‹ à¤•à¥‹ à¤›à¥‚à¤•à¤° à¤–à¥€à¤‚à¤šà¥‡à¤‚' : 'à¤«à¤¼à¥‹à¤Ÿà¥‹ à¤•à¥‹ à¤–à¥€à¤‚à¤šà¤•à¤° à¤¦à¥‡à¤–à¥‡à¤‚';
         }
         if (language === 'te') {
-            return isTouchDevice ? 'ఫోటోను తాకి లాగండి' : 'ఫోటోను లాగండి';
+            return isTouchDevice ? 'à°«à±‹à°Ÿà±‹à°¨à± à°¤à°¾à°•à°¿ à°²à°¾à°—à°‚à°¡à°¿' : 'à°«à±‹à°Ÿà±‹à°¨à± à°²à°¾à°—à°‚à°¡à°¿';
         }
         return isTouchDevice ? 'Touch and drag a photo' : 'Drag a photo';
     })();

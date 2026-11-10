@@ -100,7 +100,7 @@ export async function GET(request) {
                 headers: {
                     // Cache at CDN edge for 5 min; serve stale up to 1 hr while revalidating.
                     // Admin changes call revalidatePath to bust this instantly.
-                    'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+                    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
                 },
             }
         );

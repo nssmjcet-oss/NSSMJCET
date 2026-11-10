@@ -52,7 +52,7 @@ function formatAltText(dateStr) {
 
 /**
  * Compute target card count based on screen area:
- * aiming for ~1 card per 55,000-65,000 pxÂ²
+ * aiming for ~1 card per 55,000-65,000 px²
  * 1920x1080 -> about 32-38 cards (~36)
  * 1440x900  -> about 20-24 cards (~22)
  * tablet    -> about 14-18 cards (~16)
@@ -61,9 +61,9 @@ function formatAltText(dateStr) {
 function computeAreaCardCount(width, height) {
     const area = width * height;
     if (width <= 768) {
-        // Mobile (e.g. 390x844 = 329k)
-        const count = Math.round(area / 36000);
-        return Math.max(8, Math.min(10, count));
+        // Mobile (e.g. 390x844 = 329k): show 12-16 cards so older and newer moments both appear
+        const count = Math.round(area / 24000);
+        return Math.max(12, Math.min(18, count));
     } else if (width <= 1024) {
         // Tablet (e.g. 768x1024 = 786k, 820x1180 = 967k)
         const count = Math.round(area / 54000);
@@ -141,16 +141,32 @@ function assignPhotosDispersed(positions, momentsLength) {
     const assigned = new Array(n);
     const photoPlacements = Array.from({ length: momentsLength }, () => []);
 
-    // 1. Assign unique photos first
-    const firstPass = Math.min(n, momentsLength);
-    for (let i = 0; i < firstPass; i++) {
+    // If fewer or equal cards than photos (e.g. mobile screens),
+    // sample evenly across the ENTIRE collection from index 0 (newest) to momentsLength - 1 (oldest)
+    // so both old and new photos are displayed simultaneously on screen right from the start.
+    if (n <= momentsLength) {
+        const chosen = [];
+        for (let i = 0; i < n; i++) {
+            const idx = Math.min(momentsLength - 1, Math.round((i * (momentsLength - 1)) / (n - 1)));
+            chosen.push(idx);
+        }
+        for (let i = 0; i < n; i++) {
+            const pick = i % 2 === 0 ? chosen[Math.floor(i / 2)] : chosen[n - 1 - Math.floor(i / 2)];
+            assigned[i] = pick;
+            photoPlacements[pick].push(positions[i]);
+        }
+        return assigned;
+    }
+
+    // 1. When more cards than photos (desktop/laptop), assign unique photos first
+    for (let i = 0; i < momentsLength; i++) {
         assigned[i] = i;
         photoPlacements[i].push(positions[i]);
     }
 
     // 2. For remaining cards, greedily pick the candidate with minimum representation
     // and maximum Euclidean distance to its existing clones
-    for (let i = firstPass; i < n; i++) {
+    for (let i = momentsLength; i < n; i++) {
         const pos = positions[i];
 
         let minCount = Infinity;
@@ -216,7 +232,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     });
 
     const [portalMounted, setPortalMounted] = useState(false);
-    const [enlargedIndex, setEnlargedIndex] = useState(null);
+    const [enlargedMomentIndex, setEnlargedMomentIndex] = useState(null);
     const [cardsData, setCardsData] = useState([]);
     const [isMobile, setIsMobile] = useState(false);
     const [throttleReduction, setThrottleReduction] = useState(0);
@@ -294,7 +310,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     useEffect(() => {
         setPortalMounted(true);
 
-        fetch('/api/gallery')
+        fetch('/api/gallery?t=' + Date.now(), { cache: 'no-store' })
             .then((r) => r.json())
             .then((data) => {
                 if (data.photos && data.photos.length > 0) {
@@ -387,7 +403,9 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         setThrottleReduction((prev) => Math.min(10, prev + 2));
     }, []);
 
-    const currentEnlargedCard = enlargedIndex !== null ? cardsData[enlargedIndex] : null;
+    const currentEnlargedCard = enlargedMomentIndex !== null
+        ? cardsData.find((c) => c.momentIndex === enlargedMomentIndex)
+        : null;
     const currentEnlargedId = currentEnlargedCard ? currentEnlargedCard.id : null;
 
     // Physics & Drift hook
@@ -566,10 +584,13 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                 if (cardElsRef.current[randomIdx]) {
                     sourceRectRef.current = cardElsRef.current[randomIdx].getBoundingClientRect();
                 }
-                setEnlargedIndex(randomIdx);
-                setTimeout(() => {
-                    setEnlargedIndex((prev) => (prev === randomIdx ? null : prev));
-                }, 2500);
+                const card = cardsData[randomIdx];
+                if (card) {
+                    setEnlargedMomentIndex(card.momentIndex);
+                    setTimeout(() => {
+                        setEnlargedMomentIndex((prev) => (prev === card.momentIndex ? null : prev));
+                    }, 2500);
+                }
             }
         }, delayMs);
 
@@ -589,21 +610,24 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         setPointer(-9999, -9999, false);
     };
 
-    // Container click â†’ ripple
+    // Container click -> ripple
     const handleContainerClick = (e) => {
         registerInteraction();
-        if (enlargedIndex !== null) return;
+        if (enlargedMomentIndex !== null) return;
         const rect = containerRef.current?.getBoundingClientRect();
         if (rect) triggerRipple(e.clientX - rect.left, e.clientY - rect.top);
     };
 
     // Open from card's screen position
-    const openEnlarged = (index) => {
+    const openEnlarged = (cardIndex) => {
         registerInteraction();
-        if (cardElsRef.current[index]) {
-            sourceRectRef.current = cardElsRef.current[index].getBoundingClientRect();
+        if (cardElsRef.current[cardIndex]) {
+            sourceRectRef.current = cardElsRef.current[cardIndex].getBoundingClientRect();
         }
-        setEnlargedIndex(index);
+        const card = cardsData[cardIndex];
+        if (card && card.momentIndex !== undefined) {
+            setEnlargedMomentIndex(card.momentIndex);
+        }
     };
 
     // Track pointer down for distinguishing click vs drag
@@ -679,23 +703,34 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     };
 
     const handleClose = useCallback(() => {
-        setEnlargedIndex(null);
+        setEnlargedMomentIndex(null);
         sourceRectRef.current = null;
         cancelDrag();
     }, [cancelDrag]);
 
+    // Navigate through ALL moments in the database (old and new)
+    const handlePrevMoment = useCallback(() => {
+        if (!moments.length) return;
+        setEnlargedMomentIndex((prev) => (prev === null ? 0 : (prev - 1 + moments.length) % moments.length));
+    }, [moments.length]);
+
+    const handleNextMoment = useCallback(() => {
+        if (!moments.length) return;
+        setEnlargedMomentIndex((prev) => (prev === null ? 0 : (prev + 1) % moments.length));
+    }, [moments.length]);
+
     // Keyboard navigation
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (enlargedIndex === null) return;
+            if (enlargedMomentIndex === null) return;
             registerInteraction();
             if (e.key === 'Escape') { handleClose(); cancelDrag(); }
-            else if (e.key === 'ArrowRight') setEnlargedIndex((prev) => (prev + 1) % cardsData.length);
-            else if (e.key === 'ArrowLeft') setEnlargedIndex((prev) => (prev - 1 + cardsData.length) % cardsData.length);
+            else if (e.key === 'ArrowRight') handleNextMoment();
+            else if (e.key === 'ArrowLeft') handlePrevMoment();
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [enlargedIndex, cardsData.length, registerInteraction, handleClose]);
+    }, [enlargedMomentIndex, handleNextMoment, handlePrevMoment, registerInteraction, handleClose, cancelDrag]);
 
     // Touch swipe on enlarged card
     const handleTouchStart = (e) => {
@@ -706,14 +741,14 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
         const diff = e.changedTouches[0].clientX - touchStartXRef.current;
         if (Math.abs(diff) > 45) {
             registerInteraction();
-            if (diff < 0) setEnlargedIndex((prev) => (prev + 1) % cardsData.length);
-            else setEnlargedIndex((prev) => (prev - 1 + cardsData.length) % cardsData.length);
+            if (diff < 0) handleNextMoment();
+            else handlePrevMoment();
         }
         touchStartXRef.current = null;
     };
 
-    const activeMoment = currentEnlargedCard && moments[currentEnlargedCard.momentIndex]
-        ? moments[currentEnlargedCard.momentIndex]
+    const activeMoment = enlargedMomentIndex !== null && moments[enlargedMomentIndex]
+        ? moments[enlargedMomentIndex]
         : null;
 
     const sourceStyle = sourceRectRef.current ? {
@@ -725,7 +760,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
 
     // Header strings if enabled
     const headerStrings = settings.headerText?.[language] || settings.headerText?.en || {
-        eyebrow: 'NSS MJCET Â· NOT ME BUT YOU',
+        eyebrow: 'NSS MJCET · NOT ME BUT YOU',
         headingPlain: 'The Spirit of Our ',
         headingItalic: 'Volunteers',
         subtext: 'Real moments from the people who show up, work hard and enjoy every step of the journey.',
@@ -747,7 +782,10 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                 aria-label="Close enlarged view"
                 title="Close (Esc)"
             >
-                âœ•
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
             </button>
 
             {/* Prev / Next buttons at far edges of viewport */}
@@ -756,12 +794,14 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                 onClick={(e) => {
                     e.stopPropagation();
                     registerInteraction();
-                    setEnlargedIndex((prev) => (prev - 1 + cardsData.length) % cardsData.length);
+                    handlePrevMoment();
                 }}
                 aria-label="Previous moment"
                 title="Previous (Left arrow)"
             >
-                â€¹
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
             </button>
 
             <button
@@ -769,12 +809,14 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
                 onClick={(e) => {
                     e.stopPropagation();
                     registerInteraction();
-                    setEnlargedIndex((prev) => (prev + 1) % cardsData.length);
+                    handleNextMoment();
                 }}
                 aria-label="Next moment"
                 title="Next (Right arrow)"
             >
-                â€º
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
             </button>
 
             {/* Enlarged Card with natural aspect ratio */}
@@ -812,10 +854,10 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
     // Drag hint copy with multilingual support
     const hintText = (() => {
         if (language === 'hi') {
-            return isTouchDevice ? 'à¤«à¤¼à¥‹à¤Ÿà¥‹ à¤•à¥‹ à¤›à¥‚à¤•à¤° à¤–à¥€à¤‚à¤šà¥‡à¤‚' : 'à¤«à¤¼à¥‹à¤Ÿà¥‹ à¤•à¥‹ à¤–à¥€à¤‚à¤šà¤•à¤° à¤¦à¥‡à¤–à¥‡à¤‚';
+            return isTouchDevice ? '\u092B\u093C\u094B\u091F\u094B \u0915\u094B \u091B\u0942\u0915\u0930 \u0916\u0940\u0902\u091A\u0947\u0902' : '\u092B\u093C\u094B\u091F\u094B \u0915\u094B \u0916\u0940\u0902\u091A\u0915\u0930 \u0926\u0947\u0916\u0947\u0902';
         }
         if (language === 'te') {
-            return isTouchDevice ? 'à°«à±‹à°Ÿà±‹à°¨à± à°¤à°¾à°•à°¿ à°²à°¾à°—à°‚à°¡à°¿' : 'à°«à±‹à°Ÿà±‹à°¨à± à°²à°¾à°—à°‚à°¡à°¿';
+            return isTouchDevice ? '\u0C2B\u0C4B\u0C1F\u0C4B\u0C28\u0C41 \u0C24\u0C3E\u0C15\u0C3F \u0C32\u0C3E\u0C17\u0C02\u0C21\u0C3F' : '\u0C2B\u0C4B\u0C1F\u0C4B\u0C28\u0C41 \u0C32\u0C3E\u0C17\u0C02\u0C21\u0C3F';
         }
         return isTouchDevice ? 'Touch and drag a photo' : 'Drag a photo';
     })();
@@ -826,7 +868,7 @@ export default function DriftingGallery({ initialMoments = [], initialSettings =
             <GalleryMenu
                 showLogo={settings.showLogo}
                 showMenuButton={settings.showMenuButton}
-                isEnlarged={enlargedIndex !== null}
+                isEnlarged={enlargedMomentIndex !== null}
             />
 
             {/* Optional Header Text (controlled via admin settings) */}

@@ -8,7 +8,7 @@ export function middleware(request) {
   if (hostname && hostname.includes('vercel.app')) {
     const redirectResponse = NextResponse.redirect(
       `https://www.nssmjcet.in${pathname}${search}`,
-      { status: 301 }
+      308
     );
     // Tell Google to remove this Vercel URL from its index
     redirectResponse.headers.set('X-Robots-Tag', 'noindex, nofollow');
@@ -19,7 +19,7 @@ export function middleware(request) {
   if (hostname === 'nssmjcet.in') {
     return NextResponse.redirect(
       `https://www.nssmjcet.in${pathname}${search}`,
-      { status: 301 }
+      308
     );
   }
 
